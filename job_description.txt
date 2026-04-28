@@ -1,0 +1,56 @@
+Job Title: Data Engineer Intern (2026)
+Location: Pune, India
+Company: Snowflake
+
+About Snowflake
+Snowflake is powering the era of the agentic enterprise. We are looking for AI-native thinkers who treat AI as a high-trust collaborator to reinvent how work gets done. Our Data Cloud platform enables thousands of organizations to unlock the value of their data with near-unlimited scale, concurrency, and performance. We are a community of low-ego individuals who thrive in dynamic environments, moving with an experimental mindset to discover simpler, more powerful ways to deliver results.
+
+About the Role
+The Data Engineering Team designs, builds, and oversees the deployment of technology architecture and software to capture, manage, store, and utilize structured and unstructured data. You will help establish processes based on business and technical requirements, channel data from multiple inputs, and suggest system upgrades to accommodate ongoing needs. This is a paid, full-time internship with the potential for post-internship career opportunities.
+
+Key Responsibilities
+- Develop technical tools and programming that leverage AI, Machine Learning, and big-data techniques to cleanse, organize, and transform data.
+- Maintain, defend, and update data structures and integrity on an automated basis.
+- Create and manage declarative automations and data validation to support business processes.
+- Partner directly with business stakeholders to gather requirements and translate business needs into technical data solutions.
+- Design and develop innovative applications that leverage AI and ML to drive automated insights.
+- Follow best practices to produce clean, efficient, and maintainable data pipelines and configurations.
+- Build advanced monitoring and alerting frameworks (Observability) that utilize AI to predict and resolve pipeline failures.
+
+What You Will Learn
+- How to leverage AI and Machine Learning in data engineering workflows.
+- Strategies for partnering with stakeholders to deliver technical solutions.
+- Best practices for designing scalable data platforms and infrastructure.
+- How to build self-service tools for engineering teams.
+- Methods for automating the lifecycle of data pipeline creation.
+
+Focus Areas (You may work on one or more of these)
+- Data Platform & Enablement: Building and scaling the underlying infrastructure that powers the Data Cloud.
+- AI-Driven Automation: Designing intelligent solutions to replace manual tasks in data pipeline creation.
+- Observability & Operations: Building monitoring frameworks to predict and resolve failures.
+- Data Engineering Excellence: Refining data architectures to ensure high-quality data flows across the ecosystem.
+
+Qualifications
+- Must be actively enrolled in an accredited college/university program during the internship.
+- Desired Class Level: B.Tech or M.Tech in progress.
+- Desired Majors: Computer Science, Software Engineering, Technology, or related fields.
+- Strong proficiency in Python for data manipulation, automation, and application development.
+- Solid understanding of SQL and relational database concepts.
+- Preliminary experience in big data technologies across multiple domains.
+- Ability to interact professionally with diverse functional/technical teams and business leaders.
+- Strong problem-solving, critical thinking, and communication skills.
+- A strong desire to learn and an eagerness to understand new features and technologies.
+
+Bonus Skills
+- Hands-on experience with Snowflake (SnowSQL).
+- Experience with CI/CD pipelines and version control (e.g., GitHub/GitLab).
+- Familiarity with R or other statistical scripting languages.
+- Good interpersonal skills and a strong sense of ownership.
+
+What We Offer
+- Paid, full-time internship in the heart of the software industry.
+- Exposure to a fast-paced, fun, and inclusive culture.
+- Opportunity to work with world-class experts on challenging projects.
+- Meaningful contributions to real systems used by customers.
+- High level of access to supervisors, detailed direction without micromanagement, and continuous feedback.
+- Final evaluation and potential for full-time career opportunities.

@@ -1,0 +1,223 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Professional Resume for Hirishi (Single Page Optimized)
+%
+% Author: Harsha Siva Akash Saladi alias Hirishi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,10pt]{article} % Reduced base font to 10pt for better fit
+\usepackage{latexsym}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{ragged2e}
+\usepackage[empty]{fullpage}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage{marvosym}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{cfr-lm}
+\usepackage[T1]{fontenc}
+\usepackage{fontawesome5}
+
+% Tighter Margins for Single Page
+\geometry{left=1.0cm, top=0.8cm, right=1.0cm, bottom=0.8cm}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\usepackage[most]{tcolorbox}
+\tcbset{
+	frame code={},
+	center title,
+	left=0pt,
+	right=0pt,
+	top=0pt,
+	bottom=0pt,
+	colback=gray!15,
+	colframe=white,
+	width=\dimexpr\textwidth\relax,
+	enlarge left by=-2mm,
+	boxsep=2pt,
+	arc=0pt,outer arc=0pt,
+}
+
+\urlstyle{same}
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Compressed Sections formatting
+\titleformat{\section}{
+  \vspace{-10pt}\scshape\raggedright\large % Reduced top space
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}] % Reduced bottom space
+
+%-------------------------
+% Custom commands (Optimized for space)
+\newcommand{\resumeItem}[2]{
+  \item{
+    \textbf{#1}{:\hspace{0.5mm}#2 \vspace{-1mm}}
+  }
+}
+
+\newcommand{\resumePOR}[3]{
+\vspace{0.3mm}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1},\hspace{0.3mm}#2 & \textit{\small{#3}}
+    \end{tabular*}
+    \vspace{-3mm}
+}
+
+\newcommand{\resumeSubheading}[4]{
+\vspace{0.3mm}\item
+    \begin{tabular*}{0.98\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & \textit{\footnotesize{#4}} \\
+        \textit{\footnotesize{#3}} &  \footnotesize{#2}\\
+    \end{tabular*}
+    \vspace{-3.5mm}
+}
+
+\newcommand{\resumeProject}[4]{
+\vspace{0.3mm}\item
+    \begin{tabular*}{0.98\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & \textit{\footnotesize{#3}} \\
+        \footnotesize{\textit{#2}} & \footnotesize{#4}
+    \end{tabular*}
+    \vspace{-3.5mm}
+}
+
+\newcommand{\resumeSubItem}[2]{\resumeItem{#1}{#2}\vspace{-3pt}}
+\renewcommand{\labelitemi}{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=*,labelsep=0mm,itemsep=1pt]}
+\newcommand{\resumeHeadingSkillStart}{\begin{itemize}[leftmargin=*,itemsep=1mm, rightmargin=2ex]}
+\newcommand{\resumeItemListStart}{\begin{justify}\begin{itemize}[leftmargin=3ex, rightmargin=2ex, noitemsep,labelsep=1.2mm,itemsep=0mm]\small}
+
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}\vspace{1mm}}
+\newcommand{\resumeHeadingSkillEnd}{\end{itemize}\vspace{-1mm}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\end{justify}\vspace{-1.5mm}}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}%
+%---- End of Packages and Functions ------
+
+\newcommand{\name}{Harsha Siva Akash Saladi } % Your Name
+\newcommand{\course}{B.Tech in Computer Science Engineering} % Your Course
+\newcommand{\phone}{9494921694} % Your Phone Number
+\newcommand{\emaild}{harshasivaakashsaladi@gmail.com} %Email
+
+\begin{document}
+\fontfamily{cmr}\selectfont
+
+%----------HEADING (Compact)-----------------
+\begin{center}
+    \textbf{\LARGE \name} \\ \vspace{2pt}
+    \small \course \ | \ SRM University AP \\ \vspace{2pt}
+    \small +91-\phone \ | \ \href{mailto:\emaild}{\emaild} \ | \ \href{https://portfolio.hirishi.co.in/}{Portfolio} \href{https://github.com/Hirishi24}{ \faGithub} \href{https://www.linkedin.com/in/akashsaladi/}{ \faLinkedin}
+\end{center}
+\vspace{-12pt}
+
+\section{Education}
+\resumeSubHeadingListStart
+  \item \textbf{B.Tech. in Computer Science Engineering}, SRM University AP \hfill 6.67 CGPA | 2023-Present
+  \item \textbf{+2 Intermediate}, APBIE Board \hfill 96.1\% | 2021-23
+  \item \textbf{X Grade}, SSC Board \hfill 100\% | 2020-21
+\resumeSubHeadingListEnd
+
+\section{Experience}
+\resumeSubHeadingListStart
+    \resumeProject
+      {Summer Research Intern - Pest Detection Using TinyML}
+      {SRM UNIVERSITY-AP}
+      {May 2025 - July 2025}
+      {}
+      \resumeItemListStart
+        \item {Engineered low-power image classification models using TinyML on Arduino Nano 33 BLE to enable real-time, offline pest detection in agriculture.}
+        \item {Integrated hardware-software prototypes with OV7675 cameras and IoT sensors, creating a scalable solution for intelligent edge inference in smart farming.}
+        \item {Spearheaded the development of a patentable innovation, managing the invention disclosure and IP filing process under faculty supervision.}
+      \resumeItemListEnd
+    
+    \resumeProject
+      {Research Intern - ANPR}
+      {Automatic Number Plate Recognition}
+      {August 2025 - Present}
+      {}
+      \resumeItemListStart
+        \item {Developed a computer vision-based ANPR system to detect vehicle number plates from traffic videos and integrate with e-challan systems for automated traffic enforcement.}
+      \resumeItemListEnd
+
+    \resumeProject
+      {Founder, Hirishi Cloud Kitchen}
+      {Entrepreneurial Experience}
+      {2023 - Present}
+      {}
+      \resumeItemListStart
+        \item {Founded and managed an independent cloud kitchen startup, orchestrating vendor relations, logistics, and menu planning to deliver high-quality food services to local customers.}
+      \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Projects}
+\resumeSubHeadingListStart
+    \resumeProject
+      {Unibuddy – Automated Academic Dashboard}
+      {React, Node.js, FastAPI, PyTorch | \href{https://github.com/Hirishi24/unibuddy}{\faGithub}}
+      {}
+      {\href{https://unibuddy.hirishi.co.in/}{\faLink}}
+      \resumeItemListStart
+        \item {Built a microservices web app to automate student portal interactions and track attendance analytics.}
+        \item {Deployed a custom PyTorch/ONNX AI model via FastAPI to bypass login CAPTCHAs programmatically.}
+        \item {Secured backend data caching using AES-256-GCM encryption to protect user privacy.}
+        \item {Delivered a mobile-first UI with React and Tailwind CSS, hosted via continuous integration on Vercel.}
+      \resumeItemListEnd
+
+    \resumeProject
+      {Cloud Kitchen Website}
+      {Web Development | \href{https://github.com/Hirishi24/Hirishi-Cloud-Kitchen}{\faGithub}}
+      {}
+      {\href{https://hirishicloudkitchen.netlify.app/}{\faLink}}
+      \resumeItemListStart
+        \item {Architected a full-stack e-commerce website using PHP and MySQL, facilitating seamless online ordering and inventory management for a cloud kitchen.}
+      \resumeItemListEnd
+
+    \resumeProject
+      {Automated Invoice Generator}
+      {Python Application | \href{https://github.com/Hirishi24/Automatic-Invoice-Generator}{\faGithub}}
+      {}
+      {}
+      \resumeItemListStart
+        \item {Programmed a Python-based automated billing application with a GUI, streamlining itemized invoice generation and GST calculations for business operations.}
+      \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{Technical Skills}
+ \resumeHeadingSkillStart
+  \resumeSubItem{Programming Languages}{C/C++, Python}
+  \resumeSubItem{Web Development}{HTML, CSS, JavaScript, Flask, Django, MERN Stack}
+  \resumeSubItem{Databases}{MySQL, MongoDB}
+  \resumeSubItem{CS Fundamentals}{Data Structures and Algorithms, OOPs concepts}
+ \resumeHeadingSkillEnd
+
+\section{Positions of Responsibility}
+\resumeSubHeadingListStart
+\resumePOR{Ex Member}{Ecell, SRM AP}{}
+\resumeSubHeadingListEnd
+
+\section{Achievements}
+\resumeSubHeadingListStart
+\resumePOR{AP EAPCET 2023}{Secured State Rank 1021 out of 3 lakh+ candidates}{}
+\resumeSubHeadingListEnd
+
+\section{Languages}
+\resumeHeadingSkillStart
+    \resumeSubItem{Telugu}{Fluent \& Native}
+    \resumeSubItem{English}{Fluent}
+\resumeHeadingSkillEnd
+
+\end{document}

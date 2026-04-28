@@ -1,0 +1,57 @@
+{
+  "personal_info": {
+    "name": "Full Name",
+    "title": "Current Role / Degree",
+    "phone": "+91-0000000000",
+    "email": "example@email.com",
+    "location": "City, Country",
+    "portfolio": "https://link-to-portfolio.com",
+    "github": "https://github.com/username"
+  },
+  "education": [
+    {
+      "degree": "Degree Name",
+      "institute": "College/University Name",
+      "score": "CGPA / %",
+      "year": "YYYY-YYYY"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Job Title",
+      "organization": "Company Name",
+      "date": "Month YYYY - Month YYYY",
+      "description": [
+        "Major achievement or responsibility #1",
+        "Major achievement or responsibility #2"
+      ],
+      "keywords": ["Skill1", "Skill2", "Technology"]
+    }
+  ],
+  "projects": [
+    {
+      "title": "Project Name",
+      "type": "Web/App/ML",
+      "github": "Link",
+      "description": [
+        "What did the project do?",
+        "What technologies did you use?"
+      ],
+      "stack": ["Tech1", "Tech2"],
+      "keywords": ["Keyword1", "Keyword2"]
+    }
+  ],
+  "skills": {
+    "programming_languages": ["Language1", "Language2"],
+    "web_development": ["Framework1", "Tool2"],
+    "databases": ["SQL/NoSQL"],
+    "others": ["Skill1", "Skill2"]
+  },
+  "achievements": [
+    {
+      "title": "Award/Rank Name",
+      "description": "Details about the achievement"
+    }
+  ],
+  "languages": ["Language (Level)"]
+}

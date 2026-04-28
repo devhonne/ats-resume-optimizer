@@ -1,0 +1,125 @@
+{
+  "personal_info": {
+    "name": "Harsha Siva Akash Saladi",
+    "alias": "Hirishi",
+    "title": "B.Tech in Computer Science Engineering",
+    "phone": "+91-9494921694",
+    "email": "harshasivaakashsaladi@gmail.com",
+    "location": "Amaravati, India",
+    "portfolio": "https://portfolio.hirishi.co.in/",
+    "github": "https://github.com/Hirishi24",
+    "linkedin": "https://www.linkedin.com/in/akashsaladi/"
+  },
+  "education": [
+    {
+      "degree": "B.Tech. CSE",
+      "institute": "SRM University AP",
+      "score": "6.67 CGPA",
+      "year": "2023-Present"
+    },
+    {
+      "degree": "+2 Intermediate",
+      "institute": "APBIE Board",
+      "score": "96.1%",
+      "year": "2021-23"
+    },
+    {
+      "degree": "X Grade",
+      "institute": "SSC Board",
+      "score": "100%",
+      "year": "2020-21"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Summer Research Intern",
+      "topic": "Pest Detection Using TinyML",
+      "organization": "SRM UNIVERSITY-AP",
+      "date": "May 2025 - July 2025",
+      "description": [
+        "Conducted research on deploying low-power image classification models using TinyML for real-time pest detection in agriculture.",
+        "Utilized Arduino Nano 33 BLE and OV7675 camera for hardware integration.",
+        "Designed and integrated a hardware-software prototype combining IoT sensing and intelligent edge inference.",
+        "Co-developing a patentable innovation; currently in final stages of IP filing."
+      ],
+      "keywords": ["TinyML", "Arduino", "IoT", "Image Classification", "Edge AI", "Research"]
+    },
+    {
+      "role": "Research Intern",
+      "topic": "ANPR (Automatic Number Plate Recognition)",
+      "organization": "SRM UNIVERSITY-AP",
+      "date": "August 2025-Present",
+      "description": [
+        "Building an ANPR system to detect and recognize vehicle number plates from traffic videos.",
+        "Integrating vehicle details with an automatic e-challan system to identify traffic violations.",
+        "Reducing manual intervention and improving traffic enforcement efficiency."
+      ],
+      "keywords": ["ANPR", "Computer Vision", "Python", "Traffic Automation", "Digital Challan"]
+    },
+    {
+      "role": "Founder",
+      "organization": "Hirishi Cloud Kitchen",
+      "category": "Entrepreneurial Experience",
+      "date": "2023 - Present",
+      "description": [
+        "Started a cloud kitchen startup focused on food preparation and delivery without a dine-in space.",
+        "Managed menu planning, vendor relationships, kitchen operations, and delivery logistics.",
+        "Optimized quality service and customer satisfaction through direct operational management."
+      ],
+      "keywords": ["Entrepreneurship", "Operations Management", "Logistics", "Business Strategy"]
+    }
+  ],
+  "projects": [
+    {
+      "title": "Unibuddy – Automated Academic Dashboard",
+      "type": "Full Stack & AI",
+      "github": "https://github.com/Hirishi24/unibuddy",
+      "link": "https://unibuddy.hirishi.co.in/",
+      "description": [
+        "Built a microservices web app to automate student portal interactions and track attendance analytics.",
+        "Deployed a custom PyTorch/ONNX AI model via FastAPI to bypass login CAPTCHAs programmatically.",
+        "Secured backend data caching using AES-256-GCM encryption to protect user privacy.",
+        "Delivered a mobile-first UI with React and Tailwind CSS, hosted via continuous integration on Vercel."
+      ],
+      "stack": ["React", "Node.js", "FastAPI", "PyTorch", "Tailwind CSS"],
+      "keywords": ["React", "Node.js", "FastAPI", "PyTorch", "ONNX", "Microservices", "AES-256-GCM", "Tailwind CSS", "Vercel", "CI/CD"]
+    },
+    {
+      "title": "Cloud Kitchen Website",
+      "type": "Web Development",
+      "github": "https://github.com/Hirishi24/Hirishi-Cloud-Kitchen",
+      "link": "https://hirishicloudkitchen.netlify.app/",
+      "description": [
+        "Built a full-stack website for my cloud kitchen to handle online orders.",
+        "Implemented database management for menu and order tracking."
+      ],
+      "stack": ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
+      "keywords": ["Full Stack", "PHP", "MySQL", "Web Development", "E-commerce"]
+    },
+    {
+      "title": "Automated Invoice Generator",
+      "type": "Python Application",
+      "github": "https://github.com/Hirishi24/Automatic-Invoice-Generator",
+      "date": "Jan. 2024 – Apr. 2024",
+      "description": [
+        "Developed a Python app to generate itemized invoices with GST calculations.",
+        "Created a print-friendly output system for business billing."
+      ],
+      "stack": ["Python", "Tkinter", "ReportLab"],
+      "keywords": ["Python", "Automation", "GUI", "GST", "Billing Software"]
+    }
+  ],
+  "skills": {
+    "programming_languages": ["C", "C++", "Python", "JavaScript"],
+    "web_development": ["HTML", "CSS", "Flask", "Django", "MERN Stack"],
+    "databases": ["MySQL", "MongoDB"],
+    "cs_fundamentals": ["Data Structures and Algorithms", "OOPs concepts"]
+  },
+  "achievements": [
+    {
+      "title": "AP EAPCET 2023",
+      "description": "Secured State Rank 1021 out of 3 lakh+ candidates (Top 0.3%)"
+    }
+  ],
+  "languages": ["Telugu (Native)", "English (Fluent)"]
+}
