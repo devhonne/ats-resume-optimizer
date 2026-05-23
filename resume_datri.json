@@ -1,0 +1,84 @@
+{
+  "personal_info": {
+    "name": "Datri Saranya Saladi",
+    "title": "B.Tech in Computer Science and Engineering (AI/ML)",
+    "phone": "+91-9182599168",
+    "email": "datrisaranyasaladi@gmail.com",
+    "location": "Amaravati, India",
+    "github": "",
+    "linkedin": "https://www.linkedin.com/in/datri-saranya-saladi-1552a3371"
+  },
+  "education": [
+    {
+      "degree": "B.Tech. CSE (AI/ML)",
+      "institute": "VITAP University",
+      "score": "9.29 CGPA (Semester 3)",
+      "year": "2024-Present"
+    },
+    {
+      "degree": "Senior Secondary (+2)",
+      "institute": "APBIE Board",
+      "score": "98.5%",
+      "year": "2022-24"
+    },
+    {
+      "degree": "Secondary (X)",
+      "institute": "SSC Board",
+      "score": "97.34%",
+      "year": "2022"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Research Assistant",
+      "topic": "Number Plate Detection Project",
+      "organization": "VITAP University",
+      "date": "August 2025 - Present",
+      "description": [
+        "Worked on data preprocessing, feature extraction, and exploratory data analysis for machine learning experiments.",
+        "Built a data preprocessing and feature extraction pipeline to prepare vehicle image datasets for number plate detection models.",
+        "Presently working on an ML-based computer vision system that takes a video or live camera feed as input to automatically detect vehicle number plates and extract the license number as text."
+      ],
+      "keywords": ["Machine Learning", "Computer Vision", "Data Preprocessing", "Feature Extraction", "Exploratory Data Analysis", "Number Plate Detection", "Python", "Image Processing"]
+    }
+  ],
+  "projects": [
+    {
+      "title": "OMR Based Evaluation System",
+      "type": "Software Engineering Project",
+      "github": "",
+      "description": [
+        "Designed a web-based OMR evaluation system to digitally evaluate objective-type answer sheets when dedicated OMR machines are unavailable.",
+        "Planned role-based interfaces for Admin, Faculty (Evaluator), and Students, enabling secure upload of OMR sheets, answer key management, and result viewing.",
+        "Defined a modular evaluation workflow including OMR input handling, response processing, rule-based scoring, and result generation.",
+        "Focused on a software-centric, cost-effective alternative to hardware-dependent OMR solutions using digitized inputs."
+      ],
+      "stack": ["Python", "Web Development", "System Design", "Software Engineering"],
+      "keywords": ["Software Engineering", "OMR Evaluation", "Role-Based UI", "Workflow Automation", "System Design"]
+    }
+  ],
+  "skills": {
+    "programming_languages": ["C/C++", "Python", "Java", "SQL"],
+    "databases": ["MySQL", "SQL+"],
+    "cs_fundamentals": ["Data Structures", "Object-Oriented Programming", "Problem Solving", "Software Engineering"],
+    "ai_ml": ["Supervised Learning", "Feature Extraction", "Model Evaluation", "Genetic Algorithms", "Computer Vision", "Machine Learning"],
+    "tools": ["Git", "Github"]
+  },
+  "positions_of_responsibility": [
+    {
+      "role": "Project Team Lead",
+      "organization": "OMR Based Evaluation System, VIT AP"
+    },
+    {
+      "role": "Event Volunteer",
+      "organization": "Inter-Department Mechanical Event, VIT AP"
+    }
+  ],
+  "achievements": [
+    {
+      "title": "National Level Abacus Competition",
+      "description": "Champion - Viswam Edutech (2017)"
+    }
+  ],
+  "languages": ["English", "Telugu"]
+}
