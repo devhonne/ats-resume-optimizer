@@ -1,56 +1,22 @@
-Job Title: Data Engineer Intern (2026)
-Location: Pune, India
-Company: Snowflake
+Position Summary...
+As a Software Engineering Sophomore Intern, you’ll be part of a collaborative team that builds scalable software solutions with AI/ML integrations. You’ll contribute to real-world projects, learn from experienced engineers, and gain exposure to Walmart’s technology ecosystem. Interns are expected to demonstrate curiosity, ownership, and a strong learning mindset while embodying Walmart’s culture and values.
 
-About Snowflake
-Snowflake is powering the era of the agentic enterprise. We are looking for AI-native thinkers who treat AI as a high-trust collaborator to reinvent how work gets done. Our Data Cloud platform enables thousands of organizations to unlock the value of their data with near-unlimited scale, concurrency, and performance. We are a community of low-ego individuals who thrive in dynamic environments, moving with an experimental mindset to discover simpler, more powerful ways to deliver results.
+About Walmart 
+At Walmart Global Tech India, you'll join a collaborative team of over 15,000 engineers, data scientists, and service professionals. The team builds scalable software solutions with AI/ML integrations, driving digital transformation for Walmart’s global operations and enhancing customer and associate experiences.
 
-About the Role
-The Data Engineering Team designs, builds, and oversees the deployment of technology architecture and software to capture, manage, store, and utilize structured and unstructured data. You will help establish processes based on business and technical requirements, channel data from multiple inputs, and suggest system upgrades to accommodate ongoing needs. This is a paid, full-time internship with the potential for post-internship career opportunities.
+If you’re thinking ‘scale’, think bigger and don’t stop there. At Walmart Global Tech India, we don’t just innovate, we enable transformations across stores and different channels for the Walmart experience. Take a regular day at Walmart Global Tech India and match that with 260 million customers a week, 11,300+ stores, under 19 countries and e-commerce websites.
 
-Key Responsibilities
-- Develop technical tools and programming that leverage AI, Machine Learning, and big-data techniques to cleanse, organize, and transform data.
-- Maintain, defend, and update data structures and integrity on an automated basis.
-- Create and manage declarative automations and data validation to support business processes.
-- Partner directly with business stakeholders to gather requirements and translate business needs into technical data solutions.
-- Design and develop innovative applications that leverage AI and ML to drive automated insights.
-- Follow best practices to produce clean, efficient, and maintainable data pipelines and configurations.
-- Build advanced monitoring and alerting frameworks (Observability) that utilize AI to predict and resolve pipeline failures.
+With fiscal year 2025 revenue of $681 billion, Walmart employs approximately 2.3 million associates worldwide. We innovate to deliver a simple and seamless experience for our customers. Our tech talent solves the biggest and most complex problems. They drive digital transformation where data and analytics are enabling us to better serve our customers and create a digital relationship with them. As our customers evolve and adapt, we are taking it a few notches further here. We’re changing what customers can expect from the experience of shopping, from the physical stores, to mobile, social and even online; we’re not just ready for the future of shopping, we’re creating it. 
 
-What You Will Learn
-- How to leverage AI and Machine Learning in data engineering workflows.
-- Strategies for partnering with stakeholders to deliver technical solutions.
-- Best practices for designing scalable data platforms and infrastructure.
-- How to build self-service tools for engineering teams.
-- Methods for automating the lifecycle of data pipeline creation.
+About Team: 
+Building the right technology foundation for Infrastructure & platforms is vital to success at the scale of Walmart. Our team builds and maintains the foundational technologies that support the tech organization. Included in this are data platforms, enterprise architecture, DevOps, cloud computing, and infrastructure. All of these products and services are supported by scalable and powerful infrastructure, ensuring a secure and seamless employee and customer experience across stores, digital channels, and distribution centers.
 
-Focus Areas (You may work on one or more of these)
-- Data Platform & Enablement: Building and scaling the underlying infrastructure that powers the Data Cloud.
-- AI-Driven Automation: Designing intelligent solutions to replace manual tasks in data pipeline creation.
-- Observability & Operations: Building monitoring frameworks to predict and resolve failures.
-- Data Engineering Excellence: Refining data architectures to ensure high-quality data flows across the ecosystem.
+What you'll do:
+You will have to work in a team of developers writing codes to build one of these systems but not limited to: Largest private customer database, master data for Item, Supply Chain to support our online and offline channels, Mobile development to enhance user experience for our associates, Complex security frameworks and cryptology suites, Integration layer to interface with suppliers and B2B partners, World's largest private cloud, Large Scale distributed Systems, Service Oriented Architecture, High Performance, Scalable and Reliable Systems; Massive in-memory databases.
 
-Qualifications
-- Must be actively enrolled in an accredited college/university program during the internship.
-- Desired Class Level: B.Tech or M.Tech in progress.
-- Desired Majors: Computer Science, Software Engineering, Technology, or related fields.
-- Strong proficiency in Python for data manipulation, automation, and application development.
-- Solid understanding of SQL and relational database concepts.
-- Preliminary experience in big data technologies across multiple domains.
-- Ability to interact professionally with diverse functional/technical teams and business leaders.
-- Strong problem-solving, critical thinking, and communication skills.
-- A strong desire to learn and an eagerness to understand new features and technologies.
-
-Bonus Skills
-- Hands-on experience with Snowflake (SnowSQL).
-- Experience with CI/CD pipelines and version control (e.g., GitHub/GitLab).
-- Familiarity with R or other statistical scripting languages.
-- Good interpersonal skills and a strong sense of ownership.
-
-What We Offer
-- Paid, full-time internship in the heart of the software industry.
-- Exposure to a fast-paced, fun, and inclusive culture.
-- Opportunity to work with world-class experts on challenging projects.
-- Meaningful contributions to real systems used by customers.
-- High level of access to supervisors, detailed direction without micromanagement, and continuous feedback.
-- Final evaluation and potential for full-time career opportunities.
+What you'll bring:
+- You are currently pursuing a bachelor's / master's or an equivalent degree in engineering and are to graduate in 2028
+- You have scored a combined aggregate score of 7 or above across all semesters
+- You possess an extremely sound understanding in the basic areas of Computer Science such as Data Structures, Algorithms, Object Oriented Programming and Design
+- You have a good command on any one programming language C/C++/Java.
+- You have strong problem solving, analytic, decision-making and excellent communication with interpersonal skills. You pay attention to details and are able to interpret data and trends, diagnose problems, and formulate effective action plans to resolve issues. You are self-driven and motivated with entrepreneurial passion and desire to work in a fast-paced, results-driven environment with varied responsibilities.

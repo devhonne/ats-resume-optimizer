@@ -6,7 +6,7 @@
     "email": "datrisaranyasaladi@gmail.com",
     "location": "Amaravati, India",
     "github": "",
-    "linkedin": "https://www.linkedin.com/in/datri-saranya-saladi-1552a3371"
+    "linkedin": "https://www.linkedin.com/in/datri-saranya-saladi/"
   },
   "education": [
     {
@@ -35,11 +35,11 @@
       "organization": "VITAP University",
       "date": "August 2025 - Present",
       "description": [
-        "Worked on data preprocessing, feature extraction, and exploratory data analysis for machine learning experiments.",
-        "Built a data preprocessing and feature extraction pipeline to prepare vehicle image datasets for number plate detection models.",
-        "Presently working on an ML-based computer vision system that takes a video or live camera feed as input to automatically detect vehicle number plates and extract the license number as text."
+        "Worked on data preprocessing, feature extraction, and exploratory data analysis for scalable machine learning experiments.",
+        "Built a data preprocessing and feature extraction pipeline to prepare vehicle image datasets for high-performance number plate detection models.",
+        "Presently working on a scalable ML-based computer vision system that takes a video or live camera feed as input to automatically detect vehicle number plates and extract the license number as text, integrating AI/ML models with real-time pipelines."
       ],
-      "keywords": ["Machine Learning", "Computer Vision", "Data Preprocessing", "Feature Extraction", "Exploratory Data Analysis", "Number Plate Detection", "Python", "Image Processing"]
+      "keywords": ["Machine Learning", "Computer Vision", "Data Preprocessing", "Feature Extraction", "Exploratory Data Analysis", "Number Plate Detection", "Python", "Image Processing", "Scalable Systems"]
     }
   ],
   "projects": [
@@ -48,20 +48,20 @@
       "type": "Software Engineering Project",
       "github": "",
       "description": [
-        "Designed a web-based OMR evaluation system to digitally evaluate objective-type answer sheets when dedicated OMR machines are unavailable.",
+        "Designed a web-based, scalable OMR evaluation system utilizing Object-Oriented Design patterns to digitally evaluate objective-type answer sheets.",
         "Planned role-based interfaces for Admin, Faculty (Evaluator), and Students, enabling secure upload of OMR sheets, answer key management, and result viewing.",
-        "Defined a modular evaluation workflow including OMR input handling, response processing, rule-based scoring, and result generation.",
+        "Defined a modular evaluation workflow and algorithms for OMR input handling, response processing, rule-based scoring, and result generation.",
         "Focused on a software-centric, cost-effective alternative to hardware-dependent OMR solutions using digitized inputs."
       ],
       "stack": ["Python", "Web Development", "System Design", "Software Engineering"],
-      "keywords": ["Software Engineering", "OMR Evaluation", "Role-Based UI", "Workflow Automation", "System Design"]
+      "keywords": ["Software Engineering", "OMR Evaluation", "Role-Based UI", "Workflow Automation", "System Design", "Object-Oriented Design", "Algorithms"]
     }
   ],
   "skills": {
     "programming_languages": ["C/C++", "Python", "Java", "SQL"],
     "databases": ["MySQL", "SQL+"],
-    "cs_fundamentals": ["Data Structures", "Object-Oriented Programming", "Problem Solving", "Software Engineering"],
-    "ai_ml": ["Supervised Learning", "Feature Extraction", "Model Evaluation", "Genetic Algorithms", "Computer Vision", "Machine Learning"],
+    "cs_fundamentals": ["Data Structures", "Algorithms", "Object-Oriented Programming and Design", "Software Engineering", "Distributed Systems (Concepts)"],
+    "ai_ml": ["Supervised Learning", "Feature Extraction", "Model Evaluation", "Genetic Algorithms", "Computer Vision", "Machine Learning", "AI/ML Integrations"],
     "tools": ["Git", "Github"]
   },
   "positions_of_responsibility": [
