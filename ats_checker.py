@@ -13,7 +13,8 @@ MASTER_TECH_LIST = {
     "deep learning", "nlp", "ai", "llm", "gemini", "openai", "terraform", "ansible", "linux", "html", "css",
     "tailwind", "bootstrap", "redux", "async python", "pydantic", "uvicorn", "cloudinary", "vertex ai",
     "data structures", "algorithms", "oops", "distributed systems", "microservices", "agile", "scrum",
-    "pyspark", "tableau", "power bi", "hive", "hadoop", "r", "azure databricks"
+    "pyspark", "tableau", "power bi", "hive", "hadoop", "r", "azure databricks",
+    "computer vision", "software engineering", "data science", "natural language processing"
 }
 
 def get_resume_files():
@@ -94,8 +95,8 @@ def calculate_ats_score(data_filename, jd_filename):
     # We scan the JD for any word that is in our MASTER_TECH_LIST
     required_keywords = set()
     for tech in MASTER_TECH_LIST:
-        # Use regex to find whole word matches
-        if re.search(rf'\b{re.escape(tech)}\b', jd_text):
+        # Use regex to find matches, avoiding boundary failures with special chars like +, #, .
+        if re.search(rf'(?<!\w){re.escape(tech)}(?!\w)', jd_text):
             required_keywords.add(tech)
 
     # 4. Compare and Score

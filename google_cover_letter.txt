@@ -1,0 +1,30 @@
+Datri Saranya Saladi
+Amaravati, India | +91-9182599168 | datrisaranyasaladi@gmail.com
+Portfolio: datri.vercel.app | LinkedIn: linkedin.com/in/datri-saranya-saladi/
+
+June 4, 2026
+
+Hiring Committee / Recruiting Team
+Google India
+Bengaluru, Karnataka, India
+
+Subject: Application for Student Researcher Program, 2026 (Bengaluru)
+
+Dear Hiring Committee,
+
+I am writing to express my strong interest in the Student Researcher Program (2026) at Google India. I am currently pursuing a B.Tech in Computer Science and Engineering (specializing in AI and Machine Learning) at VIT-AP University. Reflecting my academic performance, I maintain a 9.16 CGPA at present and ranked in the top 3 of my branch during my first year, which enabled me to formally migrate from Mechanical Engineering into the CSE (AI/ML) department. 
+
+My engineering background is focused on developing solutions for real-world, large-scale problems, directly aligning with Google's mission. Key highlights of my technical experience include:
+
+*   **Computer Vision & Deep Learning**: Developed a real-time, non-intrusive driver fatigue detection system using Python, OpenCV, and deep learning. I designed facial landmark analysis algorithms to monitor drowsiness indicators (eye closure, yawn frequency) and built a low-latency, scalable software architecture suitable for Advanced Driver Assistance Systems (ADAS) deployment.
+*   **Frontend & Full-Stack Development**: Designed and deployed a responsive frontend platform for a startup (Hirishi Cloud Kitchen, hosted at hck.hirishi.com) using React, JavaScript, HTML, and CSS. Additionally, I co-developed "Rage CAPTCHA" (a gamified human-verification system) under strict hackathon constraints, reaching the finals of DUMB-A-THON 2.0.
+*   **Analytical Rigor**: Selected for the Amaravati Quantum Valley Phase II Course (ranking in the top 3,000 out of 63,000+ candidates) and completed an official certification in Quantum Fundamentals.
+
+I am highly motivated by the opportunity to collaborate with research and engineering teams at Google to build the next generation of intelligent systems. I bring a strong ownership mindset, a learning-first approach, and experience programming in Python, Java, JavaScript, and C++. 
+
+I have attached my resume and academic transcripts (which include my official Bonafide Certificate and branch migration details). Thank you for your time and consideration.
+
+Sincerely,
+
+Datri Saranya Saladi
++91-9182599168 | datrisaranyasaladi@gmail.com

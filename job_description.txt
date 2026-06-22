@@ -1,22 +1,30 @@
 Position Summary...
-As a Software Engineering Sophomore Intern, you’ll be part of a collaborative team that builds scalable software solutions with AI/ML integrations. You’ll contribute to real-world projects, learn from experienced engineers, and gain exposure to Walmart’s technology ecosystem. Interns are expected to demonstrate curiosity, ownership, and a strong learning mindset while embodying Walmart’s culture and values.
+Company: Google
+Job Title: Student Researcher, 2026
+Location: Bengaluru, Karnataka, India
+Role: Intern & Apprentice
 
-About Walmart 
-At Walmart Global Tech India, you'll join a collaborative team of over 15,000 engineers, data scientists, and service professionals. The team builds scalable software solutions with AI/ML integrations, driving digital transformation for Walmart’s global operations and enhancing customer and associate experiences.
+Please complete your application before June 30, 2026.
+Participation in this program requires that you are located in India for the duration of the engagement.
+To start the application process, you will need an updated CV or resume and a current unofficial or official transcript in English (PDFs preferred). 
 
-If you’re thinking ‘scale’, think bigger and don’t stop there. At Walmart Global Tech India, we don’t just innovate, we enable transformations across stores and different channels for the Walmart experience. Take a regular day at Walmart Global Tech India and match that with 260 million customers a week, 11,300+ stores, under 19 countries and e-commerce websites.
+Minimum qualifications:
+Currently enrolled in Bachelor's, Master's, or PhD degree program in Computer Science, Linguistics, Statistics, Biostatistics, Applied Mathematics, Operations Research, Economics, or Natural Sciences.
+Experience in one area of computer science (e.g., Natural Language Understanding, Human Computer Interactions, Computer Vision, Machine Learning, Deep Learning, Algorithmic Foundations of Optimization, Quantum Information Science, Data Science, Software Engineering, or similar areas).
 
-With fiscal year 2025 revenue of $681 billion, Walmart employs approximately 2.3 million associates worldwide. We innovate to deliver a simple and seamless experience for our customers. Our tech talent solves the biggest and most complex problems. They drive digital transformation where data and analytics are enabling us to better serve our customers and create a digital relationship with them. As our customers evolve and adapt, we are taking it a few notches further here. We’re changing what customers can expect from the experience of shopping, from the physical stores, to mobile, social and even online; we’re not just ready for the future of shopping, we’re creating it. 
+Preferred qualifications:
+Currently enrolled in a full-time degree program and returning to the program after completion of the internship.
+Experience contributing research communities or efforts, including publishing papers in major conferences or journals.
+Experience with one or more general purpose programming languages (e.g., Python, Java, JavaScript, C/C++, etc.).
 
-About Team: 
-Building the right technology foundation for Infrastructure & platforms is vital to success at the scale of Walmart. Our team builds and maintains the foundational technologies that support the tech organization. Included in this are data platforms, enterprise architecture, DevOps, cloud computing, and infrastructure. All of these products and services are supported by scalable and powerful infrastructure, ensuring a secure and seamless employee and customer experience across stores, digital channels, and distribution centers.
+About the job
+Researchers across Google are working to advance in computing and build the next generation of intelligent systems for all Google products. To achieve this, we invest in foundational research and work on projects that utilize the latest computer science techniques developed by skilled software developers and research scientists. Whether we're shaping the future of sustainability, optimizing algorithms, or pioneering AI systems, our teams strive to continuously progress science, advance society, and improve the lives of billions of people.
 
-What you'll do:
-You will have to work in a team of developers writing codes to build one of these systems but not limited to: Largest private customer database, master data for Item, Supply Chain to support our online and offline channels, Mobile development to enhance user experience for our associates, Complex security frameworks and cryptology suites, Integration layer to interface with suppliers and B2B partners, World's largest private cloud, Large Scale distributed Systems, Service Oriented Architecture, High Performance, Scalable and Reliable Systems; Massive in-memory databases.
+Student Researcher projects are exploratory and direct experiences that drive scientific advancement across a multitude of research areas. Students will work collaboratively on projects that explore innovative research challenges and support the creation of breakthrough technologies.
 
-What you'll bring:
-- You are currently pursuing a bachelor's / master's or an equivalent degree in engineering and are to graduate in 2028
-- You have scored a combined aggregate score of 7 or above across all semesters
-- You possess an extremely sound understanding in the basic areas of Computer Science such as Data Structures, Algorithms, Object Oriented Programming and Design
-- You have a good command on any one programming language C/C++/Java.
-- You have strong problem solving, analytic, decision-making and excellent communication with interpersonal skills. You pay attention to details and are able to interpret data and trends, diagnose problems, and formulate effective action plans to resolve issues. You are self-driven and motivated with entrepreneurial passion and desire to work in a fast-paced, results-driven environment with varied responsibilities.
+The Student Researcher Program fosters academic collaborations by hiring students onto research projects aligned to company priorities in scientific advancement. The program offers placements on teams across Google, for research, engineering, and science roles. As a Student Researcher, you will have the opportunity to participate in research projects focused on developing solutions for real-world, large-scale problems.
+
+The program is open to students enrolled in a Bachelor's, Master's, or PhD program. Projects vary in duration and location based on team and student requirements. It is required that you are located in one of the specific country locations identified for this role for the full duration of the engagement. When you apply, you will be considered for Student Researcher positions across all of Google's research teams - including Google DeepMind, Google Research, Google Cloud and more. This allows us to find the right project match for your skills and interests.
+
+Responsibilities
+Participate in research to develop solutions for real-world, large-scale problems.
