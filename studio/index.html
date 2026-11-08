@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume Studio</title>
+<style>
+:root{
+  --bg1:#eef2ff; --bg2:#fdf2f8;
+  --blob1:#a5b4fc; --blob2:#f9a8d4; --blob3:#67e8f9; --blob4:#fcd34d;
+  --glass:rgba(255,255,255,.52); --glass-strong:rgba(255,255,255,.72);
+  --edge:rgba(255,255,255,.75); --edge-soft:rgba(255,255,255,.35);
+  --shadow:0 18px 50px rgba(31,41,90,.16);
+  --text:#14172b; --muted:#5b6078; --faint:#8a8fa8;
+  --accent:#5b5bf0; --accent2:#c04fd8;
+  --good:#0f9d6b; --mid:#d48806; --bad:#e0475b;
+  --good-bg:rgba(15,157,107,.12); --bad-bg:rgba(224,71,91,.11);
+  --field:rgba(255,255,255,.6); --field-focus:rgba(255,255,255,.9);
+  --blob-op:.7;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg1:#0b0d1d; --bg2:#160b22;
+    --blob1:#4f46e5; --blob2:#be185d; --blob3:#0891b2; --blob4:#b45309;
+    --glass:rgba(22,24,44,.55); --glass-strong:rgba(28,30,54,.86);
+    --edge:rgba(255,255,255,.22); --edge-soft:rgba(255,255,255,.08);
+    --shadow:0 20px 60px rgba(0,0,0,.45);
+    --text:#eef0ff; --muted:#a5a9c7; --faint:#7a7f9e;
+    --accent:#8b8bff; --accent2:#e07af0;
+    --good:#34d399; --mid:#fbbf24; --bad:#fb7185;
+    --good-bg:rgba(52,211,153,.13); --bad-bg:rgba(251,113,133,.12);
+    --field:rgba(255,255,255,.06); --field-focus:rgba(255,255,255,.11);
+    --blob-op:.5;
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; color:var(--text);
+  font:14px/1.5 "Segoe UI Variable Text","Segoe UI",system-ui,-apple-system,sans-serif;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2)); background-attachment:fixed;
+  overflow-x:hidden;
+}
+/* ---------- liquid background ---------- */
+.liquid{position:fixed; inset:0; z-index:-1; overflow:hidden; filter:blur(70px) saturate(140%)}
+.liquid span{position:absolute; border-radius:50%; opacity:var(--blob-op); animation:float 22s ease-in-out infinite alternate}
+.liquid span:nth-child(1){width:46vw;height:46vw;left:-8vw;top:-10vw;background:var(--blob1)}
+.liquid span:nth-child(2){width:38vw;height:38vw;right:-6vw;top:8vh;background:var(--blob2);animation-duration:26s;animation-delay:-6s}
+.liquid span:nth-child(3){width:34vw;height:34vw;left:22vw;bottom:-14vw;background:var(--blob3);animation-duration:30s;animation-delay:-12s}
+.liquid span:nth-child(4){width:24vw;height:24vw;right:18vw;bottom:4vh;background:var(--blob4);opacity:.45;animation-duration:24s}
+@keyframes float{
+  0%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(6vw,4vh) scale(1.12)}
+  100%{transform:translate(-4vw,6vh) scale(.94)}
+}
+@media (prefers-reduced-motion:reduce){.liquid span{animation:none}}
+
+/* ---------- glass ---------- */
+.glass{
+  position:relative; background:var(--glass);
+  -webkit-backdrop-filter:blur(26px) saturate(180%); backdrop-filter:blur(26px) saturate(180%);
+  border:1px solid var(--edge-soft); border-radius:24px;
+  box-shadow:var(--shadow), inset 0 1px 0 var(--edge), inset 0 -1px 0 var(--edge-soft);
+}
+.glass::before{ /* specular highlight */
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,255,255,.35) 0%,rgba(255,255,255,0) 38%);
+  mix-blend-mode:soft-light;
+}
+
+.wrap{max-width:1320px; margin:0 auto; padding:20px 20px 120px}
+header{display:flex; align-items:center; gap:14px; padding:12px 14px 12px 18px; border-radius:22px; margin-bottom:16px}
+.logo{
+  width:38px;height:38px;border-radius:12px;display:grid;place-items:center;flex:none;
+  background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 6px 16px rgba(91,91,240,.35);
+}
+header h1{font-size:17px;margin:0;font-weight:650;letter-spacing:-.01em}
+header p{margin:0;color:var(--muted);font-size:12.5px}
+header .sp{flex:1}
+.who{font-size:12.5px;color:var(--muted);padding:6px 12px;border-radius:999px;background:var(--field);border:1px solid var(--edge-soft)}
+
+/* ---------- buttons & fields ---------- */
+button{font:inherit;cursor:pointer;border:0;color:inherit}
+.btn{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border-radius:999px;
+  background:var(--field); border:1px solid var(--edge-soft);
+  box-shadow:inset 0 1px 0 var(--edge); font-weight:550; transition:transform .15s, background .2s;
+}
+.btn:hover{background:var(--field-focus); transform:translateY(-1px)}
+.btn:active{transform:translateY(0) scale(.98)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn.primary{
+  color:#fff; border-color:transparent;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 8px 22px rgba(120,80,240,.35);
+}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border-color:transparent;box-shadow:none}
+.btn .n{
+  width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:700;
+  background:rgba(255,255,255,.25)
+}
+.btn:not(.primary) .n{background:var(--accent);color:#fff}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--muted);font-weight:550;min-width:0}
+input,select,textarea{
+  font:inherit;color:var(--text);background:var(--field);border:1px solid var(--edge-soft);
+  border-radius:14px;padding:10px 13px;outline:none;width:100%;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.06); transition:background .2s,border-color .2s,box-shadow .2s;
+}
+input:focus,select:focus,textarea:focus{background:var(--field-focus);border-color:var(--accent);box-shadow:0 0 0 4px rgba(91,91,240,.18)}
+select option{background:var(--glass-strong);color:var(--text)}
+
+/* ---------- steps strip ---------- */
+.steps{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.step{flex:1 1 200px;display:flex;gap:12px;align-items:center;padding:12px 16px;border-radius:18px}
+.step b{
+  width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;font-size:13px;
+  background:var(--field);border:1px solid var(--edge-soft);color:var(--muted);transition:all .3s
+}
+.step.done b{background:var(--good);color:#fff;border-color:transparent}
+.step.now b{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent;box-shadow:0 0 0 5px rgba(91,91,240,.18)}
+.step strong{display:block;font-size:13.5px}
+.step small{color:var(--muted);font-size:12px}
+
+/* ---------- main grid ---------- */
+.grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:16px}
+.panel{padding:18px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.panel h2{margin:0;font-size:15px;font-weight:650;display:flex;align-items:center;gap:8px}
+.panel .hint{margin:-6px 0 0;color:var(--muted);font-size:12.5px}
+.row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.row > *{flex:1 1 160px}
+textarea#jd{min-height:380px;flex:1;resize:vertical;line-height:1.55;font-size:13.5px}
+.count{font-size:12px;color:var(--faint);text-align:right;margin-top:-6px}
+
+/* ---------- results ---------- */
+.empty{flex:1;display:grid;place-items:center;text-align:center;color:var(--muted);padding:30px 10px}
+.empty .ico{font-size:40px;opacity:.7;margin-bottom:6px}
+.scoreBox{display:flex;gap:18px;align-items:center}
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{transform:rotate(-90deg)}
+.ring .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.ring .val b{font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.ring .val small{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+.ring circle{fill:none;stroke-width:11;stroke-linecap:round}
+.ring .track{stroke:var(--field);stroke:rgba(127,127,160,.18)}
+.ring .bar{transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1),stroke .4s}
+.verdict h3{margin:0 0 2px;font-size:18px}
+.verdict p{margin:0;color:var(--muted);font-size:13px}
+.delta{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:999px;background:var(--good-bg);color:var(--good);font-weight:650;font-size:12.5px}
+.sect{display:flex;flex-direction:column;gap:6px}
+.sect h4{margin:0;font-size:12.5px;color:var(--muted);font-weight:600;display:flex;justify-content:space-between}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:4px 11px;border-radius:999px;font-size:12.5px;font-weight:550;border:1px solid transparent}
+.chip.ok{background:var(--good-bg);color:var(--good);border-color:color-mix(in srgb,var(--good) 25%,transparent)}
+.chip.miss{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 25%,transparent)}
+.note{font-size:12px;color:var(--faint)}
+.notes{white-space:pre-wrap;font-size:13px;background:var(--field);border:1px solid var(--edge-soft);border-radius:14px;padding:12px 14px;max-height:220px;overflow:auto}
+.tabs{display:flex;gap:4px;padding:4px;border-radius:999px;background:var(--field);border:1px solid var(--edge-soft);align-self:flex-start}
+.tabs button{background:transparent;padding:6px 14px;border-radius:999px;font-weight:550;color:var(--muted)}
+.tabs button.on{background:var(--glass-strong);color:var(--text);box-shadow:0 2px 8px rgba(0,0,0,.08),inset 0 1px 0 var(--edge)}
+pre.tex{margin:0;flex:1;min-height:300px;max-height:520px;overflow:auto;font:12px/1.5 "Cascadia Code",Consolas,monospace;background:var(--field);border:1px solid var(--edge-soft);border-radius:14px;padding:14px;white-space:pre}
+.fileline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
+.fileline code{background:var(--field);padding:3px 8px;border-radius:8px;color:var(--text)}
+
+/* ---------- dock ---------- */
+.dock{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:calc(18px + env(safe-area-inset-bottom,0px));
+  display:flex;gap:8px;align-items:center;padding:8px;border-radius:999px;z-index:20;
+  max-width:calc(100% - 32px);flex-wrap:wrap;justify-content:center;
+}
+.dock .div{width:1px;height:26px;background:var(--edge-soft);margin:0 4px}
+
+/* ---------- modal / overlay / toast ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,12,30,.35);display:grid;place-items:center;z-index:50;padding:16px;animation:fade .2s}
+.modal{width:min(640px,100%);padding:22px;display:flex;flex-direction:column;gap:14px;background:var(--glass-strong);animation:pop .25s cubic-bezier(.2,.9,.3,1.2)}
+.modal h3{margin:0;font-size:17px}
+.modal p{margin:0;color:var(--muted);font-size:13px}
+.modal ol{margin:0;padding-left:20px;color:var(--muted);font-size:13px}
+.modal .actions{display:flex;justify-content:flex-end;gap:8px}
+.modal textarea{min-height:260px;font:12px/1.5 Consolas,monospace}
+@keyframes fade{from{opacity:0}}
+@keyframes pop{from{opacity:0;transform:scale(.94) translateY(8px)}}
+.orb{
+  width:120px;height:120px;border-radius:50%;margin:6px auto;
+  background:conic-gradient(from 0deg,var(--accent),var(--accent2),#22d3ee,var(--accent));
+  animation:spin 3s linear infinite;filter:blur(1px);position:relative;
+  box-shadow:0 0 50px rgba(140,90,255,.45);
+}
+.orb::after{content:"";position:absolute;inset:10px;border-radius:50%;background:var(--glass-strong);backdrop-filter:blur(10px)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading{text-align:center}
+.loading h3{margin-top:10px}
+.toast{
+  position:fixed;top:calc(18px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);
+  padding:10px 18px;border-radius:999px;z-index:60;font-weight:550;font-size:13px;
+  background:var(--glass-strong);animation:pop .25s;max-width:calc(100% - 32px)
+}
+.toast.err{color:var(--bad)}
+.keyok{color:var(--good);font-weight:600}
+[hidden]{display:none!important}
+
+@media (max-width:900px){
+  .grid{grid-template-columns:1fr}
+  textarea#jd{min-height:240px}
+  header .who{display:none}
+  .dock .lbl{display:none}
+}
+</style>
+</head>
+<body>
+<div class="liquid" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
+<div class="wrap">
+  <header class="glass">
+    <div class="logo">R</div>
+    <div>
+      <h1>Resume Studio</h1>
+      <p>Paste a job → see your ATS match → get a tailored resume</p>
+    </div>
+    <div class="sp"></div>
+    <span class="who">Devi Sree Honne · main.tex</span>
+    <button class="btn ghost" id="folderBtn" title="Open the folder with your tailored resumes">📁 Resumes</button>
+    <button class="btn" id="settingsBtn">⚙️ Settings</button>
+  </header>
+
+  <div class="steps">
+    <div class="step glass now" id="s1"><b>1</b><div><strong>Paste the job</strong><small>Copy the full job post into the left box</small></div></div>
+    <div class="step glass" id="s2"><b>2</b><div><strong>Check your match</strong><small>See which keywords you have and miss</small></div></div>
+    <div class="step glass" id="s3"><b>3</b><div><strong>Tailor your resume</strong><small>AI rewrites it with true facts only</small></div></div>
+  </div>
+
+  <div class="grid">
+    <!-- left -->
+    <section class="glass panel">
+      <h2>📝 Job description</h2>
+      <p class="hint">Company and role are optional. They name the saved file.</p>
+      <div class="row">
+        <label class="f">Company<input id="company" placeholder="e.g. Google"></label>
+        <label class="f">Role<input id="role" placeholder="e.g. Software Engineer Intern"></label>
+        <label class="f">Score this resume<select id="resume"></select></label>
+      </div>
+      <textarea id="jd" placeholder="Paste the full job description here: responsibilities, requirements, skills…"></textarea>
+      <div class="count" id="count">0 words</div>
+    </section>
+
+    <!-- right -->
+    <section class="glass panel" id="right">
+      <div class="tabs" id="tabs" hidden>
+        <button class="on" data-tab="result">Match</button>
+        <button data-tab="latex" id="latexTab" hidden>Tailored resume</button>
+      </div>
+
+      <div id="emptyView" class="empty">
+        <div>
+          <div class="ico">🎯</div>
+          <h3 style="margin:0 0 4px">Your match score shows up here</h3>
+          <p style="margin:0">Paste a job description, then press <b>Check match</b> below.</p>
+        </div>
+      </div>
+
+      <div id="resultView" hidden style="display:flex;flex-direction:column;gap:16px">
+        <div class="scoreBox">
+          <div class="ring">
+            <svg width="132" height="132" viewBox="0 0 132 132">
+              <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop id="g1" offset="0"/><stop id="g2" offset="1"/></linearGradient></defs>
+              <circle class="track" cx="66" cy="66" r="54"/>
+              <circle class="bar" id="bar" cx="66" cy="66" r="54" stroke="url(#g)" stroke-dasharray="339.3" stroke-dashoffset="339.3"/>
+            </svg>
+            <div class="val"><div><b id="scoreNum">0%</b><small>ATS match</small></div></div>
+          </div>
+          <div class="verdict">
+            <h3 id="verdictTitle"></h3>
+            <p id="verdictText"></p>
+            <span class="delta" id="delta" hidden></span>
+          </div>
+        </div>
+        <div class="fileline">Scored <code id="scoredFile"></code> for <b id="scoredJob"></b></div>
+        <div class="sect">
+          <h4><span>✅ Keywords you have</span><span id="okCount"></span></h4>
+          <div class="chips" id="okChips"></div>
+        </div>
+        <div class="sect">
+          <h4><span>⚠️ Keywords the job wants but your resume doesn't show</span><span id="missCount"></span></h4>
+          <div class="chips" id="missChips"></div>
+          <div class="note">Only add these if they're true. The AI tailor follows the same rule.</div>
+        </div>
+        <div class="sect" id="notesSect" hidden>
+          <h4><span>🧠 What the AI changed &amp; your real gaps</span></h4>
+          <div class="notes" id="notes"></div>
+        </div>
+      </div>
+
+      <div id="latexView" hidden style="display:flex;flex-direction:column;gap:10px;flex:1">
+        <div class="fileline">Saved as <code id="savedFile"></code></div>
+        <div class="row" style="flex:none">
+          <button class="btn" id="copyTex">📋 Copy LaTeX</button>
+          <button class="btn" id="overleaf">🌿 Open Overleaf</button>
+          <button class="btn" id="pdfBtn">📄 Make PDF</button>
+        </div>
+        <p class="note" style="margin:0">To get a PDF: Copy LaTeX → Open Overleaf → New Project → Blank → paste over everything → Recompile → Download.</p>
+        <pre class="tex" id="tex"></pre>
+      </div>
+    </section>
+  </div>
+</div>
+
+<nav class="dock glass">
+  <button class="btn" id="scanBtn"><span class="n">2</span><span class="lbl">Check match</span></button>
+  <button class="btn primary" id="tailorBtn"><span class="n">3</span><span class="lbl">Tailor with AI</span></button>
+  <span class="div"></span>
+  <button class="btn ghost" id="promptBtn" title="Free: use any AI chat">✨ <span class="lbl">Free: copy prompt</span></button>
+  <button class="btn ghost" id="pasteBtn">📥 <span class="lbl">Paste AI reply</span></button>
+</nav>
+
+<!-- modals -->
+<div class="scrim" id="settingsModal" hidden>
+  <div class="glass modal">
+    <h3>⚙️ Settings</h3>
+    <p>The <b>Tailor with AI</b> button uses Claude through an Anthropic API key (a few cents per resume). Get one at <b>console.anthropic.com</b> → API Keys.</p>
+    <label class="f">Anthropic API key<input id="keyInput" type="password" placeholder="sk-ant-…" autocomplete="off"></label>
+    <p id="keyState"></p>
+    <p class="note">Saved only on this computer in <code>studio_config.json</code>, which git ignores, so it never gets pushed.</p>
+    <div class="actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="saveKey">Save</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="promptModal" hidden>
+  <div class="glass modal">
+    <h3>✨ Prompt copied! Here's what to do next:</h3>
+    <ol>
+      <li>Open any AI chat: claude.ai, Gemini, or ChatGPT.</li>
+      <li>Paste with <b>Ctrl + V</b> and send.</li>
+      <li>When it finishes, copy its <b>entire reply</b>.</li>
+      <li>Come back and press <b>📥 Paste AI reply</b>.</li>
+    </ol>
+    <div class="actions"><button class="btn" id="openClaude">Open claude.ai</button><button class="btn primary" data-close>Got it</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="pasteModal" hidden>
+  <div class="glass modal">
+    <h3>📥 Paste the AI's reply</h3>
+    <p>Paste everything the AI wrote. The app pulls out the LaTeX resume and the notes, saves the resume, and scores it again.</p>
+    <textarea id="replyInput" placeholder="Paste the AI's full reply here (Ctrl + V)…"></textarea>
+    <div class="actions"><button class="btn" data-close>Cancel</button><button class="btn primary" id="saveReply">Save &amp; score</button></div>
+  </div>
+</div>
+
+<div class="scrim" id="loadingModal" hidden>
+  <div class="glass modal loading">
+    <div class="orb"></div>
+    <h3 id="loadTitle">Claude is reading the job…</h3>
+    <p id="loadText">This usually takes 30–90 seconds. Keep this window open.</p>
+  </div>
+</div>
+
+<div class="toast glass" id="toast" hidden></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const state = { hasKey:false, pdflatex:false, last:null, tailored:null };
+
+async function api(path, body){
+  const r = await fetch(path, body === undefined ? {} : {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)});
+  const data = await r.json().catch(()=>({error:'Bad response'}));
+  if(!r.ok) throw Object.assign(new Error(data.error || 'Request failed'), {code:data.error});
+  return data;
+}
+function toast(msg, err){
+  const t = $('#toast'); t.textContent = msg; t.className = 'toast glass' + (err?' err':''); t.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(()=>t.hidden = true, err?5200:2800);
+}
+function show(id){ $(id).hidden = false }
+function closeAll(){ document.querySelectorAll('.scrim').forEach(s=>{ if(s.id!=='loadingModal') s.hidden = true }) }
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick = closeAll);
+document.querySelectorAll('.scrim').forEach(s=>s.addEventListener('click', e=>{ if(e.target===s && s.id!=='loadingModal') closeAll() }));
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeAll() });
+
+function payload(){ return { jd:$('#jd').value, company:$('#company').value, role:$('#role').value, resume:$('#resume').value } }
+function needJD(){
+  if($('#jd').value.trim().split(/\s+/).length < 15){ toast('Paste the job description first 👈', true); $('#jd').focus(); return false }
+  return true;
+}
+function setStep(n){
+  [1,2,3].forEach(i=>{ const el=$('#s'+i); el.classList.toggle('done', i<n); el.classList.toggle('now', i===n) });
+}
+function updateCount(){
+  const w = $('#jd').value.trim() ? $('#jd').value.trim().split(/\s+/).length : 0;
+  $('#count').textContent = w + ' words';
+  if(!state.last) setStep(w >= 15 ? 2 : 1);
+}
+$('#jd').addEventListener('input', updateCount);
+
+function chips(el, items, cls){
+  el.replaceChildren();
+  if(!items.length){ const s=document.createElement('span'); s.className='note'; s.textContent = cls==='ok' ? 'None yet' : 'Nothing missing 🎉'; el.append(s); return }
+  items.forEach(k=>{ const c=document.createElement('span'); c.className='chip '+cls; c.textContent=k; el.append(c) });
+}
+function verdict(s){
+  if(s>=85) return ['Strong match 🚀','Your resume covers almost everything this job screens for.','var(--good)'];
+  if(s>=70) return ['Good match 👍','A few gaps. Tailoring should push you into the strong zone.','var(--good)'];
+  if(s>=50) return ['Partial match','Tailor the resume to surface more of the keywords you really have.','var(--mid)'];
+  return ['Weak match','Many requested skills are missing. Check the gaps before applying.','var(--bad)'];
+}
+function showTab(t){
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('on', b.dataset.tab===t));
+  $('#resultView').hidden = t!=='result'; $('#latexView').hidden = t!=='latex';
+}
+document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+
+function render(r){
+  state.last = r;
+  $('#emptyView').hidden = true; $('#tabs').hidden = false; showTab('result');
+  const [title,text,color] = verdict(r.score);
+  $('#verdictTitle').textContent = title; $('#verdictText').textContent = text;
+  $('#g1').setAttribute('stop-color', color); $('#g2').setAttribute('stop-color', r.score>=70 ? '#22d3ee' : color);
+  const C = 339.3; requestAnimationFrame(()=> $('#bar').style.strokeDashoffset = C - C*r.score/100);
+  let n = 0; const target = r.score; clearInterval(render.t);
+  render.t = setInterval(()=>{ n = Math.min(target, n+2); $('#scoreNum').textContent = n+'%'; if(n>=target) clearInterval(render.t) }, 16);
+  $('#scoredFile').textContent = r.resume;
+  $('#scoredJob').textContent = [r.role, r.company].filter(x=>x && !/^Unknown/.test(x)).join(' at ') || 'this job';
+  $('#okCount').textContent = r.matched.length; $('#missCount').textContent = r.missing.length;
+  chips($('#okChips'), r.matched, 'ok'); chips($('#missChips'), r.missing, 'miss');
+  const d = $('#delta');
+  if(r.before != null){ d.hidden=false; d.textContent = `${r.before}% → ${r.score}%  (${r.score-r.before>=0?'+':''}${r.score-r.before})` } else d.hidden = true;
+  $('#notesSect').hidden = !r.notes; $('#notes').textContent = r.notes || '';
+  if(!$('#company').value && r.company && !/^Unknown/.test(r.company)) $('#company').value = r.company;
+  if(!$('#role').value && r.role && !/^Unknown/.test(r.role)) $('#role').value = r.role;
+}
+function renderTailored(r){
+  state.tailored = r;
+  render(r); setStep(4); $('#latexTab').hidden = false;
+  $('#tex').textContent = r.tex; $('#savedFile').textContent = r.file;
+  $('#pdfBtn').disabled = !state.pdflatex;
+  $('#pdfBtn').title = state.pdflatex ? '' : 'Install MiKTeX to enable. Use Overleaf for now.';
+  refreshResumes(r.file);
+  toast('Tailored resume saved ✓');
+}
+async function refreshResumes(select){
+  const d = await api('/api/init');
+  const sel = $('#resume'); const cur = select || sel.value || 'main.tex';
+  sel.replaceChildren(...d.resumes.map(f=>{ const o=document.createElement('option'); o.value=f; o.textContent = f==='main.tex' ? 'main.tex (master)' : f; return o }));
+  if(d.resumes.includes(cur)) sel.value = cur;
+  return d;
+}
+
+// ---- actions
+$('#scanBtn').onclick = async ()=>{
+  if(!needJD()) return;
+  try{ render(await api('/api/scan', payload())); setStep(3) }catch(e){ toast(e.message, true) }
+};
+$('#promptBtn').onclick = async ()=>{
+  if(!needJD()) return;
+  try{
+    const {prompt} = await api('/api/prompt', payload());
+    await navigator.clipboard.writeText(prompt);
+    show('#promptModal');
+  }catch(e){ toast(e.message, true) }
+};
+$('#openClaude').onclick = ()=> window.open('https://claude.ai/new','_blank');
+$('#pasteBtn').onclick = ()=>{ if(!needJD()) return; $('#replyInput').value=''; show('#pasteModal'); setTimeout(()=>$('#replyInput').focus(), 50) };
+$('#saveReply').onclick = async ()=>{
+  const reply = $('#replyInput').value;
+  if(!reply.includes('\\documentclass')){ toast("That doesn't look like a LaTeX resume. Copy the AI's whole reply.", true); return }
+  try{ closeAll(); renderTailored(await api('/api/save_result', {...payload(), reply})) }catch(e){ toast(e.message, true) }
+};
+$('#tailorBtn').onclick = async ()=>{
+  if(!needJD()) return;
+  if(!state.hasKey){ toast('Add your API key first, or use "Free: copy prompt"'); openSettings(); return }
+  let job;
+  try{ job = (await api('/api/tailor', payload())).job }catch(e){ toast(e.code==='no_key' ? 'Add your API key in Settings' : e.message, true); return }
+  $('#loadTitle').textContent = 'Claude is reading the job…';
+  $('#loadText').textContent = 'Matching requirements to your real experience. Usually 30–90 seconds.';
+  show('#loadingModal'); $('#tailorBtn').disabled = true;
+  const poll = setInterval(async ()=>{
+    try{
+      const j = await api('/api/job/'+job);
+      if(j.state==='writing'){ $('#loadTitle').textContent='Writing your tailored resume…'; $('#loadText').textContent = j.chars.toLocaleString()+' characters written' }
+      if(j.state==='done' || j.state==='error'){
+        clearInterval(poll); $('#loadingModal').hidden = true; $('#tailorBtn').disabled = false;
+        j.state==='done' ? renderTailored(j.result) : toast(j.error, true);
+      }
+    }catch(e){ clearInterval(poll); $('#loadingModal').hidden = true; $('#tailorBtn').disabled = false; toast(e.message, true) }
+  }, 1200);
+};
+$('#copyTex').onclick = async ()=>{ await navigator.clipboard.writeText($('#tex').textContent); toast('LaTeX copied. Paste it into Overleaf.') };
+$('#overleaf').onclick = ()=> window.open('https://www.overleaf.com/project','_blank');
+$('#pdfBtn').onclick = async ()=>{ try{ const r = await api('/api/compile', {file: state.tailored.file}); toast('PDF opened: '+r.pdf) }catch(e){ toast(e.message, true) } };
+$('#folderBtn').onclick = ()=> api('/api/open_folder', {}).catch(e=>toast(e.message, true));
+
+function openSettings(){
+  $('#keyInput').value = '';
+  $('#keyState').innerHTML = state.hasKey ? '<span class="keyok">✓ A key is saved.</span> Leave blank and press Save to remove it.' : 'No key saved yet.';
+  show('#settingsModal'); setTimeout(()=>$('#keyInput').focus(), 50);
+}
+$('#settingsBtn').onclick = openSettings;
+$('#saveKey').onclick = async ()=>{
+  try{ const r = await api('/api/settings', {api_key:$('#keyInput').value}); state.hasKey = r.has_key; closeAll(); toast(r.has_key ? 'API key saved ✓' : 'API key removed') }
+  catch(e){ toast(e.message, true) }
+};
+$('#resume').onchange = ()=>{ if(state.last) $('#scanBtn').click() };
+
+// ---- boot
+(async ()=>{
+  try{
+    const d = await refreshResumes();
+    state.hasKey = d.has_key; state.pdflatex = d.pdflatex;
+    const jd = d.jd || '';
+    const c = jd.match(/^Company:\s*(.+)$/im), t = jd.match(/^Job Title:\s*(.+)$/im);
+    if(c) $('#company').value = c[1].trim();
+    if(t) $('#role').value = t[1].trim();
+    $('#jd').value = jd.replace(/^(Company|Job Title):.*\n/gim, '');
+    updateCount();
+  }catch(e){ toast('Could not reach the app server. Restart Resume Studio.', true) }
+  setInterval(()=>fetch('/api/ping').catch(()=>{}), 10000);
+  if(location.hash==='#scan') $('#scanBtn').click();
+})();
+</script>
+</body>
+</html>
