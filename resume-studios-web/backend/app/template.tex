@@ -1,0 +1,68 @@
+\documentclass[a4paper,10pt]{article}
+
+%================ PACKAGES ================
+\usepackage[margin=0.5in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+
+%================ FORMATTING ================
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\urlstyle{same}
+\definecolor{heading}{RGB}{25,45,75}
+\titleformat{\section}{\large\bfseries\color{heading}}{}{0em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{7pt}{4pt}
+\setlist[itemize]{leftmargin=14pt,itemsep=1pt,topsep=2pt,parsep=0pt}
+
+\begin{document}
+
+%================ HEADER ================
+\begin{center}
+    {\LARGE \textbf{FULL NAME}}\\[4pt]
+    {\normalsize \textbf{Headline | Top Skill | Top Skill}}\\[5pt]
+    \small
+    \href{mailto:email@example.com}{email@example.com}
+    \quad | \quad \href{https://linkedin.com/in/handle}{LinkedIn}
+    \quad | \quad \href{https://github.com/handle}{GitHub}
+\end{center}
+
+%================ SUMMARY ================
+\section*{PROFESSIONAL SUMMARY}
+Two to four sentences built only from facts in the resume.
+
+%================ SKILLS ================
+\section*{TECHNICAL SKILLS}
+\textbf{Category:} Skill, Skill, Skill\\
+\textbf{Category:} Skill, Skill
+
+%================ EXPERIENCE ================
+\section*{EXPERIENCE}
+\textbf{Role -- Organization} \hfill \textit{Mon YYYY -- Mon YYYY}
+\begin{itemize}
+    \item Action verb + what + tools + result/metric.
+\end{itemize}
+
+%================ PROJECTS ================
+\section*{PROJECTS}
+\textbf{Project Name} \hfill \textit{Tool, Tool, Tool}
+\begin{itemize}
+    \item Action verb + what + tools + result/metric.
+\end{itemize}
+
+%================ EDUCATION ================
+\section*{EDUCATION}
+\textbf{Institution} \hfill \textit{YYYY -- YYYY}\\
+Degree \hfill \textbf{Grade}
+
+%================ CERTIFICATIONS ================
+\section*{CERTIFICATIONS \& ACHIEVEMENTS}
+\begin{itemize}
+    \item Item
+\end{itemize}
+
+\end{document}
