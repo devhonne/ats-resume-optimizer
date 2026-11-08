@@ -4,6 +4,7 @@ generate(key, system, user, schema=None) -> str
 Tries a chain of models so a busy/retired model doesn't break the app.
 """
 import json
+import re
 import socket
 import time
 import urllib.error
@@ -29,7 +30,7 @@ def _call(key, model, body, timeout):
         return json.load(r)
 
 
-def generate(key, system, user, schema=None, model=None, timeout=240, max_tokens=32768):
+def generate(key, system, user, schema=None, model=None, timeout=240, max_tokens=32768, tools=None):
     body = {
         "contents": [{"role": "user", "parts": [{"text": user}]}],
         "generationConfig": {"maxOutputTokens": max_tokens},
@@ -38,6 +39,8 @@ def generate(key, system, user, schema=None, model=None, timeout=240, max_tokens
         body["systemInstruction"] = {"parts": [{"text": system}]}
     if schema:
         body["generationConfig"].update(responseMimeType="application/json", responseSchema=schema)
+    if tools:
+        body["tools"] = tools
 
     chain = [model] + [m for m in MODELS if m != model] if model else list(MODELS)
     chain.insert(1, chain[0])   # one retry on the preferred model before falling back
@@ -117,3 +120,46 @@ def extract_keywords(key, jd, model=None):
     req = list(dict.fromkeys(clean(d.get("required", []))))
     pref = [k for k in dict.fromkeys(clean(d.get("preferred", []))) if k not in req]
     return {"required": req[:25], "preferred": pref[:20]}
+
+
+JOB_SCHEMA = {
+    "type": "OBJECT",
+    "properties": {
+        "company": {"type": "STRING"},
+        "title": {"type": "STRING"},
+        "location": {"type": "STRING"},
+        "description": {"type": "STRING"},
+    },
+    "required": ["company", "title", "description"],
+}
+
+JOB_FROM_TEXT = """Below is the text of a job posting web page (navigation, cookie banners and other junk included).
+Extract the job. "description" must be the COMPLETE job description copied verbatim: about the role,
+responsibilities, basic/minimum qualifications, preferred qualifications, skills. Keep line breaks and
+bullet points (use "- "). Do not summarise or shorten it. Drop site navigation, legal footers, and
+"similar jobs" lists.
+
+<page url="{url}">
+{text}
+</page>"""
+
+JOB_FROM_URL = """Open this job posting: {url}
+Return ONLY a JSON object with keys company, title, location, description.
+"description" must be the COMPLETE job description copied verbatim from the page (about the role,
+responsibilities, basic/minimum qualifications, preferred qualifications), with bullet points as "- ".
+Do not summarise."""
+
+
+def extract_job(key, url, page_text=None, model=None):
+    """Job posting -> {company, title, location, description}. Uses page text when we have it,
+    otherwise lets Gemini open the URL itself (url_context tool)."""
+    if page_text:
+        text = generate(key, None, JOB_FROM_TEXT.format(url=url, text=page_text[:60000]),
+                        schema=JOB_SCHEMA, model=model, timeout=90, max_tokens=16384)
+        return json.loads(text)
+    text = generate(key, None, JOB_FROM_URL.format(url=url), model=model, timeout=120,
+                    max_tokens=16384, tools=[{"url_context": {}}])
+    m = re.search(r"\{.*\}", text, re.S)
+    if not m:
+        raise GeminiError("Gemini couldn't read that page. Paste the job text instead.")
+    return json.loads(m.group(0))

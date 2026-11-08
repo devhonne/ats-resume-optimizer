@@ -43,7 +43,10 @@ without asking for confirmation in between:
 
 ## Hard rules — truthfulness
 Getting shortlisted on a fabricated resume ends in a failed interview or a rescinded offer.
-- **Never invent** skills, tools, employers, dates, metrics, grades, or certifications.
+- **Never remove** anything from `main.tex`: every skill, project, internship, education entry,
+  certification, link and number must still be in the tailored resume (reorder/reword only).
+  Check with `ats_checker.compare_resumes(master_tex, tailored_tex)`; `missing` must be empty.
+- **Never invent** skills, tools, courses, employers, dates, availability, metrics, grades, or certifications.
 - Allowed: rephrasing, reordering, emphasising, using the JD's synonym for something Honne did,
   surfacing details already implied (e.g. ANPR work used Python and deep learning).
 - Not allowed: adding a tool just because the JD lists it. Report it as a gap instead.
@@ -60,9 +63,20 @@ Getting shortlisted on a fabricated resume ends in a failed interview or a resci
 On request, also write a cover letter (`resumes/<company>_<role>_cover_letter.txt`) using the same
 facts and rules. Keep it under 300 words.
 
-## Scanner
+## Scanner (offline)
 `python ats_checker.py [resume.tex|resume.json] [jd.txt]`. With no args it shows a menu.
-It only checks a fixed keyword list (`MASTER_TECH_LIST`), so step 3 (your own JD analysis) is required.
+Score = keywords 60% + job title 10% + sections 10% + measurable impact 10% + length 10%.
+Offline it uses a fixed keyword list (`MASTER_TECH_LIST`) + synonyms, so step 3 (your own JD
+analysis) is required. `compare_resumes()` reports facts dropped from / added to `main.tex`.
+
+## Folder layout
+- Root (offline files): `main.tex`, `ats_checker.py`, `job_description.txt`, `resumes/`.
+- `resume_studio/` (the app): `app.py` server, `gemini.py` client, `job_fetch.py` (job link →
+  description), `index.html` UI, `assets/theme.jpg`, and gitignored `config.json` (Gemini key) +
+  `cache.json` (AI keywords per JD).
 
 ## GUI
-`python resume_studio.py` (or double-click `Resume Studio.bat`) runs the same pipeline in a local web app. It uses Google Gemini (key in gitignored `studio_config.json`) for AI keyword extraction and auto-tailoring; `gemini.py` is the client.
+`python resume_studio/app.py` (or double-click `resume_studio/Resume Studio.bat`) runs the pipeline
+in a local web app: paste a job link → Gemini reads it → local + Gemini scores with "how we matched"
+evidence → copy-prompt for Claude/ChatGPT or auto-tailor with Gemini → Changes (diff vs main.tex)
+and Review (facts kept / new claims, one-click restore).

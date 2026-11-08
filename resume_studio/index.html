@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Resume Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ tokens (theme: sumi-e ink wash · vermilion sun) ============ */
+:root{
+  --paper:#F4EFE6; --paper-2:#EAE3D6;
+  --ink:#1C1915; --ink-2:#3A352E; --muted:#5E574D; --faint:#857D70;
+  --sun:#C8361F; --sun-hover:#A82B17; --sun-soft:rgba(200,54,31,.10);
+  --good:#2F6B4F; --good-soft:rgba(47,107,79,.11);
+  --warn:#8A5D0B; --warn-soft:rgba(154,106,18,.12);
+  --bad:#B42D1A;  --bad-soft:rgba(200,54,31,.10);
+  --card:rgba(250,247,241,.80); --card-solid:#FAF7F1;
+  --glass:rgba(250,247,241,.42); --glass-hi:rgba(255,255,255,.75); --glass-edge:rgba(255,255,255,.55);
+  --line:rgba(28,25,21,.12); --line-2:rgba(28,25,21,.2);
+  --field:rgba(255,255,255,.7); --code:#F7F3EB;
+  --shadow:0 1px 2px rgba(28,25,21,.06),0 12px 32px rgba(28,25,21,.10);
+  --focus:0 0 0 3px rgba(200,54,31,.35);
+  --bg-filter:none; --bg-veil:linear-gradient(90deg,rgba(244,239,230,0) 0%,rgba(244,239,230,.35) 60%);
+  --serif:"Noto Serif JP","Yu Mincho","Hiragino Mincho ProN",Georgia,serif;
+  --sans:"Noto Sans JP","Segoe UI",system-ui,-apple-system,sans-serif;
+  --mono:"Cascadia Code","JetBrains Mono",Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#141210; --paper-2:#1C1915;
+    --ink:#EFE9DE; --ink-2:#D6CEC0; --muted:#B3AA9B; --faint:#8C8476;
+    --sun:#F0583F; --sun-hover:#FF6E55; --sun-soft:rgba(240,88,63,.14);
+    --good:#7CC4A0; --good-soft:rgba(124,196,160,.13);
+    --warn:#E3B45A; --warn-soft:rgba(227,180,90,.13);
+    --bad:#FF7A63; --bad-soft:rgba(255,122,99,.13);
+    --card:rgba(24,22,19,.80); --card-solid:#1A1815;
+    --glass:rgba(30,27,23,.45); --glass-hi:rgba(255,255,255,.12); --glass-edge:rgba(255,255,255,.14);
+    --line:rgba(239,233,222,.11); --line-2:rgba(239,233,222,.2);
+    --field:rgba(255,255,255,.05); --code:rgba(10,9,8,.6);
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 16px 40px rgba(0,0,0,.45);
+    --focus:0 0 0 3px rgba(240,88,63,.45);
+    --bg-filter:invert(.9) hue-rotate(180deg) saturate(1.3) brightness(.8);
+    --bg-veil:linear-gradient(90deg,rgba(10,9,8,.15) 0%,rgba(10,9,8,.55) 60%);
+    color-scheme:dark;
+  }
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{margin:0;min-height:100vh;color:var(--ink);font:15px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+/* background painting + mist */
+.scene{position:fixed;inset:0;z-index:-2;background:url("/assets/theme.jpg") center left/cover no-repeat;filter:var(--bg-filter)}
+.veil{position:fixed;inset:0;z-index:-1;background:var(--bg-veil);pointer-events:none}
+.mist{position:fixed;left:-20%;right:-20%;bottom:-10%;height:45%;z-index:-1;pointer-events:none;opacity:.55;
+  background:radial-gradient(40% 60% at 20% 70%,var(--paper) 0%,transparent 70%),radial-gradient(35% 50% at 70% 80%,var(--paper) 0%,transparent 70%);
+  filter:blur(30px);animation:drift 40s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translateX(8%)}}
+
+h1,h2,h3{font-family:var(--serif);letter-spacing:.01em;margin:0;color:var(--ink)}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:none;box-shadow:var(--focus);border-radius:12px}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ============ liquid glass (navigation + controls only) ============ */
+.glass{
+  position:relative;isolation:isolate;background:var(--glass);
+  -webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);
+  border:1px solid var(--glass-edge);
+  box-shadow:inset 0 1px 0 var(--glass-hi),inset 0 -1px 0 rgba(255,255,255,.06),0 10px 30px rgba(28,25,21,.12);
+}
+.glass::after{ /* moving specular highlight = "liquid" lensing */
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+  background:radial-gradient(220px 120px at var(--mx,30%) var(--my,0%),rgba(255,255,255,.45),transparent 70%);
+  opacity:.7;mix-blend-mode:soft-light;transition:background .15s}
+@media (prefers-reduced-transparency:reduce){
+  .glass,.card{background:var(--card-solid)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+}
+
+/* ============ layout ============ */
+.nav{position:sticky;top:calc(12px + env(safe-area-inset-top,0px));z-index:30;margin:12px auto 0;max-width:1480px;width:calc(100% - 32px);
+  display:flex;align-items:center;gap:16px;padding:10px 12px 10px 16px;border-radius:20px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.sunmark{width:30px;height:30px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 35%,#E8573E,var(--sun) 60%,#9E2814);box-shadow:0 0 0 3px rgba(200,54,31,.15)}
+.brand b{font-family:var(--serif);font-size:18px;font-weight:700;white-space:nowrap}
+.steps{display:flex;align-items:center;gap:4px;margin:0 auto;padding:4px;border-radius:999px}
+.step{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap;transition:background .25s,color .25s}
+.step i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:700;border:1.5px solid var(--line-2)}
+.step.on{background:var(--card-solid);color:var(--ink);box-shadow:0 1px 4px rgba(28,25,21,.12)}
+.step.on i{background:var(--sun);border-color:var(--sun);color:#fff}
+.step.done i{background:var(--good);border-color:var(--good);color:#fff}
+.navbtns{display:flex;gap:6px}
+
+main{max-width:1480px;margin:0 auto;padding:18px 16px 48px}
+.intro{margin:8px 0 18px;max-width:780px;padding:16px 20px;border-radius:20px;background:color-mix(in srgb,var(--paper) 62%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.intro h1{font-size:clamp(26px,3.2vw,38px);font-weight:700;line-height:1.2}
+.intro p{margin:6px 0 0;color:var(--ink-2);font-size:15.5px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.col{display:flex;flex-direction:column;gap:18px;min-width:0}
+
+/* content cards: calmer, more opaque surface for readability */
+.card{background:var(--card);-webkit-backdrop-filter:blur(16px) saturate(140%);backdrop-filter:blur(16px) saturate(140%);
+  border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:20px 22px;display:flex;flex-direction:column;gap:14px;min-width:0;
+  animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+.card:nth-child(2){animation-delay:.06s}.card:nth-child(3){animation-delay:.12s}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+.card.locked{opacity:.55}
+.card.locked .lockable{pointer-events:none}
+.ch{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ch .no{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;font-weight:700;font-size:13px;border:1.5px solid var(--line-2);color:var(--muted)}
+.card.now .ch .no{background:var(--sun);border-color:var(--sun);color:#fff}
+.card.done .ch .no{background:var(--good);border-color:var(--good);color:#fff}
+.ch h2{font-size:19px;font-weight:700}
+.ch .sp{flex:1}
+.sub{margin:-8px 0 0;color:var(--muted);font-size:13.5px}
+
+/* controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:999px;font-weight:500;font-size:14px;
+  border:1px solid var(--line-2);background:var(--field);color:var(--ink);transition:background .2s,border-color .2s,transform .15s,box-shadow .2s;white-space:nowrap}
+.btn:hover{background:var(--card-solid);border-color:var(--ink-2)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn.sun{background:var(--sun);border-color:var(--sun);color:#fff;box-shadow:0 6px 18px rgba(200,54,31,.28)}
+.btn.sun:hover{background:var(--sun-hover);border-color:var(--sun-hover)}
+.btn.ink{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.ink:hover{opacity:.9}
+.btn.quiet{border-color:transparent;background:transparent}
+.btn.quiet:hover{background:var(--field)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:13px}
+.btn.lg{min-height:50px;padding:0 24px;font-size:15.5px}
+.btn.glassbtn{background:transparent;border-color:transparent}
+.btn.glassbtn:hover{background:var(--glass-hi)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>label{flex:1 1 170px}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500;color:var(--ink-2);min-width:0}
+input,select,textarea{width:100%;border:1px solid var(--line-2);background:var(--field);border-radius:14px;padding:11px 14px;font-size:15px;transition:border-color .2s,box-shadow .2s,background .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sun);box-shadow:var(--focus);background:var(--card-solid)}
+textarea{resize:vertical;line-height:1.55}
+.help{font-size:12.5px;color:var(--muted)}
+.seg{display:inline-flex;padding:4px;border-radius:999px;gap:2px}
+.seg button{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 14px;border-radius:999px;font-size:13.5px;font-weight:500;color:var(--muted);transition:background .25s,color .25s}
+.seg button[aria-pressed="true"]{background:var(--card-solid);color:var(--ink);box-shadow:0 1px 4px rgba(28,25,21,.14)}
+.urlrow{display:flex;gap:8px}
+.urlrow input{flex:1}
+.source{display:flex;gap:8px;align-items:flex-start;font-size:13px;padding:10px 12px;border-radius:12px;background:var(--good-soft);color:var(--good)}
+.source.warn{background:var(--warn-soft);color:var(--warn)}
+details.jd summary{cursor:pointer;font-size:13.5px;font-weight:500;color:var(--ink-2);list-style:none;display:flex;align-items:center;gap:8px;min-height:32px}
+details.jd summary::-webkit-details-marker{display:none}
+details.jd summary::before{content:"";width:7px;height:7px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(-45deg);transition:transform .2s}
+details.jd[open] summary::before{transform:rotate(45deg)}
+#jd{min-height:220px;font-size:14px;margin-top:8px}
+.count{font-size:12.5px;color:var(--faint);margin-left:auto}
+
+/* scanning effect */
+.scanbox{position:relative}
+.brush{position:absolute;left:0;right:0;top:0;height:2px;opacity:0;pointer-events:none;
+  background:linear-gradient(90deg,transparent,var(--sun),transparent);box-shadow:0 0 16px 3px rgba(200,54,31,.45)}
+.scanning .brush{opacity:1;animation:sweep 1.2s ease-in-out infinite alternate}
+@keyframes sweep{from{top:4px}to{top:calc(100% - 6px)}}
+
+/* ============ score: ensō gauges ============ */
+.gauges{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.gauge{display:flex;gap:14px;align-items:center;padding:14px;border-radius:18px;border:1px solid var(--line);background:var(--field);cursor:pointer;text-align:left;transition:border-color .2s,box-shadow .2s}
+.gauge[aria-pressed="true"]{border-color:var(--sun);box-shadow:var(--focus)}
+.gauge .enso{position:relative;width:104px;height:104px;flex:none}
+.gauge svg.ring{width:104px;height:104px;transform:rotate(-100deg)}
+.ring .track{fill:none;stroke:var(--line);stroke-width:8}
+.ring .arc{fill:none;stroke-width:9;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1),stroke .4s}
+.gauge .num{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.gauge .num b{font-family:var(--serif);font-size:30px;font-weight:700;line-height:1}
+.gauge .num small{display:block;font-size:10.5px;color:var(--muted);margin-top:3px;letter-spacing:.04em;text-transform:uppercase}
+.gauge h3{font-size:15.5px}
+.gauge p{margin:2px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45}
+.verdict{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px}
+.delta{display:inline-block;margin-left:6px;font-size:12px;font-weight:700;color:var(--good)}
+.spin .arc{animation:spinarc 1s linear infinite;stroke-dashoffset:220!important;transition:none}
+@keyframes spinarc{to{stroke-dashoffset:-107}}
+.waiting{border:1px dashed var(--line-2);border-radius:16px;padding:22px;text-align:center;color:var(--muted);font-size:14px}
+
+.sect{display:flex;flex-direction:column;gap:8px}
+.sect>h3{font-family:var(--sans);font-size:13.5px;font-weight:700;color:var(--ink-2);display:flex;align-items:center;gap:8px}
+.sect>h3 .sp{flex:1}
+.sect>h3 small{font-weight:400;color:var(--faint)}
+.bars{display:flex;flex-direction:column;gap:10px}
+.bar{display:grid;grid-template-columns:minmax(120px,170px) 1fr 46px;gap:12px;align-items:center;font-size:13.5px}
+.bar .lb b{font-weight:500}
+.bar .lb small{display:block;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .tr{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar .fl{height:100%;width:100%;border-radius:inherit;transform-origin:left;transform:scaleX(0);transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.bar .v{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:999px;font-size:13px;font-weight:500;border:1px solid var(--line-2);background:var(--field);
+  opacity:0;transform:translateY(4px);animation:pop .35s cubic-bezier(.2,.9,.3,1.2) forwards}
+@keyframes pop{to{opacity:1;transform:none}}
+.chip .t{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border-radius:999px}
+.chip.req{border-color:color-mix(in srgb,var(--bad) 40%,transparent);background:var(--bad-soft);color:var(--bad)}
+.chip.req .t{background:var(--bad);color:#fff}
+.chip.pref{border-color:color-mix(in srgb,var(--warn) 40%,transparent);background:var(--warn-soft);color:var(--warn)}
+.chip.pref .t{background:var(--warn);color:#fff}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;background:var(--c)}
+table.how{width:100%;border-collapse:collapse;font-size:13px}
+.howwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;max-height:320px;overflow-y:auto}
+table.how th{position:sticky;top:0;background:var(--card-solid);text-align:left;font-weight:700;font-size:12px;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line)}
+table.how td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+table.how tr:last-child td{border-bottom:0}
+table.how td.k{font-weight:700;white-space:nowrap}
+table.how mark{background:var(--sun-soft);color:var(--sun);border-radius:4px;padding:0 2px;font-weight:700}
+.via{font-size:11.5px;color:var(--warn);font-weight:500}
+.tagp{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+
+/* prompt */
+#prompt{min-height:150px;max-height:280px;font:12.5px/1.55 var(--mono);background:var(--code)}
+ol.how{margin:0;padding-left:20px;font-size:14px;color:var(--ink-2)}
+ol.how li{margin:2px 0}
+.or{display:flex;align-items:center;gap:12px;color:var(--faint);font-size:12.5px}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.promise{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--good-soft);color:var(--good);font-size:13.5px}
+
+/* right panel */
+.side{position:sticky;top:96px;max-height:calc(100vh - 112px)}
+.side .card{height:100%;max-height:calc(100vh - 112px)}
+.tabs{display:flex;gap:2px;padding:4px;border-radius:999px;align-self:flex-start}
+.tabs button{display:inline-flex;align-items:center;gap:7px;min-height:36px;padding:0 14px;border-radius:999px;font-size:13.5px;font-weight:500;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--card-solid);color:var(--ink);box-shadow:0 1px 4px rgba(28,25,21,.14)}
+.tabs .cnt{min-width:18px;height:18px;border-radius:9px;padding:0 5px;font-size:11px;font-weight:700;display:inline-grid;place-items:center;background:var(--sun);color:#fff}
+.tabs .cnt.ok{background:var(--good)}
+.texbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.texbar select{flex:1 1 220px;width:auto;min-height:40px;padding:6px 12px;font-size:14px}
+.badge{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid var(--line-2);color:var(--muted)}
+.badge.new{color:var(--good);border-color:color-mix(in srgb,var(--good) 40%,transparent);background:var(--good-soft)}
+.pane{flex:1;min-height:0;overflow:auto;border:1px solid var(--line);border-radius:16px;background:var(--code)}
+pre.tex{margin:0;padding:16px 18px;font:12.5px/1.6 var(--mono);white-space:pre;tab-size:4;color:var(--ink-2)}
+pre.tex .c{color:var(--faint);font-style:italic}
+pre.tex .k{color:var(--sun);font-weight:600}
+.diff{font:12.5px/1.6 var(--mono)}
+.diff div{padding:0 14px 0 34px;white-space:pre;position:relative;min-height:1.6em}
+.diff div::before{position:absolute;left:12px;color:var(--faint)}
+.diff .add{background:var(--good-soft);color:var(--good)}
+.diff .add::before{content:"+";color:var(--good)}
+.diff .del{background:var(--bad-soft);color:var(--bad);text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--bad) 50%,transparent)}
+.diff .del::before{content:"−";color:var(--bad)}
+.diff .gap{color:var(--faint);font-style:italic;font-family:var(--sans);font-size:12px;padding-top:4px;padding-bottom:4px;background:var(--line)}
+.diffsum{display:flex;gap:12px;font-size:13px;align-items:center;flex-wrap:wrap}
+.diffsum .a{color:var(--good);font-weight:700}.diffsum .r{color:var(--bad);font-weight:700}
+.empty{display:grid;place-items:center;text-align:center;color:var(--muted);padding:40px 20px;font-size:14px;gap:6px}
+.review{padding:16px 18px;display:flex;flex-direction:column;gap:16px}
+.meter{display:flex;align-items:center;gap:14px}
+.meter .big{font-family:var(--serif);font-size:34px;font-weight:700;line-height:1}
+.meter .trk{flex:1;height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.meter .fl{height:100%;border-radius:inherit;transition:width 1s}
+ul.list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+ul.list li{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;padding:8px 10px;border-radius:10px}
+ul.list.bad li{background:var(--bad-soft);color:var(--bad)}
+ul.list.warn li{background:var(--warn-soft);color:var(--warn)}
+ul.list small{opacity:.8;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;margin-left:auto}
+.notes{white-space:pre-wrap;font-size:13.5px;color:var(--ink-2);background:var(--field);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+
+/* modal + toast */
+.scrim{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(20,18,15,.35);animation:fade .2s}
+@keyframes fade{from{opacity:0}}
+.modal{width:min(640px,100%);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:14px;background:var(--card-solid);border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.35);animation:rise .3s cubic-bezier(.2,.9,.3,1.1)}
+.modal h3{font-size:20px}
+.modal p{margin:0;color:var(--ink-2);font-size:14px}
+.modal .acts{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.modal textarea{min-height:240px;font:12.5px/1.5 var(--mono)}
+.loading{text-align:center;align-items:center}
+.inksun{width:96px;height:96px;border-radius:50%;background:radial-gradient(circle at 40% 40%,#E8573E,var(--sun) 60%,#9E2814);animation:breathe 2.2s ease-in-out infinite;box-shadow:0 0 0 0 rgba(200,54,31,.35)}
+@keyframes breathe{50%{transform:scale(1.06);box-shadow:0 0 0 18px rgba(200,54,31,0)}}
+.stages{display:flex;flex-direction:column;gap:6px;text-align:left;font-size:14px;color:var(--muted);margin-top:4px}
+.stages div{display:flex;gap:8px;align-items:center}
+.stages div.on{color:var(--ink);font-weight:500}
+.stages div.ok{color:var(--good)}
+.stages div::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.6}
+.toast{position:fixed;top:calc(84px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:60;max-width:calc(100% - 32px);
+  padding:10px 18px;border-radius:999px;font-size:14px;font-weight:500;display:flex;gap:8px;align-items:center;animation:rise .25s}
+.toast.err{color:var(--bad)}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
+
+@media (max-width:1080px){
+  .grid{grid-template-columns:1fr}
+  .side{position:relative;top:0;max-height:none}
+  .side .card{max-height:none}.pane{max-height:560px}
+  .steps .step span{display:none}
+}
+@media (max-width:640px){
+  .gauges{grid-template-columns:1fr}
+  .navbtns .lbl,.brand b{display:none}
+  .bar{grid-template-columns:110px 1fr 40px}
+  .card{padding:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .chip{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <filter id="brushy"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
+  </defs>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
+  <symbol id="i-paste" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.8L20 10l-6.1 1.2L12 17l-1.9-5.8L4 10l6.1-1.2z"/><path d="M19 17v4M17 19h4"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v5h5M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-diff" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M11 18H8a2 2 0 0 1-2-2V9"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+  <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></symbol>
+</svg>
+
+<div class="scene" aria-hidden="true"></div><div class="veil" aria-hidden="true"></div><div class="mist" aria-hidden="true"></div>
+
+<nav class="nav glass" aria-label="Resume Studio">
+  <div class="brand"><div class="sunmark" aria-hidden="true"></div><b>Resume Studio</b></div>
+  <div class="steps glass" role="list" aria-label="Progress">
+    <div class="step on" id="st1" role="listitem"><i>1</i><span>Job</span></div>
+    <div class="step" id="st2" role="listitem"><i>2</i><span>ATS score</span></div>
+    <div class="step" id="st3" role="listitem"><i>3</i><span>Enhance</span></div>
+    <div class="step" id="st4" role="listitem"><i>4</i><span>Review</span></div>
+  </div>
+  <div class="navbtns">
+    <button class="btn glassbtn sm" id="folderBtn"><svg class="i"><use href="#i-folder"/></svg><span class="lbl">Resumes</span></button>
+    <button class="btn glassbtn sm" id="settingsBtn"><svg class="i"><use href="#i-sliders"/></svg><span class="lbl">Settings</span></button>
+  </div>
+</nav>
+
+<main>
+  <div class="intro">
+    <h1>Match your resume to any job</h1>
+    <p>Paste a job link. Gemini reads it, scores your resume, and helps you surface the skills you already have, without changing who you are.</p>
+  </div>
+
+  <div class="grid">
+    <div class="col">
+      <!-- 1 · Job -->
+      <section class="card now" id="c1" aria-labelledby="h1">
+        <div class="ch"><span class="no">1</span><h2 id="h1">The job</h2><span class="sp"></span>
+          <div class="seg glass" role="group" aria-label="How to add the job">
+            <button id="modeLink" aria-pressed="true"><svg class="i"><use href="#i-link"/></svg>Job link</button>
+            <button id="modePaste" aria-pressed="false"><svg class="i"><use href="#i-paste"/></svg>Paste text</button>
+          </div>
+        </div>
+        <div id="linkMode">
+          <label class="f" for="url">Job posting link</label>
+          <div class="urlrow" style="margin-top:6px">
+            <input id="url" type="url" inputmode="url" placeholder="https://www.amazon.jobs/en/jobs/…  ·  LinkedIn · Naukri · Greenhouse · Lever" autocomplete="off">
+            <button class="btn sun" id="fetchBtn"><svg class="i"><use href="#i-spark"/></svg>Read job</button>
+          </div>
+          <p class="help" style="margin:6px 0 0">The app downloads the page and Gemini pulls out the full description and qualifications.</p>
+        </div>
+        <div class="source" id="source" hidden><svg class="i"><use href="#i-check"/></svg><span id="sourceText"></span></div>
+        <div class="row">
+          <label class="f">Company<input id="company" placeholder="e.g. Amazon"></label>
+          <label class="f">Role<input id="role" placeholder="e.g. SDE I Intern"></label>
+        </div>
+        <details class="jd" id="jdBox">
+          <summary>Job description <span class="help" id="count">· 0 words</span></summary>
+          <div class="scanbox" id="scanbox">
+            <textarea id="jd" aria-label="Job description" placeholder="The job description appears here after Read job, or paste it yourself."></textarea>
+            <div class="brush" aria-hidden="true"></div>
+          </div>
+        </details>
+        <div class="row" style="align-items:center">
+          <button class="btn ink lg" id="scanBtn"><svg class="i"><use href="#i-search"/></svg><span>Check ATS score</span></button>
+          <button class="btn quiet sm" id="clearBtn">Clear</button>
+        </div>
+      </section>
+
+      <!-- 2 · Score -->
+      <section class="card locked" id="c2" aria-labelledby="h2" aria-live="polite">
+        <div class="ch"><span class="no">2</span><h2 id="h2">ATS score</h2><span class="sp"></span><span class="badge" id="scoredFile" hidden></span></div>
+        <div class="waiting" id="scoreWait">Your scores appear here after <b>Check ATS score</b>.</div>
+        <div id="scoreView" hidden style="display:flex;flex-direction:column;gap:18px">
+          <div class="gauges">
+            <button class="gauge" id="gAi" aria-pressed="true">
+              <div class="enso"><svg class="ring" viewBox="0 0 104 104"><circle class="track" cx="52" cy="52" r="44"/><circle class="arc" cx="52" cy="52" r="44" stroke-dasharray="276.5" stroke-dashoffset="276.5"/></svg>
+                <div class="num"><div><b>–</b><small>Gemini</small></div></div></div>
+              <div><h3>Gemini match</h3><p>AI finds the job's must-have and nice-to-have keywords</p><span class="verdict"></span><span class="delta" hidden></span></div>
+            </button>
+            <button class="gauge" id="gLocal" aria-pressed="false">
+              <div class="enso"><svg class="ring" viewBox="0 0 104 104"><circle class="track" cx="52" cy="52" r="44"/><circle class="arc" cx="52" cy="52" r="44" stroke-dasharray="276.5" stroke-dashoffset="276.5"/></svg>
+                <div class="num"><div><b>–</b><small>Local</small></div></div></div>
+              <div><h3>Local match</h3><p>Offline: built-in list of 120+ tech keywords</p><span class="verdict"></span><span class="delta" hidden></span></div>
+            </button>
+          </div>
+          <div class="sect">
+            <h3>Score breakdown <span class="sp"></span><small id="viewName">Gemini view</small></h3>
+            <div class="bars" id="bars"></div>
+          </div>
+          <div class="sect">
+            <h3>How we matched <span class="sp"></span><small id="howCount"></small></h3>
+            <div class="howwrap"><table class="how"><thead><tr><th>Keyword</th><th>Found in your resume</th></tr></thead><tbody id="howBody"></tbody></table></div>
+          </div>
+          <div class="sect">
+            <h3>Not visible in your resume <span class="sp"></span><small id="missCount"></small></h3>
+            <div class="chips" id="missChips"></div>
+            <div class="legend"><span style="--c:var(--bad)">Must-have · counts 3×</span><span style="--c:var(--warn)">Nice-to-have · 2×</span><span style="--c:var(--faint)">General tech term · 1×</span></div>
+            <p class="help" style="margin:0">If you truly have one of these, the enhance step uses the job's wording for it. If you don't, it stays a gap and is never added.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 · Enhance -->
+      <section class="card locked" id="c3" aria-labelledby="h3">
+        <div class="ch"><span class="no">3</span><h2 id="h3">Enhance your resume</h2></div>
+        <div class="promise"><svg class="i"><use href="#i-shield"/></svg><span>Your skills stay. Tailoring only reorders and rewords what's already in <b>main.tex</b>. Every result is checked, and anything removed is flagged and can be restored.</span></div>
+        <div class="lockable" style="display:flex;flex-direction:column;gap:12px">
+          <ol class="how">
+            <li><b>Copy the prompt.</b> It contains your resume, the job, and the gaps.</li>
+            <li>Paste it into <b>Claude</b> or <b>ChatGPT</b> and send.</li>
+            <li>Copy the whole reply → <b>Paste AI reply</b>. Review it on the right.</li>
+          </ol>
+          <textarea id="prompt" readonly aria-label="Prompt for Claude or ChatGPT" placeholder="Your prompt appears here after the ATS check."></textarea>
+          <div class="row">
+            <button class="btn sun" id="copyPrompt"><svg class="i"><use href="#i-copy"/></svg>Copy prompt</button>
+            <button class="btn" id="openClaude"><svg class="i"><use href="#i-ext"/></svg>Claude</button>
+            <button class="btn" id="openGpt"><svg class="i"><use href="#i-ext"/></svg>ChatGPT</button>
+            <button class="btn" id="pasteBtn"><svg class="i"><use href="#i-inbox"/></svg>Paste AI reply</button>
+          </div>
+          <div class="or">or let Gemini do it here</div>
+          <div class="row" style="align-items:center">
+            <button class="btn ink" id="tailorBtn"><svg class="i"><use href="#i-zap"/></svg>Auto-tailor with Gemini</button>
+            <span class="help" id="keyNote"></span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- right: resume / changes / review -->
+    <aside class="side">
+      <section class="card" aria-label="Resume file">
+        <div class="ch">
+          <div class="tabs glass" role="tablist">
+            <button role="tab" id="tResume" aria-selected="true"><svg class="i"><use href="#i-file"/></svg>Resume</button>
+            <button role="tab" id="tChanges" aria-selected="false"><svg class="i"><use href="#i-diff"/></svg>Changes</button>
+            <button role="tab" id="tReview" aria-selected="false"><svg class="i"><use href="#i-shield"/></svg>Review <span class="cnt" id="reviewCnt" hidden></span></button>
+          </div>
+          <span class="sp"></span><span class="badge" id="texBadge">Master</span>
+        </div>
+        <div class="texbar">
+          <label class="sr" for="texSelect">Resume file</label>
+          <select id="texSelect"></select>
+          <button class="btn sm" id="copyTex"><svg class="i"><use href="#i-copy"/></svg>Copy</button>
+          <button class="btn sm" id="overleaf"><svg class="i"><use href="#i-ext"/></svg>Overleaf</button>
+          <button class="btn sm" id="pdfBtn"><svg class="i"><use href="#i-file"/></svg>PDF</button>
+        </div>
+        <div class="pane" id="paneResume"><pre class="tex" id="tex">Loading…</pre></div>
+        <div class="pane" id="paneChanges" hidden><div class="empty" id="diffEmpty">Pick a tailored resume to see exactly what changed from <b>main.tex</b>.</div><div class="diff" id="diff"></div></div>
+        <div class="pane" id="paneReview" hidden>
+          <div class="empty" id="reviewEmpty">After tailoring, this checks that every skill, project and number from <b>main.tex</b> is still there, and lists anything new.</div>
+          <div class="review" id="review" hidden>
+            <div class="sect"><h3>Facts kept from main.tex</h3>
+              <div class="meter"><span class="big" id="keptPct">–</span><div class="trk"><div class="fl" id="keptBar"></div></div></div>
+              <p class="help" style="margin:0" id="keptText"></p>
+            </div>
+            <div class="sect" id="missSect"><h3 style="color:var(--bad)">Removed. These are yours and should be back</h3><ul class="list bad" id="missList"></ul>
+              <div class="row"><button class="btn sun sm" id="restoreBtn"><svg class="i"><use href="#i-undo"/></svg>Restore with Gemini</button></div></div>
+            <div class="sect" id="addSect"><h3 style="color:var(--warn)">New. Not in main.tex, confirm they're true</h3><ul class="list warn" id="addList"></ul>
+              <p class="help" style="margin:0">Keep only what you can explain in an interview. Edit the .tex to remove the rest.</p></div>
+            <div class="sect" id="notesSect"><h3>AI notes &amp; real gaps</h3><div class="notes" id="notes"></div></div>
+          </div>
+        </div>
+        <p class="help" style="margin:0">PDF: <b>Copy</b> → <b>Overleaf</b> → New project → Blank → paste over everything → Recompile → Download.</p>
+      </section>
+    </aside>
+  </div>
+</main>
+
+<!-- modals -->
+<div class="scrim" id="settingsModal" hidden role="dialog" aria-modal="true" aria-labelledby="sTitle">
+  <div class="modal">
+    <h3 id="sTitle">Settings</h3>
+    <p>A <b>Google Gemini</b> key powers job-link reading, the Gemini match score, and auto-tailor. Get a free key at <b>aistudio.google.com</b> → Get API key. The local score and copy-prompt flow work without it.</p>
+    <label class="f">Gemini API key<input id="keyInput" type="password" placeholder="Leave blank to keep the saved key" autocomplete="off"></label>
+    <p id="keyState" class="help"></p>
+    <label class="f">Gemini model<select id="modelSelect"></select></label>
+    <p class="help">If a model is busy, the app automatically tries the others. The key is stored only in resume_studio/config.json (gitignored).</p>
+    <div class="acts"><button class="btn" data-close>Cancel</button><button class="btn sun" id="saveKey">Save</button></div>
+  </div>
+</div>
+<div class="scrim" id="pasteModal" hidden role="dialog" aria-modal="true" aria-labelledby="pTitle">
+  <div class="modal">
+    <h3 id="pTitle">Paste the AI's reply</h3>
+    <p>Paste everything Claude or ChatGPT wrote. The app saves the resume to <b>resumes/</b>, re-scores it, and checks that nothing of yours was removed.</p>
+    <textarea id="replyInput" aria-label="AI reply" placeholder="Ctrl + V"></textarea>
+    <div class="acts"><button class="btn" data-close>Cancel</button><button class="btn sun" id="saveReply">Save &amp; check</button></div>
+  </div>
+</div>
+<div class="scrim" id="loadingModal" hidden role="dialog" aria-modal="true" aria-labelledby="lTitle">
+  <div class="modal loading">
+    <div class="inksun" aria-hidden="true"></div>
+    <h3 id="lTitle">Gemini is working…</h3>
+    <div class="stages" id="stages"><div id="sg1" class="on">Reading the job and your master resume</div><div id="sg2">Writing the tailored resume</div><div id="sg3">Checking every skill is kept</div></div>
+    <p class="help" id="lTime">0s</p>
+  </div>
+</div>
+<div class="toast glass" id="toast" role="status" hidden></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const S = { mode:'link', hasKey:false, model:'', models:[], pdflatex:false, scan:null, before:null, view:'ai', file:'main.tex' };
+const CIRC = 276.5;
+
+async function api(path, body){
+  const r = await fetch(path, body===undefined ? {} : {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d = await r.json().catch(()=>({error:'Bad response from the app'}));
+  if(!r.ok) throw Object.assign(new Error(d.error||'Request failed'),{code:d.error});
+  return d;
+}
+function toast(msg, err){
+  const t=$('#toast'); t.textContent=msg; t.className='toast glass'+(err?' err':''); t.hidden=false;
+  clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true, err?6000:2800);
+}
+const show = id => { $(id).hidden=false; const f=$(id).querySelector('input,textarea,button.sun'); f&&setTimeout(()=>f.focus(),50) };
+function closeAll(){ document.querySelectorAll('.scrim').forEach(s=>{ if(s.id!=='loadingModal') s.hidden=true }) }
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeAll);
+document.querySelectorAll('.scrim').forEach(s=>s.addEventListener('click',e=>{ if(e.target===s && s.id!=='loadingModal') closeAll() }));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll() });
+
+/* liquid highlight follows the pointer on glass */
+document.addEventListener('pointermove', e=>{
+  document.querySelectorAll('.glass').forEach(g=>{ const r=g.getBoundingClientRect();
+    g.style.setProperty('--mx',(e.clientX-r.left)+'px'); g.style.setProperty('--my',(e.clientY-r.top)+'px') });
+},{passive:true});
+
+/* ---------- steps ---------- */
+function setStep(n){
+  [1,2,3,4].forEach(i=>{ const s=$('#st'+i); s.classList.toggle('on',i===n); s.classList.toggle('done',i<n) });
+  [1,2,3].forEach(i=>{ const c=$('#c'+i); c.classList.toggle('now',i===Math.min(n,3)&&n<4); c.classList.toggle('done',i<n); c.classList.toggle('locked',i>n) });
+}
+
+/* ---------- job input ---------- */
+const words = () => { const v=$('#jd').value.trim(); return v ? v.split(/\s+/).length : 0 };
+const updCount = () => $('#count').textContent = '· '+words()+' words';
+$('#jd').addEventListener('input', updCount);
+function setMode(m){
+  S.mode=m; $('#modeLink').setAttribute('aria-pressed',m==='link'); $('#modePaste').setAttribute('aria-pressed',m==='paste');
+  $('#linkMode').hidden = m!=='link';
+  if(m==='paste'){ $('#jdBox').open=true; $('#jd').focus() } else $('#url').focus();
+}
+$('#modeLink').onclick=()=>setMode('link'); $('#modePaste').onclick=()=>setMode('paste');
+$('#url').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#fetchBtn').click() });
+$('#fetchBtn').onclick = async ()=>{
+  const url=$('#url').value.trim();
+  if(!/^https?:\/\//.test(url)) return toast('Paste the full job link (starts with https://)', true);
+  const b=$('#fetchBtn'); b.disabled=true; b.lastChild.textContent='Reading…';
+  $('#source').hidden=true; $('#scanbox').classList.add('scanning'); $('#jdBox').open=true;
+  try{
+    const j = await api('/api/fetch_job',{url});
+    $('#company').value=j.company||''; $('#role').value=j.title||'';
+    $('#jd').value=j.description||''; updCount();
+    $('#sourceText').textContent = j.source + (j.location?` · ${j.location}`:'') + (j.note?` · ${j.note}`:'');
+    $('#source').classList.toggle('warn',!!j.note); $('#source').hidden=false;
+    $('#scanbox').classList.remove('scanning');
+    toast('Job loaded. Checking your score…');
+    $('#scanBtn').click();
+  }catch(e){ $('#scanbox').classList.remove('scanning'); toast(e.message,true); if(/Paste text/.test(e.message)) setMode('paste') }
+  b.disabled=false; b.lastChild.textContent='Read job';
+};
+$('#clearBtn').onclick=()=>{ ['#url','#company','#role','#jd'].forEach(s=>$(s).value=''); updCount(); $('#source').hidden=true; setMode(S.mode) };
+const payload = () => ({ jd:$('#jd').value, company:$('#company').value, role:$('#role').value, resume:'main.tex' });
+function needJD(){ if(words()<15){ toast(S.mode==='link'?'Read a job link first, or switch to Paste text':'Paste the job description first',true); return false } return true }
+
+/* ---------- scoring ---------- */
+const tone = p => p>=80?'var(--good)':p>=60?'var(--warn)':'var(--bad)';
+const verdict = p => p>=85?'Strong':p>=70?'Good':p>=50?'Partial':'Weak';
+function gauge(el, r, before){
+  const arc=el.querySelector('.arc'), num=el.querySelector('.num b'), v=el.querySelector('.verdict'), d=el.querySelector('.delta');
+  el.classList.remove('spin');
+  if(!r){ num.textContent='–'; arc.style.strokeDashoffset=CIRC; v.textContent=S.hasKey?'Unavailable':'Add key in Settings'; v.style.cssText='color:var(--muted);background:var(--field)'; d.hidden=true; return }
+  arc.style.stroke=tone(r.score);
+  arc.style.strokeDashoffset=CIRC; setTimeout(()=>arc.style.strokeDashoffset=CIRC-CIRC*r.score/100, 40);
+  const t0=performance.now(); clearInterval(el._t);
+  el._t=setInterval(()=>{ const k=Math.max(0,Math.min(1,(performance.now()-t0)/1100)), e=1-Math.pow(1-k,3);
+    num.textContent=Math.round(r.score*e)+'%'; if(k>=1) clearInterval(el._t) }, 16);
+  setTimeout(()=>{ clearInterval(el._t); num.textContent=r.score+'%' }, 1300);
+  v.textContent=verdict(r.score)+' match'; v.style.cssText=`color:${tone(r.score)};background:color-mix(in srgb,${tone(r.score)} 13%,transparent)`;
+  if(before!=null){ const x=r.score-before; d.hidden=false; d.textContent=`${before}% → ${r.score}% (${x>=0?'+':''}${x})`; d.style.color=x>=0?'var(--good)':'var(--bad)' } else d.hidden=true;
+}
+function renderScan(scan, before){
+  S.scan=scan; S.before=before||null;
+  $('#scoreWait').hidden=true; $('#scoreView').hidden=false;
+  gauge($('#gAi'), scan.ai, before?before.ai:null); gauge($('#gLocal'), scan.local, before?before.local:null);
+  if(!scan.ai && S.view==='ai') S.view='local';
+  if(scan.ai_error) toast('Gemini score unavailable: '+scan.ai_error.slice(0,140), true);
+  const b=$('#scoredFile'); b.hidden=false; b.textContent='Scored: '+scan.resume;
+  renderView();
+  if(before && (scan.ai||scan.local).score > ((before.ai ?? before.local) || 0)) setTimeout(confetti,900);
+}
+function renderView(){
+  const r = S.view==='ai' ? S.scan.ai : S.scan.local;
+  $('#gAi').setAttribute('aria-pressed', S.view==='ai'); $('#gLocal').setAttribute('aria-pressed', S.view==='local');
+  $('#viewName').textContent = S.view==='ai' ? 'Gemini view' : 'Local view';
+  if(!r) return;
+  // bars
+  const bars=$('#bars'); bars.replaceChildren();
+  r.parts.forEach((p,i)=>{
+    const row=document.createElement('div'); row.className='bar';
+    row.innerHTML=`<div class="lb"><b>${esc(p.name)}${p.weight?` · ${p.weight}%`:''}</b><small title="${esc(p.detail)}">${esc(p.detail)}</small></div><div class="tr"><div class="fl"></div></div><div class="v"></div>`;
+    const fl=row.querySelector('.fl'), v=row.querySelector('.v');
+    fl.style.background = p.pct==null?'var(--faint)':tone(p.pct);
+    v.textContent = p.pct==null?'n/a':p.pct+'%'; v.style.color = p.pct==null?'var(--faint)':tone(p.pct);
+    bars.append(row); setTimeout(()=>fl.style.transform=`scaleX(${(p.pct??0)/100})`, 120+i*120);
+  });
+  // how we matched
+  const tb=$('#howBody'); tb.replaceChildren();
+  $('#howCount').textContent = `${r.matched.length} found`;
+  if(!r.matched.length){ tb.innerHTML='<tr><td colspan="2" class="help">No job keywords found yet.</td></tr>' }
+  r.matched.forEach(m=>{
+    const tr=document.createElement('tr');
+    let snip=esc(m.snip||'');
+    const word=(m.via && !/words|spread/.test(m.via)) ? m.via : m.k;
+    try{ snip=snip.replace(new RegExp('('+word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','i'),'<mark>$1</mark>') }catch(e){}
+    tr.innerHTML=`<td class="k">${esc(m.k)}<br><span class="tagp">${m.p==='required'?'must-have':m.p==='preferred'?'nice-to-have':'general'}</span></td>
+      <td>${m.section?`<b>${esc(m.section)}</b> · `:''}${snip||'<span class="help">—</span>'}${m.via?`<div class="via">matched via “${esc(m.via)}”</div>`:''}</td>`;
+    tb.append(tr);
+  });
+  // missing
+  const mc=$('#missChips'); mc.replaceChildren(); $('#missCount').textContent=`${r.missing.length}`;
+  if(!r.missing.length) mc.innerHTML='<span class="help">Nothing missing 🎉</span>';
+  r.missing.forEach((m,i)=>{ const c=document.createElement('span'); c.className='chip '+(m.p==='required'?'req':m.p==='preferred'?'pref':'');
+    c.style.animationDelay=(Math.min(i,30)*30)+'ms'; c.textContent=m.k;
+    if(m.p!=='general'){ const t=document.createElement('span'); t.className='t'; t.textContent=m.p==='required'?'must':'nice'; c.append(t) }
+    mc.append(c) });
+}
+$('#gAi').onclick=()=>{ if(S.scan?.ai){ S.view='ai'; renderView() } else if(!S.hasKey) openSettings() };
+$('#gLocal').onclick=()=>{ if(S.scan){ S.view='local'; renderView() } };
+
+$('#scanBtn').onclick = async ()=>{
+  if(!needJD()) return;
+  const b=$('#scanBtn'); b.disabled=true; b.lastChild.textContent='Scanning…';
+  $('#scanbox').classList.add('scanning');
+  if(!$('#scoreView').hidden){ $('#gAi').classList.add('spin'); $('#gLocal').classList.add('spin') }
+  else $('#scoreWait').textContent = S.hasKey ? 'Gemini is reading the job and finding its must-have keywords…' : 'Scanning your resume…';
+  setStep(2);
+  const minWait=new Promise(r=>setTimeout(r,1000));
+  try{
+    const scan=await api('/api/scan',payload()); await minWait;
+    renderScan(scan);
+    const {prompt}=await api('/api/prompt',payload()); $('#prompt').value=prompt;
+    setStep(3); await selectFile('main.tex');
+    $('#c2').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){ toast(e.message,true); $('#gAi').classList.remove('spin'); $('#gLocal').classList.remove('spin') }
+  $('#scanbox').classList.remove('scanning'); b.disabled=false; b.lastChild.textContent='Check ATS score';
+};
+
+/* ---------- enhance ---------- */
+$('#copyPrompt').onclick=async ()=>{ if(!$('#prompt').value) return toast('Check your ATS score first',true);
+  await navigator.clipboard.writeText($('#prompt').value); toast('Prompt copied. Paste it into Claude or ChatGPT') };
+$('#openClaude').onclick=()=>window.open('https://claude.ai/new','_blank');
+$('#openGpt').onclick=()=>window.open('https://chatgpt.com/','_blank');
+$('#pasteBtn').onclick=()=>{ $('#replyInput').value=''; show('#pasteModal') };
+$('#saveReply').onclick=async ()=>{
+  const reply=$('#replyInput').value;
+  if(!reply.includes('\\documentclass')) return toast("That doesn't contain a LaTeX resume. Copy the AI's whole reply.",true);
+  try{ closeAll(); tailored(await api('/api/save_result',{...payload(),reply})) }catch(e){ toast(e.message,true) }
+};
+$('#tailorBtn').onclick=async ()=>{
+  if(!needJD()) return;
+  if(!S.hasKey){ toast('Add a Gemini key in Settings, or use Copy prompt'); return openSettings() }
+  let job; try{ job=(await api('/api/tailor',payload())).job }catch(e){ return toast(e.message,true) }
+  show('#loadingModal'); $('#tailorBtn').disabled=true;
+  const t0=Date.now(), stage=n=>[1,2,3].forEach(i=>{ $('#sg'+i).className = i<n?'ok':i===n?'on':'' });
+  const poll=setInterval(async ()=>{
+    $('#lTime').textContent=Math.round((Date.now()-t0)/1000)+'s';
+    try{
+      const j=await api('/api/job/'+job);
+      stage(j.state==='writing'?2:j.state==='checking'?3:1);
+      if(j.state==='done'||j.state==='error'){
+        clearInterval(poll); $('#loadingModal').hidden=true; $('#tailorBtn').disabled=false;
+        j.state==='done' ? tailored(j.result) : toast(j.error,true);
+      }
+    }catch(e){ clearInterval(poll); $('#loadingModal').hidden=true; $('#tailorBtn').disabled=false; toast(e.message,true) }
+  },1000);
+};
+function tailored(res){
+  renderScan(res.scan, res.before);
+  setStep(4);
+  refreshList(res.file).then(()=>selectFile(res.file, res.check, res.notes));
+  tab('review');
+  toast(res.repaired ? 'Saved. Gemini had dropped some of your facts; they were restored automatically' : 'Saved to '+res.file);
+}
+
+/* ---------- right panel ---------- */
+function tab(t){
+  [['resume','#tResume','#paneResume'],['changes','#tChanges','#paneChanges'],['review','#tReview','#paneReview']].forEach(([n,b,p])=>{
+    $(b).setAttribute('aria-selected',n===t); $(p).hidden=n!==t });
+}
+$('#tResume').onclick=()=>tab('resume'); $('#tChanges').onclick=()=>tab('changes'); $('#tReview').onclick=()=>tab('review');
+function highlight(src){
+  return src.split('\n').map(line=>{
+    const m=line.match(/(^|[^\\])%/); let code=line, com='';
+    if(m){ const i=m.index+m[1].length; code=line.slice(0,i); com=line.slice(i) }
+    return esc(code).replace(/(\\[a-zA-Z]+\*?)/g,'<span class="k">$1</span>') + (com?'<span class="c">'+esc(com)+'</span>':'');
+  }).join('\n');
+}
+async function refreshList(sel){
+  const d=await api('/api/init');
+  $('#texSelect').replaceChildren(...d.resumes.map(f=>{ const o=document.createElement('option'); o.value=f; o.textContent=f==='main.tex'?'main.tex · master (never changed)':f; return o }));
+  $('#texSelect').value=sel||S.file; return d;
+}
+async function selectFile(file, check, notes){
+  S.file=file; $('#texSelect').value=file;
+  const master=file==='main.tex';
+  const b=$('#texBadge'); b.textContent=master?'Master':'Tailored'; b.classList.toggle('new',!master);
+  $('#pdfBtn').disabled=!S.pdflatex||master; $('#pdfBtn').title=S.pdflatex?'':'Install MiKTeX to enable. Use Overleaf for now.';
+  try{ const d=await api('/api/tex?file='+encodeURIComponent(file)); $('#tex').innerHTML=highlight(d.tex); $('#tex').dataset.raw=d.tex }
+  catch(e){ $('#tex').textContent='Could not load '+file }
+  // changes
+  $('#diff').replaceChildren(); $('#diffEmpty').hidden=!master;
+  if(!master){
+    try{ const d=await api('/api/diff?file='+encodeURIComponent(file));
+      const sum=document.createElement('div'); sum.className='diffsum'; sum.style.cssText='padding:12px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--code)';
+      sum.innerHTML=`<b>vs main.tex</b><span class="a">+${d.added} added</span><span class="r">−${d.removed} removed</span><span class="help">lines</span>`;
+      $('#diff').append(sum);
+      d.rows.forEach(r=>{ const el=document.createElement('div'); el.className=r.t==='+'?'add':r.t==='-'?'del':r.t==='…'?'gap':''; el.textContent=r.t==='…'?`⋯ ${r.l}`:r.l; $('#diff').append(el) });
+    }catch(e){}
+  }
+  // review
+  if(master){ $('#review').hidden=true; $('#reviewEmpty').hidden=false; $('#reviewCnt').hidden=true; return }
+  if(!check && words()>=15){ try{ const r=await api('/api/review',{...payload(),file}); check=r.check }catch(e){} }
+  renderReview(check, notes);
+}
+function renderReview(c, notes){
+  if(!c){ $('#review').hidden=true; $('#reviewEmpty').hidden=false; return }
+  $('#review').hidden=false; $('#reviewEmpty').hidden=true;
+  $('#keptPct').textContent=c.preserved_pct+'%'; $('#keptPct').style.color=c.missing.length?'var(--bad)':'var(--good)';
+  $('#keptBar').style.background=c.missing.length?'var(--bad)':'var(--good)'; $('#keptBar').style.width=c.preserved_pct+'%';
+  $('#keptText').textContent=`${c.kept} of ${c.total} skills, projects, roles and numbers from main.tex are in this resume.`;
+  $('#missSect').hidden=!c.missing.length;
+  $('#missList').innerHTML=c.missing.map(m=>`<li><svg class="i"><use href="#i-alert"/></svg>${esc(m.item)}<small>${esc(m.kind)}</small></li>`).join('');
+  const added=[...c.added_skills.map(s=>({s,k:'skill'})), ...c.added_keywords.filter(k=>!c.added_skills.some(s=>s.toLowerCase().includes(k))).map(s=>({s,k:'keyword'}))];
+  $('#addSect').hidden=!added.length;
+  $('#addList').innerHTML=added.map(a=>`<li><svg class="i"><use href="#i-alert"/></svg>${esc(a.s)}<small>${a.k}</small></li>`).join('');
+  $('#notesSect').hidden=!notes; $('#notes').textContent=notes||'';
+  const n=c.missing.length+added.length, cnt=$('#reviewCnt'); cnt.hidden=false; cnt.textContent=n||'✓'; cnt.classList.toggle('ok',!n);
+}
+$('#restoreBtn').onclick=async ()=>{
+  const b=$('#restoreBtn'); b.disabled=true; b.lastChild.textContent='Restoring…';
+  try{ const r=await api('/api/review',{...payload(),file:S.file,repair:true}); renderScan(r.scan, S.before); await selectFile(S.file, r.check, $('#notes').textContent); tab('review');
+    toast(r.check.missing.length?'Some items still missing. Check the list':'All your facts are back ✓', !!r.check.missing.length) }
+  catch(e){ toast(e.message,true) }
+  b.disabled=false; b.lastChild.textContent='Restore with Gemini';
+};
+$('#texSelect').onchange=()=>selectFile($('#texSelect').value);
+$('#copyTex').onclick=async ()=>{ await navigator.clipboard.writeText($('#tex').dataset.raw||''); toast('LaTeX copied. Paste it into Overleaf') };
+$('#overleaf').onclick=()=>window.open('https://www.overleaf.com/project','_blank');
+$('#pdfBtn').onclick=async ()=>{ try{ const r=await api('/api/compile',{file:S.file}); toast('PDF opened: '+r.pdf) }catch(e){ toast(e.message,true) } };
+$('#folderBtn').onclick=()=>api('/api/open_folder',{}).catch(e=>toast(e.message,true));
+
+/* ---------- settings ---------- */
+function keyNote(){ $('#keyNote').textContent = S.hasKey ? `Gemini ready · ${S.model}` : 'Needs a Gemini key (Settings)' }
+function openSettings(){
+  $('#keyInput').value='';
+  $('#keyState').textContent = S.hasKey ? '✓ A Gemini key is saved. Paste a new one to replace it.' : 'No key saved yet.';
+  $('#modelSelect').replaceChildren(...S.models.map((m,i)=>{ const o=document.createElement('option'); o.value=m; o.textContent=m+(i===0?' (recommended)':''); return o }));
+  $('#modelSelect').value=S.model; show('#settingsModal');
+}
+$('#settingsBtn').onclick=openSettings;
+$('#saveKey').onclick=async ()=>{
+  const body={gemini_model:$('#modelSelect').value}; if($('#keyInput').value.trim()) body.gemini_key=$('#keyInput').value.trim();
+  try{ const r=await api('/api/settings',body); S.hasKey=r.has_key; S.model=r.model; keyNote(); closeAll(); toast('Settings saved') }catch(e){ toast(e.message,true) }
+};
+
+/* ---------- confetti (vermilion petals) ---------- */
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const cv=$('#confetti'), x=cv.getContext('2d'); cv.width=innerWidth; cv.height=innerHeight;
+  const cols=['#C8361F','#E8573E','#1C1915','#D9A441','#F4EFE6'];
+  const ps=Array.from({length:120},()=>({x:innerWidth*(.25+Math.random()*.5),y:innerHeight*.3,vx:(Math.random()-.5)*12,vy:-Math.random()*11-3,r:Math.random()*7+4,c:cols[Math.random()*5|0],a:Math.random()*6,s:(Math.random()-.5)*.25}));
+  let t=0; (function f(){ x.clearRect(0,0,cv.width,cv.height);
+    ps.forEach(p=>{ p.vy+=.3; p.x+=p.vx; p.y+=p.vy; p.vx*=.99; p.a+=p.s; x.save(); x.translate(p.x,p.y); x.rotate(p.a); x.globalAlpha=Math.max(0,1-t/120); x.fillStyle=p.c;
+      x.beginPath(); x.ellipse(0,0,p.r,p.r*.45,0,0,Math.PI*2); x.fill(); x.restore() });
+    if(++t<130) requestAnimationFrame(f); else x.clearRect(0,0,cv.width,cv.height) })();
+}
+
+/* ---------- boot ---------- */
+(async ()=>{
+  try{
+    const d=await refreshList('main.tex');
+    Object.assign(S,{hasKey:d.has_key,model:d.model,models:d.models,pdflatex:d.pdflatex}); keyNote();
+    const jd=d.jd||''; const c=jd.match(/^Company:\s*(.+)$/im), t=jd.match(/^Job Title:\s*(.+)$/im);
+    if(c) $('#company').value=c[1].trim(); if(t) $('#role').value=t[1].trim();
+    $('#jd').value=jd.replace(/^(Company|Job Title):.*\n/gim,''); updCount();
+    if(words()>=15) $('#jdBox').open=true;
+    await selectFile('main.tex');
+  }catch(e){ toast('Could not reach the app. Restart Resume Studio',true) }
+  setInterval(()=>fetch('/api/ping').catch(()=>{}),10000);
+  if(location.hash==='#scan') $('#scanBtn').click();
+  const fm=location.hash.match(/^#file=(.+)$/);
+  if(fm){ const f=decodeURIComponent(fm[1]); await selectFile(f); tab('review') }
+})();
+</script>
+</body>
+</html>

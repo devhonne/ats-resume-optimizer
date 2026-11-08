@@ -258,7 +258,7 @@ def scan(resume_path, jd_raw, ai_keywords=None):
         total += weight[pri]
         if has_keyword(kw, text):
             got += weight[pri]
-            matched.append({"k": kw, "p": pri})
+            matched.append({"k": kw, "p": pri, **find_evidence(kw, resume_plain)})
         else:
             missing.append({"k": kw, "p": pri})
     order = {"required": 0, "preferred": 1, "general": 2}
@@ -300,6 +300,78 @@ def scan(resume_path, jd_raw, ai_keywords=None):
         "score": round(overall * 100), "parts": parts,
         "matched": matched, "missing": missing,
         "ai_keywords": bool(ai_keywords),
+    }
+
+
+def find_evidence(kw, plain):
+    """Where in the resume a keyword was found: {"via": synonym or None, "section", "snip"}."""
+    kw = kw.lower().strip()
+    variants = [kw] + SYNONYMS.get(kw, [])
+    words = [w for w in re.findall(r"[a-z0-9+#]+(?:\.[a-z0-9]+)*", kw) if w not in STOP and len(w) > 1]
+    section = "Header"
+    for line in plain.splitlines():
+        s = line.strip()
+        if s.startswith("## "):
+            section = s[3:].strip().title()
+            continue
+        low = s.lower()
+        for v in variants + ([words[0]] if words and words != [kw] else []):
+            m = kw_regex(v).search(low)
+            if m:
+                a, b = max(0, m.start() - 45), min(len(s), m.end() + 65)
+                via = None if v == kw else (v if v in variants else "all words of the phrase")
+                return {"via": via, "section": section,
+                        "snip": ("…" if a else "") + s[a:b].strip() + ("…" if b < len(s) else "")}
+    return {"via": "spread across the resume", "section": "", "snip": ""}
+
+
+def _clean_tex(s):
+    s = s.replace(r"\&", "&").replace(r"\%", "%").replace(r"\#", "#").replace(r"\_", "_").replace("--", "-")
+    s = re.sub(r"\\[a-zA-Z]+\*?", " ", s)
+    return re.sub(r"\s+", " ", re.sub(r"[{}\\]", " ", s)).strip()
+
+
+def resume_facts(tex):
+    """Facts a tailored resume must keep: skill items, bold titles (projects/roles/certs), key numbers."""
+    body = tex.split(r"\begin{document}", 1)[-1]
+    skills = []
+    m = re.search(r"\\section\*?\{[^}]*SKILL[^}]*\}(.*?)(?=\\section|\\end\{document\})", body, re.S | re.I)
+    if m:
+        for cat in re.finditer(r"\\textbf\{[^}]*:\}\s*(.*?)(?=\\textbf\{[^}]*:\}|\\\\|\n\s*\n|$)", m.group(1), re.S):
+            for item in re.split(r"[,;](?![^()]*\))", _clean_tex(cat.group(1))):
+                item = item.strip(" .")
+                if 1 < len(item) <= 40:
+                    skills.append(item)
+    titles = []
+    for t in re.findall(r"\\textbf\{([^{}]{4,90})\}", body):
+        t = _clean_tex(t)
+        if not t.endswith(":") and "|" not in t and not re.search(r"cgpa|^\d|%$", t, re.I) and t.upper() != t:
+            titles.append(t)
+    nums = sorted(set(re.findall(r"IN-\d+|\d+(?:,\d{3})+|\d+\.\d+|\d+\\?%", body)))
+    return {"skills": list(dict.fromkeys(skills)), "titles": list(dict.fromkeys(titles)),
+            "numbers": [n.replace("\\", "") for n in nums]}
+
+
+def compare_resumes(master_tex, tailored_tex, keywords=()):
+    """Did tailoring keep every fact from the master, and what did it add?"""
+    master_plain = latex_to_text(master_tex).lower()
+    tail_plain = latex_to_text(tailored_tex).lower()
+    mf, tf = resume_facts(master_tex), resume_facts(tailored_tex)
+    missing = []
+    for kind in ("skills", "titles"):
+        for item in mf[kind]:
+            if not has_keyword(item.lower(), tail_plain):
+                missing.append({"kind": kind[:-1], "item": item})
+    for n in mf["numbers"]:
+        if n not in tailored_tex.replace("\\%", "%"):
+            missing.append({"kind": "number", "item": n})
+    total = len(mf["skills"]) + len(mf["titles"]) + len(mf["numbers"])
+    added_skills = [s for s in tf["skills"] if not has_keyword(s.lower(), master_plain)]
+    added_kw = sorted({k for k in keywords if has_keyword(k, tail_plain) and not has_keyword(k, master_plain)})
+    return {
+        "total": total, "kept": total - len(missing),
+        "preserved_pct": round(100 * (total - len(missing)) / total) if total else 100,
+        "missing": missing, "added_skills": added_skills, "added_keywords": added_kw,
     }
 
 

@@ -1,30 +1,39 @@
-Position Summary...
-Company: Google
-Job Title: Student Researcher, 2026
-Location: Bengaluru, Karnataka, India
-Role: Intern & Apprentice
+Company: amazon
+Job Title: SDE 1
+SDE I Intern , Amazon University Talent Acquisition
+Job ID: 10508052 | ADCI - Karnataka
+Description
+Software Development Engineer 6 months Internship – 2027 (In-Person)
 
-Please complete your application before June 30, 2026.
-Participation in this program requires that you are located in India for the duration of the engagement.
-To start the application process, you will need an updated CV or resume and a current unofficial or official transcript in English (PDFs preferred). 
+Introduction
+At Amazon, we hire the best minds in technology to innovate and build on behalf of our customers. The intense focus we have on our customers is why we are one of the world’s most beloved brands – customer obsession is part of our company DNA. Our interns write real software and collaborate with a select group of experienced software development engineers (SDEs) who guide interns on projects that matter to our customers. As an intern, you will be matched to a manager and a mentor. You will have the opportunity to influence the evolution of Amazon technology and lead mission critical projects early in your career. Your design, code, and raw smarts will contribute to solving some of the most complex technical challenges in the areas of distributed systems, data mining, automation, optimization, scalability, and security – just to name a few. In addition to working on an impactful project, you will have the opportunity to engage with Amazonians for both personal and professional development, expand your network, and participate in activities with other interns throughout your internship. No matter the location of your internship, we give you the tools to own your project and learn in a real-world setting. Many of our technologies overlap, and you would be hard pressed to find a team that is not using Amazon Web Services (AWS), touching the catalogue, or iterating services to better personalize for customers. If this opportunity interests you, apply and come chart your own path at Amazon.
 
-Minimum qualifications:
-Currently enrolled in Bachelor's, Master's, or PhD degree program in Computer Science, Linguistics, Statistics, Biostatistics, Applied Mathematics, Operations Research, Economics, or Natural Sciences.
-Experience in one area of computer science (e.g., Natural Language Understanding, Human Computer Interactions, Computer Vision, Machine Learning, Deep Learning, Algorithmic Foundations of Optimization, Quantum Information Science, Data Science, Software Engineering, or similar areas).
+Job location
+By applying to this position your application will be considered for all locations we hire for in India. This includes but is not limited to Bengaluru, Chennai, Hyderabad, Delhi, Mumbai and Pune.
 
-Preferred qualifications:
-Currently enrolled in a full-time degree program and returning to the program after completion of the internship.
-Experience contributing research communities or efforts, including publishing papers in major conferences or journals.
-Experience with one or more general purpose programming languages (e.g., Python, Java, JavaScript, C/C++, etc.).
+Duration and Timelines
+Amazon internships are full-time (40 hours/week) for 24 - 26 consecutive weeks (six months) with start dates between January - June 2027
 
-About the job
-Researchers across Google are working to advance in computing and build the next generation of intelligent systems for all Google products. To achieve this, we invest in foundational research and work on projects that utilize the latest computer science techniques developed by skilled software developers and research scientists. Whether we're shaping the future of sustainability, optimizing algorithms, or pioneering AI systems, our teams strive to continuously progress science, advance society, and improve the lives of billions of people.
+Please note that Amazon internships require full-time commitment during the duration of the internship. During the course of internship, interns should not have any conflicts including but not limited to academic projects, classes or other internships/employment. Any exam related details must be shared with the hiring manager to plan for absence during those days. Specific team norms around working hours will be communicated by the hiring/ reporting manager at the time of commencement of internship. Candidates receiving internship will be required to submit declaration of their availability to complete the entire duration of internship duly signed by a competent authority at their University. Internship offer will be subjected to successful submission of the declaration.
 
-Student Researcher projects are exploratory and direct experiences that drive scientific advancement across a multitude of research areas. Students will work collaboratively on projects that explore innovative research challenges and support the creation of breakthrough technologies.
+Key job responsibilities
+• Collaborate with experienced cross-disciplinary Amazonians to conceive, design, and bring innovative products and services to market.
+• Design and build innovative technologies in a large distributed computing environment, and help lead fundamental changes in the industry.
+• Create solutions to run predictions on distributed systems with exposure to innovative
+technologies at incredible scale and speed.
+• Build distributed storage, index, and query systems that are scalable, fault-tolerant, low cost, and easy to manage/use.
+• Ability to design and code the right solutions starting with broadly defined problems.
+• Work in an agile environment to deliver high-quality software.
 
-The Student Researcher Program fosters academic collaborations by hiring students onto research projects aligned to company priorities in scientific advancement. The program offers placements on teams across Google, for research, engineering, and science roles. As a Student Researcher, you will have the opportunity to participate in research projects focused on developing solutions for real-world, large-scale problems.
+Basic Qualifications
+- Knowledge of computer science fundamentals such as object-oriented design, operating systems, algorithms, data structures, and complexity analysis
+- Knowledge of programming languages such as C/C++, Python, Java or Perl
+- Currently enrolled in a Bachelor’s or Master’s Degree in Computer Science, Computer Engineering, or related field at time of application -Year of Graduation 2027
 
-The program is open to students enrolled in a Bachelor's, Master's, or PhD program. Projects vary in duration and location based on team and student requirements. It is required that you are located in one of the specific country locations identified for this role for the full duration of the engagement. When you apply, you will be considered for Student Researcher positions across all of Google's research teams - including Google DeepMind, Google Research, Google Cloud and more. This allows us to find the right project match for your skills and interests.
+Preferred Qualifications
+- Previous technical internship(s).
+- Experience with distributed, multi-tiered systems, algorithms, and relational databases.
+- Experience in optimization mathematics such as linear programming and nonlinear optimization.
+- Effectively articulate technical challenges and solutions.
+- Adept at handling ambiguous or undefined problems as well as ability to think abstractly.
 
-Responsibilities
-Participate in research to develop solutions for real-world, large-scale problems.
