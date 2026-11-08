@@ -212,6 +212,13 @@ class Handler(BaseHTTPRequestHandler):
                 "has_key": bool(api_key()),
                 "pdflatex": bool(shutil.which("pdflatex")),
             })
+        if self.path.startswith("/api/tex"):
+            from urllib.parse import urlparse, parse_qs
+            rel = parse_qs(urlparse(self.path).query).get("file", ["main.tex"])[0]
+            path = os.path.realpath(os.path.join(APP_DIR, rel))
+            if not path.startswith(os.path.realpath(APP_DIR)) or not path.endswith(".tex") or not os.path.exists(path):
+                return self._send(404, {"error": "file not found"})
+            return self._send(200, {"file": rel, "tex": read(path)})
         if self.path == "/api/ping":
             return self._send(200, {"ok": True})
         if self.path.startswith("/api/job/"):
