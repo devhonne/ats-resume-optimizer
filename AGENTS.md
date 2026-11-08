@@ -65,4 +65,4 @@ facts and rules. Keep it under 300 words.
 It only checks a fixed keyword list (`MASTER_TECH_LIST`), so step 3 (your own JD analysis) is required.
 
 ## GUI
-`python resume_studio.py` (or double-click `Resume Studio.bat`) runs the same pipeline in a desktop app.
+`python resume_studio.py` (or double-click `Resume Studio.bat`) runs the same pipeline in a local web app. It uses Google Gemini (key in gitignored `studio_config.json`) for AI keyword extraction and auto-tailoring; `gemini.py` is the client.

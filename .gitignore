@@ -4,3 +4,4 @@ __pycache__/
 *.out
 studio_config.json
 resumes/*.pdf
+studio_cache.json

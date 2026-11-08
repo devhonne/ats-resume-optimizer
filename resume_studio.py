@@ -3,7 +3,13 @@
 Run:  python resume_studio.py      (or double-click "Resume Studio.bat")
 Opens in its own Edge app window (falls back to the default browser).
 Only listens on 127.0.0.1. Shuts itself down ~30 s after the window is closed.
+
+AI: Google Gemini (key in Settings, stored in gitignored studio_config.json).
+ - Smarter scoring: Gemini extracts must-have / nice-to-have keywords from the JD (cached per JD).
+ - Auto-tailor: Gemini rewrites main.tex for the JD.
+Without a key everything still works: built-in keyword scoring + copy-prompt for Claude/ChatGPT.
 """
+import hashlib
 import json
 import os
 import re
@@ -16,19 +22,22 @@ import time
 import uuid
 import webbrowser
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
+from urllib.parse import urlparse, parse_qs
 
 import ats_checker
+import gemini
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 UI_FILE = os.path.join(APP_DIR, "studio", "index.html")
 RESUMES_DIR = os.path.join(APP_DIR, "resumes")
 MASTER = os.path.join(APP_DIR, "main.tex")
 JD_FILE = os.path.join(APP_DIR, "job_description.txt")
-CONFIG = os.path.join(APP_DIR, "studio_config.json")   # gitignored, holds the API key
-MODEL = "claude-opus-5-5"
+CONFIG = os.path.join(APP_DIR, "studio_config.json")   # gitignored: API key + model
+CACHE = os.path.join(APP_DIR, "studio_cache.json")     # gitignored: AI keywords per JD
 
-JOBS = {}                 # job_id -> {"state", "chars", "result", "error"}
+JOBS = {}
 LAST_PING = [time.time()]
+CACHE_LOCK = threading.Lock()
 
 
 # ---------------------------------------------------------------- helpers
@@ -37,20 +46,28 @@ def read(path):
         return f.read()
 
 
-def load_config():
+def load_json(path):
     try:
-        return json.loads(read(CONFIG))
+        return json.loads(read(path))
     except Exception:
         return {}
 
 
-def save_config(cfg):
-    with open(CONFIG, "w", encoding="utf-8") as f:
-        json.dump(cfg, f, indent=2)
+def save_json(path, data):
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
 
 
-def api_key():
-    return load_config().get("api_key") or os.environ.get("ANTHROPIC_API_KEY")
+def cfg():
+    return load_json(CONFIG)
+
+
+def gemini_key():
+    return cfg().get("gemini_key") or os.environ.get("GEMINI_API_KEY")
+
+
+def gemini_model():
+    return cfg().get("gemini_model") or gemini.MODELS[0]
 
 
 def slug(text):
@@ -66,10 +83,34 @@ def header_jd(jd, company, role):
     return extra + jd
 
 
+def ai_keywords(jd):
+    """Gemini-extracted keywords for this JD, cached so before/after scores use the same set.
+    Returns (keywords_or_None, error_or_None)."""
+    key = gemini_key()
+    if not key:
+        return None, None
+    h = hashlib.sha256(jd.strip().encode()).hexdigest()[:16]
+    with CACHE_LOCK:
+        cache = load_json(CACHE)
+        if h in cache:
+            return cache[h], None
+    try:
+        kw = gemini.extract_keywords(key, jd, model=gemini_model())
+    except Exception as e:
+        return None, str(e)
+    with CACHE_LOCK:
+        cache = load_json(CACHE)
+        cache[h] = kw
+        save_json(CACHE, dict(list(cache.items())[-50:]))   # keep the last 50 JDs
+    return kw, None
+
+
 def build_prompts(resume_tex, jd, company, role, missing):
     """System + user prompt. Rules come from AGENTS.md so there is one source of truth."""
     agents = os.path.join(APP_DIR, "AGENTS.md")
     rules = read(agents) if os.path.exists(agents) else ""
+    must = [m["k"] for m in missing if m["p"] == "required"]
+    other = [m["k"] for m in missing if m["p"] != "required"]
     system = (
         "You tailor Devi Sree Honne's LaTeX resume to a job description so it passes ATS "
         "keyword screening and reads well to a recruiter. Follow these project rules exactly, "
@@ -87,14 +128,18 @@ Role: {role or "(see JD)"}
 {jd}
 </job_description>
 
-The keyword scanner reports these JD keywords as missing from the master resume:
-{", ".join(missing) if missing else "(none)"}
-Include a missing keyword only where the master resume gives honest evidence for it.
+The ATS scanner says these JD keywords are missing from the master resume:
+- Must-have: {", ".join(must) if must else "(none)"}
+- Other: {", ".join(other) if other else "(none)"}
+Include a missing keyword only where the master resume gives honest evidence for it
+(e.g. use the JD's exact wording for a skill Honne already shows). Otherwise list it as a gap.
+
+Also keep: a summary, skills, projects, experience, education, contact links, and the existing
+numbers/metrics (they raise the ATS score). One page.
 
 Return exactly two parts:
 <resume>
-...the complete tailored LaTeX document, from \\documentclass to \\end{{document}}, one page,
-same template and packages...
+...the complete tailored LaTeX document, from \\documentclass to \\end{{document}}, same template and packages...
 </resume>
 <notes>
 - Keywords added and where
@@ -107,17 +152,24 @@ def extract_parts(text):
     m = re.search(r"<resume>\s*(.*?)\s*</resume>", text, re.S)
     tex = m.group(1) if m else text
     tex = re.sub(r"^```(?:latex|tex)?\s*|\s*```$", "", tex.strip())
+    if "\\documentclass" in tex and not tex.lstrip().startswith("\\documentclass"):
+        tex = tex[tex.index("\\documentclass"):]
+    if "\\end{document}" in tex:
+        tex = tex[:tex.index("\\end{document}") + len("\\end{document}")] + "\n"
     n = re.search(r"<notes>\s*(.*?)\s*</notes>", text, re.S)
     return tex, (n.group(1).strip() if n else "")
 
 
 # ---------------------------------------------------------------- actions
-def do_scan(resume, jd, company, role):
+def do_scan(resume, jd, company, role, save_jd=True):
     jd_full = header_jd(jd, company, role)
-    with open(JD_FILE, "w", encoding="utf-8") as f:
-        f.write(jd_full)
-    r = ats_checker.scan(resume or "main.tex", jd_full)
+    if save_jd:
+        with open(JD_FILE, "w", encoding="utf-8") as f:
+            f.write(jd_full)
+    kw, err = ai_keywords(jd)
+    r = ats_checker.scan(resume or "main.tex", jd_full, kw)
     r["resume"] = os.path.relpath(r.pop("resume_path"), APP_DIR).replace("\\", "/")
+    r["ai_error"] = err
     return r
 
 
@@ -130,55 +182,26 @@ def make_prompt(jd, company, role):
 
 def save_tailored(reply, jd, company, role, before):
     tex, notes = extract_parts(reply)
-    if "\\documentclass" not in tex:
-        raise ValueError("That reply doesn't contain a LaTeX resume (no \\documentclass).")
+    if "\\documentclass" not in tex or "\\end{document}" not in tex:
+        raise ValueError("That reply doesn't contain a complete LaTeX resume "
+                         "(needs \\documentclass … \\end{document}).")
     os.makedirs(RESUMES_DIR, exist_ok=True)
     rel = f"resumes/{slug(company or 'company')}_{slug(role or 'role')}.tex"
     with open(os.path.join(APP_DIR, rel), "w", encoding="utf-8") as f:
         f.write(tex)
     r = do_scan(rel, jd, company, role)
-    r.update({"before": before, "notes": notes, "tex": tex, "file": rel})
+    r.update({"before": before, "notes": notes, "file": rel})
     return r
 
 
 def tailor_job(job_id, jd, company, role):
     job = JOBS[job_id]
     try:
-        import anthropic
-    except ImportError:
-        job.update(state="error", error="The 'anthropic' package is missing. Run: pip install anthropic")
-        return
-    try:
         base, system, user = make_prompt(jd, company, role)
         company, role = company or base["company"], role or base["role"]
-        client = anthropic.Anthropic(api_key=api_key())
-        with client.beta.messages.stream(
-            model=MODEL,
-            max_tokens=64000,
-            output_config={"effort": "high"},
-            betas=["server-side-fallback-2026-07-01"],
-            fallbacks="default",
-            system=system,
-            messages=[{"role": "user", "content": user}],
-        ) as stream:
-            job["state"] = "writing"
-            for text in stream.text_stream:
-                job["chars"] += len(text)
-            msg = stream.get_final_message()
-        if msg.stop_reason == "refusal":
-            raise RuntimeError("Claude declined this request. Try the free Copy-prompt option.")
-        if msg.stop_reason == "max_tokens":
-            raise RuntimeError("The response was cut off. Please try again.")
-        reply = "".join(b.text for b in msg.content if b.type == "text")
+        job["state"] = "writing"
+        reply = gemini.generate(gemini_key(), system, user, model=gemini_model(), timeout=240)
         job.update(state="done", result=save_tailored(reply, jd, company, role, base["score"]))
-    except anthropic.AuthenticationError:
-        job.update(state="error", error="Invalid API key. Check Settings.")
-    except anthropic.RateLimitError:
-        job.update(state="error", error="Rate limited. Wait a minute and retry.")
-    except anthropic.APIConnectionError:
-        job.update(state="error", error="Network error. Check your internet connection.")
-    except anthropic.APIStatusError as e:
-        job.update(state="error", error=f"API error {e.status_code}: {e.message}")
     except Exception as e:
         job.update(state="error", error=str(e))
 
@@ -203,26 +226,28 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         LAST_PING[0] = time.time()
-        if self.path in ("/", "/index.html"):
+        path = urlparse(self.path).path
+        if path in ("/", "/index.html"):
             return self._send(200, read(UI_FILE).encode(), "text/html; charset=utf-8")
-        if self.path == "/api/init":
+        if path == "/api/init":
             return self._send(200, {
                 "resumes": ats_checker.get_resume_files(),
                 "jd": read(JD_FILE) if os.path.exists(JD_FILE) else "",
-                "has_key": bool(api_key()),
+                "has_key": bool(gemini_key()),
+                "model": gemini_model(),
+                "models": gemini.MODELS,
                 "pdflatex": bool(shutil.which("pdflatex")),
             })
-        if self.path.startswith("/api/tex"):
-            from urllib.parse import urlparse, parse_qs
+        if path == "/api/tex":
             rel = parse_qs(urlparse(self.path).query).get("file", ["main.tex"])[0]
-            path = os.path.realpath(os.path.join(APP_DIR, rel))
-            if not path.startswith(os.path.realpath(APP_DIR)) or not path.endswith(".tex") or not os.path.exists(path):
+            full = os.path.realpath(os.path.join(APP_DIR, rel))
+            if not full.startswith(os.path.realpath(APP_DIR)) or not full.endswith(".tex") or not os.path.exists(full):
                 return self._send(404, {"error": "file not found"})
-            return self._send(200, {"file": rel, "tex": read(path)})
-        if self.path == "/api/ping":
+            return self._send(200, {"file": rel, "tex": read(full)})
+        if path == "/api/ping":
             return self._send(200, {"ok": True})
-        if self.path.startswith("/api/job/"):
-            job = JOBS.get(self.path.rsplit("/", 1)[-1])
+        if path.startswith("/api/job/"):
+            job = JOBS.get(path.rsplit("/", 1)[-1])
             return self._send(200 if job else 404, job or {"error": "no such job"})
         self._send(404, {"error": "not found"})
 
@@ -237,10 +262,10 @@ class Handler(BaseHTTPRequestHandler):
                 _, system, user = make_prompt(jd, company, role)
                 return self._send(200, {"prompt": system + "\n\n---\n\n" + user})
             if self.path == "/api/tailor":
-                if not api_key():
+                if not gemini_key():
                     return self._send(400, {"error": "no_key"})
                 job_id = uuid.uuid4().hex[:10]
-                JOBS[job_id] = {"state": "thinking", "chars": 0, "result": None, "error": None}
+                JOBS[job_id] = {"state": "thinking", "result": None, "error": None, "started": time.time()}
                 threading.Thread(target=tailor_job, args=(job_id, jd, company, role), daemon=True).start()
                 return self._send(200, {"job": job_id})
             if self.path == "/api/save_result":
@@ -248,19 +273,22 @@ class Handler(BaseHTTPRequestHandler):
                 company, role = company or before["company"], role or before["role"]
                 return self._send(200, save_tailored(b.get("reply", ""), jd, company, role, before["score"]))
             if self.path == "/api/settings":
-                cfg = load_config()
-                cfg["api_key"] = b.get("api_key", "").strip()
-                save_config(cfg)
-                return self._send(200, {"has_key": bool(cfg["api_key"])})
+                c = cfg()
+                if "gemini_key" in b:
+                    c["gemini_key"] = b["gemini_key"].strip()
+                if b.get("gemini_model"):
+                    c["gemini_model"] = b["gemini_model"]
+                save_json(CONFIG, c)
+                return self._send(200, {"has_key": bool(c.get("gemini_key")), "model": gemini_model()})
             if self.path == "/api/open_folder":
                 os.makedirs(RESUMES_DIR, exist_ok=True)
                 os.startfile(RESUMES_DIR)
                 return self._send(200, {"ok": True})
             if self.path == "/api/compile":
-                path = os.path.join(APP_DIR, b.get("file", ""))
+                full = os.path.join(APP_DIR, b.get("file", ""))
                 subprocess.run(["pdflatex", "-interaction=nonstopmode", "-output-directory",
-                                RESUMES_DIR, path], capture_output=True, text=True)
-                pdf = path[:-4] + ".pdf"
+                                RESUMES_DIR, full], capture_output=True, text=True)
+                pdf = full[:-4] + ".pdf"
                 if not os.path.exists(pdf):
                     return self._send(500, {"error": "pdflatex failed"})
                 os.startfile(pdf)
@@ -277,13 +305,10 @@ def free_port():
 
 
 def open_window(url):
-    edge_paths = [
-        os.path.expandvars(r"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"),
-        os.path.expandvars(r"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe"),
-    ]
-    for p in edge_paths:
+    for p in (os.path.expandvars(r"%ProgramFiles(x86)%\Microsoft\Edge\Application\msedge.exe"),
+              os.path.expandvars(r"%ProgramFiles%\Microsoft\Edge\Application\msedge.exe")):
         if os.path.exists(p):
-            subprocess.Popen([p, f"--app={url}", "--window-size=1280,820"])
+            subprocess.Popen([p, f"--app={url}", "--window-size=1400,900"])
             return
     webbrowser.open(url)
 
