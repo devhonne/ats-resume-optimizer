@@ -72,9 +72,9 @@ INSTRUCTIONS FOR AI AGENT (sta_manager)
 - Active Profile: Use "honne" (Devi Sree Honne) for all ATS evaluations, cover letter
   generations, and application tailoring unless explicitly instructed otherwise.
 - Canonical Files:
-  * JSON Profile: resume_honne.json
-  * LaTeX Resume: resume_honne.tex
-- ATS Scanner Target: When running ats_checker.py, evaluate resume_honne.json against
-  job_description.txt and recommend keyword alignment for AI, ML, Data, and Software roles.
+  * Master resume (source of truth): main.tex
+  * Older derived copies: resume_honne.json, resume_honne.tex
+  * Tailored outputs: resumes/<company>_<role>.tex
+- Full workflow and truthfulness rules: see AGENTS.md
 ================================================================================
 
