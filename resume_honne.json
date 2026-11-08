@@ -1,0 +1,214 @@
+{
+  "personal_info": {
+    "name": "Devi Sree Honne",
+    "title": "Software Development | AI/ML | Python | Java | SQL",
+    "phone": "",
+    "email": "devisreehonne@gmail.com",
+    "location": "Hyderabad, India",
+    "portfolio": "",
+    "github": "https://github.com/devhonne",
+    "linkedin": "https://www.linkedin.com/in/devisreehonne/"
+  },
+  "summary": "Computer Science undergraduate specializing in Artificial Intelligence and Machine Learning, with hands-on experience in software development, AI applications, data automation, and technical troubleshooting. Proficient in Python, Java, SQL, REST APIs, and database technologies, with practical experience in Docker, Apache Airflow, and PostgreSQL. Skilled in Microsoft Excel, PowerPoint, technical documentation, and participant coordination.",
+  "education": [
+    {
+      "degree": "B.Tech in Computer Science and Engineering (AI & ML)",
+      "institute": "SRM University AP",
+      "score": "8.14/10 CGPA",
+      "year": "2023 - 2027"
+    },
+    {
+      "degree": "Intermediate",
+      "institute": "Narayana Junior College, Tirupati",
+      "score": "97.8%",
+      "year": "2021 - 2023"
+    },
+    {
+      "degree": "Secondary School Certificate (SSC)",
+      "institute": "Z.P. High School, Gangavaram",
+      "score": "94.83%",
+      "year": "2020 - 2021"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Research Intern -- Automatic Number Plate Recognition",
+      "organization": "SRM University AP",
+      "date": "Aug 2025 - Dec 2025",
+      "description": [
+        "Worked on vehicle number plate recognition from traffic footage using computer vision, deep learning, and OCR.",
+        "Investigated recognition errors across varying image and video conditions to optimize accuracy."
+      ],
+      "keywords": [
+        "Computer Vision",
+        "Deep Learning",
+        "OCR",
+        "Machine Learning",
+        "Image Processing",
+        "Python",
+        "Error Analysis"
+      ]
+    },
+    {
+      "role": "Summer Research Intern -- TinyML Pest Detection",
+      "organization": "SRM University AP",
+      "date": "May 2025 - Jul 2025",
+      "description": [
+        "Developed lightweight pest image classification models for resource-constrained hardware using Arduino Nano 33 BLE and camera modules.",
+        "Co-authored a published patent application based on edge-AI pest detection innovations."
+      ],
+      "keywords": [
+        "TinyML",
+        "Machine Learning",
+        "Edge AI",
+        "Deep Learning",
+        "Computer Vision",
+        "Embedded Systems",
+        "Python"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "title": "E-Commerce Data Pipeline",
+      "type": "Data Engineering & Automation",
+      "github": "https://github.com/devhonne",
+      "description": [
+        "Developed an automated ETL pipeline using Apache Airflow, Docker, and PostgreSQL, processing 10,000 fact-sales records alongside customer, product, and date dimension tables.",
+        "Troubleshot dependency compatibility issues by analyzing error logs and configuring compatible SQLAlchemy versions."
+      ],
+      "stack": ["Python", "SQL", "Apache Airflow", "Docker", "PostgreSQL", "ETL"],
+      "keywords": [
+        "Python",
+        "SQL",
+        "Apache Airflow",
+        "Docker",
+        "PostgreSQL",
+        "ETL",
+        "Database",
+        "Data Automation",
+        "Data Engineering"
+      ]
+    },
+    {
+      "title": "Campus Event Management System",
+      "type": "Full-Stack Web Development",
+      "github": "https://github.com/devhonne",
+      "description": [
+        "Developed a full-stack web application for campus event creation, registration, and management.",
+        "Implemented JWT-based authentication, role-based access control (RBAC), and REST APIs."
+      ],
+      "stack": ["MongoDB", "Express.js", "React.js", "Node.js"],
+      "keywords": [
+        "MongoDB",
+        "Express",
+        "React",
+        "Node.js",
+        "REST API",
+        "JWT",
+        "JavaScript",
+        "Web Development"
+      ]
+    },
+    {
+      "title": "RAG Research Assistant",
+      "type": "AI & Natural Language Processing",
+      "github": "https://github.com/devhonne",
+      "description": [
+        "Developed a research-paper question-answering application using Retrieval-Augmented Generation (RAG), PDF extraction, page-aware chunking, and semantic retrieval.",
+        "Implemented local embeddings and cosine similarity retrieval to generate context-grounded responses with source citations.",
+        "Built an evaluation dataset of 40 questions and achieved 88% Retrieval Hit Rate@5."
+      ],
+      "stack": ["Python", "FastAPI", "Hugging Face", "Groq API"],
+      "keywords": [
+        "Python",
+        "FastAPI",
+        "RAG",
+        "LLM",
+        "Natural Language Processing",
+        "NLP",
+        "Machine Learning",
+        "Deep Learning",
+        "Generative AI",
+        "AI"
+      ]
+    },
+    {
+      "title": "Text-to-SQL Analyst",
+      "type": "Generative AI & Data Analytics",
+      "github": "https://github.com/devhonne",
+      "description": [
+        "Developed a Generative AI workflow converting natural-language questions into SQL queries for structured data analysis.",
+        "Implemented automated query generation, validation, and retrieval from relational databases."
+      ],
+      "stack": ["Python", "SQL", "Generative AI"],
+      "keywords": [
+        "Python",
+        "SQL",
+        "Generative AI",
+        "LLM",
+        "AI",
+        "Data Science",
+        "Data Structures"
+      ]
+    }
+  ],
+  "skills": {
+    "programming_languages": ["Python", "Java", "SQL", "C++", "JavaScript"],
+    "software_development": ["REST API", "FastAPI", "Node.js", "Express", "React", "JWT"],
+    "ai_and_ml": [
+      "Machine Learning",
+      "Deep Learning",
+      "Generative AI",
+      "RAG",
+      "LLM",
+      "Computer Vision",
+      "Natural Language Processing",
+      "OCR"
+    ],
+    "databases": ["PostgreSQL", "MongoDB", "SQL"],
+    "automation_and_tools": [
+      "Apache Airflow",
+      "Docker",
+      "Git",
+      "GitHub",
+      "Maven",
+      "ETL",
+      "Linux"
+    ],
+    "technical_and_office": [
+      "Debugging",
+      "Error Analysis",
+      "API Integration",
+      "Technical Documentation",
+      "Microsoft Excel",
+      "Microsoft PowerPoint"
+    ]
+  },
+  "patents": [
+    {
+      "title": "TinyML-Based Pest Detection System",
+      "status": "Published Patent Application",
+      "number": "IN-202641108206",
+      "description": "Published patent application for lightweight pest image classification on edge microcontrollers."
+    }
+  ],
+  "certifications": [
+    {
+      "title": "Oracle Certified Professional: Java SE 17 Developer",
+      "issuer": "Oracle"
+    },
+    {
+      "title": "MongoDB Developer Learning Path",
+      "issuer": "MongoDB"
+    }
+  ],
+  "leadership_and_coordination": [
+    {
+      "title": "Qiskit Fall Fest 2026 -- Registration Coordinator",
+      "organization": "SRM University AP",
+      "description": "Managed participant registrations, maintained records, and coordinated communication throughout the quantum computing fest."
+    }
+  ],
+  "languages": ["English", "Telugu"]
+}

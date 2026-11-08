@@ -1,0 +1,80 @@
+================================================================================
+AGENT RECOGNITION FILE: CANDIDATE PROFILE & BRANCH IDENTIFIER
+================================================================================
+
+BRANCH NAME / IDENTIFIER: honne
+CANDIDATE FULL NAME     : Devi Sree Honne
+EMAIL                   : devisreehonne@gmail.com
+LINKEDIN                : https://www.linkedin.com/in/devisreehonne/
+GITHUB                  : https://github.com/devhonne
+LOCATION / PREFERENCE   : Hyderabad, India (Open to relocation / immediate joining)
+
+--------------------------------------------------------------------------------
+ACADEMIC BACKGROUND
+--------------------------------------------------------------------------------
+- Degree     : B.Tech in Computer Science and Engineering (Specialization: AI & ML)
+- Institution: SRM University AP (2023 – 2027)
+- CGPA       : 8.14 / 10
+- High School: Narayana Junior College, Tirupati (2021 – 2023) — 97.8%
+- Secondary  : Z.P. High School, Gangavaram (2020 – 2021) — 94.83%
+
+--------------------------------------------------------------------------------
+PATENT
+--------------------------------------------------------------------------------
+- Title             : TinyML-Based Pest Detection System
+- Status            : Published Patent Application
+- Publication/App No: IN-202641108206
+- Focus             : Lightweight pest image classification for resource-constrained
+                      hardware (Arduino Nano 33 BLE, camera modules).
+
+--------------------------------------------------------------------------------
+RESEARCH & INTERNSHIP EXPERIENCE
+--------------------------------------------------------------------------------
+1. Research Intern – Automatic Number Plate Recognition (ANPR)
+   - Duration: Aug 2025 – Dec 2025 | SRM University AP
+   - Scope   : Vehicle license plate recognition from traffic footage using Computer
+               Vision, Deep Learning, and OCR. Error analysis across lighting/weather conditions.
+
+2. Summer Research Intern – TinyML Pest Detection
+   - Duration: May 2025 – Jul 2025 | SRM University AP
+   - Scope   : Edge AI model development for lightweight microcontrollers, leading
+               to published patent application IN-202641108206.
+
+--------------------------------------------------------------------------------
+KEY PROJECTS
+--------------------------------------------------------------------------------
+1. E-Commerce Data Pipeline:
+   - Tech: Python, SQL, Apache Airflow, Docker, PostgreSQL, ETL.
+   - Built automated ETL pipeline handling 10,000+ sales and dimension records.
+
+2. Campus Event Management System:
+   - Tech: React.js, Node.js, Express.js, MongoDB, REST APIs, JWT.
+   - Full-stack web application with role-based access control and event registration.
+
+3. RAG Research Assistant:
+   - Tech: Python, FastAPI, Hugging Face, Groq API, Embeddings, Cosine Similarity.
+   - Document question-answering with citation grounding; 88% Retrieval Hit Rate@5.
+
+4. Text-to-SQL Analyst:
+   - Tech: Python, SQL, Generative AI, LLMs.
+   - Natural language to executable SQL query generation on relational databases.
+
+--------------------------------------------------------------------------------
+CERTIFICATIONS & LEADERSHIP
+--------------------------------------------------------------------------------
+- Oracle Certified Professional: Java SE 17 Developer
+- MongoDB Developer Learning Path
+- Registration Coordinator: Qiskit Fall Fest 2026, SRM University AP
+
+--------------------------------------------------------------------------------
+INSTRUCTIONS FOR AI AGENT (sta_manager)
+--------------------------------------------------------------------------------
+- Active Profile: Use "honne" (Devi Sree Honne) for all ATS evaluations, cover letter
+  generations, and application tailoring unless explicitly instructed otherwise.
+- Canonical Files:
+  * JSON Profile: resume_honne.json
+  * LaTeX Resume: resume_honne.tex
+- ATS Scanner Target: When running ats_checker.py, evaluate resume_honne.json against
+  job_description.txt and recommend keyword alignment for AI, ML, Data, and Software roles.
+================================================================================
+
