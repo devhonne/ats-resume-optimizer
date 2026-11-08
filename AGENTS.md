@@ -63,3 +63,6 @@ facts and rules. Keep it under 300 words.
 ## Scanner
 `python ats_checker.py [resume.tex|resume.json] [jd.txt]`. With no args it shows a menu.
 It only checks a fixed keyword list (`MASTER_TECH_LIST`), so step 3 (your own JD analysis) is required.
+
+## GUI
+`python resume_studio.py` (or double-click `Resume Studio.bat`) runs the same pipeline in a desktop app.

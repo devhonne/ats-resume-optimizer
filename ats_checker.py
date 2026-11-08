@@ -130,24 +130,31 @@ def parse_jd_header(jd_raw):
     return company, role
 
 
-def calculate_ats_score(resume_path, jd_path):
-    resume_path = os.path.join(SCRIPT_DIR, resume_path) if not os.path.isabs(resume_path) else resume_path
-    jd_path = os.path.join(SCRIPT_DIR, jd_path) if not os.path.isabs(jd_path) else jd_path
-    try:
-        name, resume_text = load_resume_text(resume_path)
-        with open(jd_path, 'r', encoding='utf-8') as f:
-            jd_raw = f.read()
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
-
+def scan(resume_path, jd_raw):
+    """Score a resume file against JD text. Returns a dict (used by the GUI)."""
+    if not os.path.isabs(resume_path):
+        resume_path = os.path.join(SCRIPT_DIR, resume_path)
+    name, resume_text = load_resume_text(resume_path)
     jd_text = jd_raw.lower()
     company, role = parse_jd_header(jd_raw)
-
     required = {kw for kw in MASTER_TECH_LIST if kw_regex(kw).search(jd_text)}
     matched = sorted(kw for kw in required if kw_regex(kw).search(resume_text))
     missing = sorted(required - set(matched))
     score = int(len(matched) / len(required) * 100) if required else 0
+    return {"name": name, "resume_path": resume_path, "company": company, "role": role,
+            "score": score, "matched": matched, "missing": missing}
+
+
+def calculate_ats_score(resume_path, jd_path):
+    jd_path = os.path.join(SCRIPT_DIR, jd_path) if not os.path.isabs(jd_path) else jd_path
+    try:
+        with open(jd_path, 'r', encoding='utf-8') as f:
+            r = scan(resume_path, f.read())
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    name, resume_path, company, role = r["name"], r["resume_path"], r["company"], r["role"]
+    score, matched, missing = r["score"], r["matched"], r["missing"]
 
     print("\n" + "=" * 45)
     print(f"   ATS SCANNER: {name.upper()}")

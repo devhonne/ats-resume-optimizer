@@ -2,3 +2,5 @@ __pycache__/
 *.aux
 *.log
 *.out
+studio_config.json
+resumes/*.pdf
