@@ -1,8 +1,5 @@
-Company: amazon
-Job Title: SDE 1
-SDE I Intern , Amazon University Talent Acquisition
-Job ID: 10508052 | ADCI - Karnataka
-Description
+Company: Amazon
+Job Title: SDE I Intern , Amazon University Talent Acquisition
 Software Development Engineer 6 months Internship – 2027 (In-Person)
 
 Introduction
@@ -17,13 +14,12 @@ Amazon internships are full-time (40 hours/week) for 24 - 26 consecutive weeks (
 Please note that Amazon internships require full-time commitment during the duration of the internship. During the course of internship, interns should not have any conflicts including but not limited to academic projects, classes or other internships/employment. Any exam related details must be shared with the hiring manager to plan for absence during those days. Specific team norms around working hours will be communicated by the hiring/ reporting manager at the time of commencement of internship. Candidates receiving internship will be required to submit declaration of their availability to complete the entire duration of internship duly signed by a competent authority at their University. Internship offer will be subjected to successful submission of the declaration.
 
 Key job responsibilities
-• Collaborate with experienced cross-disciplinary Amazonians to conceive, design, and bring innovative products and services to market.
-• Design and build innovative technologies in a large distributed computing environment, and help lead fundamental changes in the industry.
-• Create solutions to run predictions on distributed systems with exposure to innovative
-technologies at incredible scale and speed.
-• Build distributed storage, index, and query systems that are scalable, fault-tolerant, low cost, and easy to manage/use.
-• Ability to design and code the right solutions starting with broadly defined problems.
-• Work in an agile environment to deliver high-quality software.
+- Collaborate with experienced cross-disciplinary Amazonians to conceive, design, and bring innovative products and services to market.
+- Design and build innovative technologies in a large distributed computing environment, and help lead fundamental changes in the industry.
+- Create solutions to run predictions on distributed systems with exposure to innovative technologies at incredible scale and speed.
+- Build distributed storage, index, and query systems that are scalable, fault-tolerant, low cost, and easy to manage/use.
+- Ability to design and code the right solutions starting with broadly defined problems.
+- Work in an agile environment to deliver high-quality software.
 
 Basic Qualifications
 - Knowledge of computer science fundamentals such as object-oriented design, operating systems, algorithms, data structures, and complexity analysis
@@ -37,3 +33,4 @@ Preferred Qualifications
 - Effectively articulate technical challenges and solutions.
 - Adept at handling ambiguous or undefined problems as well as ability to think abstractly.
 
+Our inclusive culture empowers Amazonians to deliver the best results for our customers. If you have a disability and need a workplace accommodation or adjustment during the application and hiring process, including support for the interview or onboarding process, please visit https://amazon.jobs/content/en/how-we-hire/accommodations for more information. If the country/region you’re applying in isn’t listed, please contact your Recruiting Partner.
