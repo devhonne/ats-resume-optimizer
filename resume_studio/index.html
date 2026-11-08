@@ -51,13 +51,6 @@
 *{box-sizing:border-box}
 html{background:var(--paper)}
 body{margin:0;min-height:100vh;color:var(--ink);font:15px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-/* background painting + mist */
-.scene{position:fixed;inset:0;z-index:-2;background:url("/assets/theme.jpg") center left/cover no-repeat;filter:var(--bg-filter)}
-.veil{position:fixed;inset:0;z-index:-1;background:var(--bg-veil);pointer-events:none}
-.mist{position:fixed;left:-20%;right:-20%;bottom:-10%;height:45%;z-index:-1;pointer-events:none;opacity:.55;
-  background:radial-gradient(40% 60% at 20% 70%,var(--paper) 0%,transparent 70%),radial-gradient(35% 50% at 70% 80%,var(--paper) 0%,transparent 70%);
-  filter:blur(30px);animation:drift 40s ease-in-out infinite alternate}
-@keyframes drift{to{transform:translateX(8%)}}
 
 h1,h2,h3{font-family:var(--serif);letter-spacing:.01em;margin:0;color:var(--ink)}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -298,13 +291,61 @@ ul.list small{opacity:.8;font-size:11.5px;text-transform:uppercase;letter-spacin
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .chip{opacity:1;transform:none}
 }
+
+/* ============ no background image: paper + soft ink/sun washes behind the glass ============ */
+.wash{position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:
+    radial-gradient(42vw 42vw at 12% 18%,color-mix(in srgb,var(--sun) 16%,transparent) 0%,transparent 70%),
+    radial-gradient(50vw 40vw at 88% 85%,color-mix(in srgb,var(--ink) 9%,transparent) 0%,transparent 70%),
+    linear-gradient(180deg,var(--paper),var(--paper-2))}
+.logo{width:38px;height:38px;border-radius:11px;flex:none;object-fit:cover;box-shadow:0 1px 3px rgba(28,25,21,.18),inset 0 0 0 1px rgba(28,25,21,.08)}
+a.btn{text-decoration:none}
+.master{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap}
+.master label{flex:1 1 240px}
+.pts{position:absolute;right:-6px;top:-6px;font-weight:800;font-size:15px;color:var(--good);background:var(--card-solid);border:1px solid color-mix(in srgb,var(--good) 40%,transparent);
+  padding:2px 9px;border-radius:999px;box-shadow:0 4px 14px rgba(47,107,79,.25);animation:ptsUp 1.6s ease-out forwards;pointer-events:none}
+@keyframes ptsUp{0%{opacity:0;transform:translateY(8px) scale(.8)}15%{opacity:1;transform:translateY(0) scale(1.08)}70%{opacity:1}100%{opacity:0;transform:translateY(-22px)}}
+.gauge{position:relative}
+.gauge.bump .enso{animation:bump .6s ease}
+@keyframes bump{40%{transform:scale(1.08)}}
+.working{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px;border-radius:14px;background:var(--field);border:1px solid var(--line);font-size:13.5px}
+.working .sp{flex:1}
+.working b.sc{font-family:var(--serif);font-size:18px}
+.sugs{display:flex;flex-direction:column;gap:10px}
+.sug{border:1px solid var(--line);border-radius:16px;background:var(--card-solid);padding:14px;display:flex;flex-direction:column;gap:8px;transition:opacity .3s,transform .3s}
+.sug.leaving{opacity:0;transform:translateX(16px)}
+.sug.consent{border-color:color-mix(in srgb,var(--warn) 45%,transparent)}
+.sug .top{display:flex;gap:10px;align-items:flex-start}
+.sug .top b{flex:1;font-size:14.5px}
+.gain{font-weight:800;font-size:14px;color:var(--good);background:var(--good-soft);padding:2px 10px;border-radius:999px;white-space:nowrap}
+.gain.zero{color:var(--muted);background:var(--field)}
+.tagt{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--field);color:var(--muted);border:1px solid var(--line)}
+.tagt.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.sug p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.sug .ev{font-size:12.5px;color:var(--good)}
+.mini{font:12px/1.5 var(--mono);border-radius:10px;overflow:auto;border:1px solid var(--line);max-height:180px}
+.mini div{padding:4px 10px 4px 26px;white-space:pre-wrap;word-break:break-word;position:relative}
+.mini .del{background:var(--bad-soft);color:var(--bad)}
+.mini .add{background:var(--good-soft);color:var(--good)}
+.mini div::before{position:absolute;left:9px}
+.mini .del::before{content:"−"}.mini .add::before{content:"+"}
+.consentbox{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--warn);background:var(--warn-soft);padding:8px 10px;border-radius:10px}
+.consentbox input{width:18px;height:18px;margin-top:2px;flex:none;accent-color:var(--sun)}
+.grp{font-size:12.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:6px}
+details.more summary{cursor:pointer;font-weight:600;list-style:none;display:flex;align-items:center;gap:8px;min-height:36px}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::before{content:"";width:7px;height:7px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:rotate(-45deg);transition:transform .2s}
+details.more[open] summary::before{transform:rotate(45deg)}
+.lk{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;font-size:13.5px;border:1px solid var(--line);background:var(--card-solid)}
+.lk .dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:none}
+.lk a{color:var(--ink);word-break:break-all}
+.lk small{display:block;color:var(--muted)}
+.lklist{display:flex;flex-direction:column;gap:8px;padding:14px}
 </style>
 </head>
 <body>
+
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <filter id="brushy"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3.2"/></filter>
-  </defs>
   <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></symbol>
   <symbol id="i-paste" viewBox="0 0 24 24"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
@@ -318,20 +359,23 @@ ul.list small{opacity:.8;font-size:11.5px;text-transform:uppercase;letter-spacin
   <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
   <symbol id="i-zap" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
   <symbol id="i-inbox" viewBox="0 0 24 24"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 21V9m0 0-4 4m4-4 4 4"/><path d="M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2"/></symbol>
   <symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-15-6.7L3 13"/></symbol>
+  <symbol id="i-trend" viewBox="0 0 24 24"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></symbol>
 </svg>
 
-<div class="scene" aria-hidden="true"></div><div class="veil" aria-hidden="true"></div><div class="mist" aria-hidden="true"></div>
+<div class="wash" aria-hidden="true"></div>
 
 <nav class="nav glass" aria-label="Resume Studios">
   <div class="brand"><img class="logo" src="/assets/favicon.png" alt=""><b>Resume Studios</b></div>
   <div class="steps glass" role="list" aria-label="Progress">
-    <div class="step on" id="st1" role="listitem"><i>1</i><span>Job</span></div>
-    <div class="step" id="st2" role="listitem"><i>2</i><span>ATS score</span></div>
-    <div class="step" id="st3" role="listitem"><i>3</i><span>Enhance</span></div>
-    <div class="step" id="st4" role="listitem"><i>4</i><span>Review</span></div>
+    <div class="step on" id="st1" role="listitem"><i>1</i><span>Resume</span></div>
+    <div class="step" id="st2" role="listitem"><i>2</i><span>Job</span></div>
+    <div class="step" id="st3" role="listitem"><i>3</i><span>Score</span></div>
+    <div class="step" id="st4" role="listitem"><i>4</i><span>Raise score</span></div>
   </div>
   <div class="navbtns">
     <button class="btn glassbtn sm" id="folderBtn"><svg class="i"><use href="#i-folder"/></svg><span class="lbl">Resumes</span></button>
@@ -341,49 +385,64 @@ ul.list small{opacity:.8;font-size:11.5px;text-transform:uppercase;letter-spacin
 
 <main>
   <div class="intro">
-    <h1>Match your resume to any job</h1>
-    <p>Paste a job link. Gemini reads it, scores your resume, and helps you surface the skills you already have, without changing who you are.</p>
+    <h1>Raise your ATS score, honestly</h1>
+    <p>Pick your original resume, add the job, and accept suggestions one by one. They use the skills you already have, and anything new needs your OK.</p>
   </div>
 
   <div class="grid">
     <div class="col">
-      <!-- 1 · Job -->
+      <!-- 1 · Original resume -->
       <section class="card now" id="c1" aria-labelledby="h1">
-        <div class="ch"><span class="no">1</span><h2 id="h1">The job</h2><span class="sp"></span>
+        <div class="ch"><span class="no">1</span><h2 id="h1">Your original resume</h2></div>
+        <div class="master">
+          <label class="f">Original (never edited)<select id="masterSel"></select></label>
+          <button class="btn" id="uploadBtn"><svg class="i"><use href="#i-upload"/></svg>Upload .tex / .pdf</button>
+          <button class="btn quiet" id="pasteResBtn"><svg class="i"><use href="#i-paste"/></svg>Paste</button>
+          <input type="file" id="fileIn" accept=".tex,.pdf,.docx,.txt" hidden>
+        </div>
+        <div class="source" id="masterNote" hidden><svg class="i"><use href="#i-check"/></svg><span></span></div>
+        <div class="row" style="align-items:center">
+          <button class="btn sm" id="linksBtn"><svg class="i"><use href="#i-link"/></svg>Check links</button>
+          <span class="help">Checks your GitHub, project and profile links: working, redirecting or broken.</span>
+        </div>
+      </section>
+
+      <!-- 2 · Job -->
+      <section class="card locked" id="c2" aria-labelledby="h2">
+        <div class="ch"><span class="no">2</span><h2 id="h2">The job</h2><span class="sp"></span>
           <div class="seg glass" role="group" aria-label="How to add the job">
             <button id="modeLink" aria-pressed="true"><svg class="i"><use href="#i-link"/></svg>Job link</button>
             <button id="modePaste" aria-pressed="false"><svg class="i"><use href="#i-paste"/></svg>Paste text</button>
           </div>
         </div>
-        <div id="linkMode">
-          <label class="f" for="url">Job posting link</label>
-          <div class="urlrow" style="margin-top:6px">
-            <input id="url" type="url" inputmode="url" placeholder="https://www.amazon.jobs/en/jobs/…  ·  LinkedIn · Naukri · Greenhouse · Lever" autocomplete="off">
-            <button class="btn sun" id="fetchBtn"><svg class="i"><use href="#i-spark"/></svg>Read job</button>
+        <div class="lockable" style="display:flex;flex-direction:column;gap:14px">
+          <div id="linkMode">
+            <label class="f" for="url">Job posting link</label>
+            <div class="urlrow" style="margin-top:6px">
+              <input id="url" type="url" inputmode="url" placeholder="https://… LinkedIn · Naukri · Greenhouse · company careers page" autocomplete="off">
+              <button class="btn sun" id="fetchBtn"><svg class="i"><use href="#i-spark"/></svg>Read job</button>
+            </div>
+            <p class="help" style="margin:6px 0 0">If the page can't be downloaded, Gemini opens the link itself.</p>
           </div>
-          <p class="help" style="margin:6px 0 0">The app downloads the page and Gemini pulls out the full description and qualifications.</p>
-        </div>
-        <div class="source" id="source" hidden><svg class="i"><use href="#i-check"/></svg><span id="sourceText"></span></div>
-        <div class="row">
-          <label class="f">Company<input id="company" placeholder="e.g. Amazon"></label>
-          <label class="f">Role<input id="role" placeholder="e.g. SDE I Intern"></label>
-        </div>
-        <details class="jd" id="jdBox">
-          <summary>Job description <span class="help" id="count">· 0 words</span></summary>
-          <div class="scanbox" id="scanbox">
-            <textarea id="jd" aria-label="Job description" placeholder="The job description appears here after Read job, or paste it yourself."></textarea>
-            <div class="brush" aria-hidden="true"></div>
+          <div class="source" id="source" hidden><svg class="i"><use href="#i-check"/></svg><span id="sourceText"></span></div>
+          <div class="row">
+            <label class="f">Company<input id="company" placeholder="e.g. Amazon"></label>
+            <label class="f">Role<input id="role" placeholder="e.g. SDE I Intern"></label>
           </div>
-        </details>
-        <div class="row" style="align-items:center">
-          <button class="btn ink lg" id="scanBtn"><svg class="i"><use href="#i-search"/></svg><span>Check ATS score</span></button>
-          <button class="btn quiet sm" id="clearBtn">Clear</button>
+          <details class="jd" id="jdBox">
+            <summary>Job description <span class="help" id="count">· 0 words</span></summary>
+            <div class="scanbox" id="scanbox"><textarea id="jd" aria-label="Job description" placeholder="Appears here after Read job, or paste it."></textarea><div class="brush" aria-hidden="true"></div></div>
+          </details>
+          <div class="row" style="align-items:center">
+            <button class="btn ink lg" id="scanBtn"><svg class="i"><use href="#i-search"/></svg><span>Check ATS score</span></button>
+            <button class="btn quiet sm" id="clearBtn">Clear</button>
+          </div>
         </div>
       </section>
 
-      <!-- 2 · Score -->
-      <section class="card locked" id="c2" aria-labelledby="h2" aria-live="polite">
-        <div class="ch"><span class="no">2</span><h2 id="h2">ATS score</h2><span class="sp"></span><span class="badge" id="scoredFile" hidden></span></div>
+      <!-- 3 · Score -->
+      <section class="card locked" id="c3" aria-labelledby="h3" aria-live="polite">
+        <div class="ch"><span class="no">3</span><h2 id="h3">ATS score</h2><span class="sp"></span><span class="badge" id="scoredFile" hidden></span></div>
         <div class="waiting" id="scoreWait">Your scores appear here after <b>Check ATS score</b>.</div>
         <div id="scoreView" hidden style="display:flex;flex-direction:column;gap:18px">
           <div class="gauges">
@@ -398,50 +457,46 @@ ul.list small{opacity:.8;font-size:11.5px;text-transform:uppercase;letter-spacin
               <div><h3>Local match</h3><p>Offline: built-in list of 120+ tech keywords</p><span class="verdict"></span><span class="delta" hidden></span></div>
             </button>
           </div>
-          <div class="sect">
-            <h3>Score breakdown <span class="sp"></span><small id="viewName">Gemini view</small></h3>
-            <div class="bars" id="bars"></div>
-          </div>
-          <div class="sect">
-            <h3>How we matched <span class="sp"></span><small id="howCount"></small></h3>
-            <div class="howwrap"><table class="how"><thead><tr><th>Keyword</th><th>Found in your resume</th></tr></thead><tbody id="howBody"></tbody></table></div>
-          </div>
-          <div class="sect">
-            <h3>Not visible in your resume <span class="sp"></span><small id="missCount"></small></h3>
+          <div class="sect"><h3>Score breakdown <span class="sp"></span><small id="viewName">Gemini view</small></h3><div class="bars" id="bars"></div></div>
+          <div class="sect"><h3>How we matched <span class="sp"></span><small id="howCount"></small></h3>
+            <div class="howwrap"><table class="how"><thead><tr><th>Keyword</th><th>Found in your resume</th></tr></thead><tbody id="howBody"></tbody></table></div></div>
+          <div class="sect"><h3>Not visible in your resume <span class="sp"></span><small id="missCount"></small></h3>
             <div class="chips" id="missChips"></div>
-            <div class="legend"><span style="--c:var(--bad)">Must-have · counts 3×</span><span style="--c:var(--warn)">Nice-to-have · 2×</span><span style="--c:var(--faint)">General tech term · 1×</span></div>
-            <p class="help" style="margin:0">If you truly have one of these, the enhance step uses the job's wording for it. If you don't, it stays a gap and is never added.</p>
-          </div>
+            <div class="legend"><span style="--c:var(--bad)">Must-have · 3×</span><span style="--c:var(--warn)">Nice-to-have · 2×</span><span style="--c:var(--faint)">General · 1×</span></div></div>
         </div>
       </section>
 
-      <!-- 3 · Enhance -->
-      <section class="card locked" id="c3" aria-labelledby="h3">
-        <div class="ch"><span class="no">3</span><h2 id="h3">Enhance your resume</h2></div>
-        <div class="promise"><svg class="i"><use href="#i-shield"/></svg><span>Your skills stay. Tailoring only reorders and rewords what's already in <b>main.tex</b>. Every result is checked, and anything removed is flagged and can be restored.</span></div>
-        <div class="lockable" style="display:flex;flex-direction:column;gap:12px">
-          <ol class="how">
-            <li><b>Copy the prompt.</b> It contains your resume, the job, and the gaps.</li>
-            <li>Paste it into <b>Claude</b> or <b>ChatGPT</b> and send.</li>
-            <li>Copy the whole reply → <b>Paste AI reply</b>. Review it on the right.</li>
-          </ol>
-          <textarea id="prompt" readonly aria-label="Prompt for Claude or ChatGPT" placeholder="Your prompt appears here after the ATS check."></textarea>
-          <div class="row">
-            <button class="btn sun" id="copyPrompt"><svg class="i"><use href="#i-copy"/></svg>Copy prompt</button>
-            <button class="btn" id="openClaude"><svg class="i"><use href="#i-ext"/></svg>Claude</button>
-            <button class="btn" id="openGpt"><svg class="i"><use href="#i-ext"/></svg>ChatGPT</button>
-            <button class="btn" id="pasteBtn"><svg class="i"><use href="#i-inbox"/></svg>Paste AI reply</button>
-          </div>
-          <div class="or">or let Gemini do it here</div>
-          <div class="row" style="align-items:center">
-            <button class="btn ink" id="tailorBtn"><svg class="i"><use href="#i-zap"/></svg>Auto-tailor with Gemini</button>
-            <span class="help" id="keyNote"></span>
-          </div>
+      <!-- 4 · Raise score -->
+      <section class="card locked" id="c4" aria-labelledby="h4">
+        <div class="ch"><span class="no">4</span><h2 id="h4">Raise your score</h2><span class="sp"></span>
+          <button class="btn sun sm lockable" id="sugBtn"><svg class="i"><use href="#i-trend"/></svg>Get suggestions</button></div>
+        <div class="promise"><svg class="i"><use href="#i-shield"/></svg><span>Suggestions only reword, reorder and surface what's already in your original. Edits that would remove anything of yours are never shown. Anything that <b>adds</b> a skill needs your OK.</span></div>
+        <div class="working" id="working" hidden>
+          <svg class="i"><use href="#i-file"/></svg><span>Working copy <b id="workFile"></b></span><span class="sp"></span>
+          <span>Score <b class="sc" id="workScore"></b></span>
+          <button class="btn sm" id="undoBtn" disabled><svg class="i"><use href="#i-undo"/></svg>Undo</button>
+          <button class="btn sm quiet" id="newCopyBtn" title="Start a fresh copy from the original">New copy</button>
         </div>
+        <div class="waiting" id="sugWait">Check your ATS score, then press <b>Get suggestions</b>.</div>
+        <div class="sugs" id="sugs"></div>
+
+        <details class="more">
+          <summary>Other ways: full rewrite with Claude, ChatGPT or Gemini</summary>
+          <div class="lockable" style="display:flex;flex-direction:column;gap:12px;margin-top:10px">
+            <ol class="how"><li><b>Copy the prompt</b> (your resume + job + gaps).</li><li>Paste into <b>Claude</b> or <b>ChatGPT</b>.</li><li>Copy the reply → <b>Paste AI reply</b>. Check it in Review.</li></ol>
+            <textarea id="prompt" readonly aria-label="Prompt" placeholder="Appears after the ATS check."></textarea>
+            <div class="row">
+              <button class="btn" id="copyPrompt"><svg class="i"><use href="#i-copy"/></svg>Copy prompt</button>
+              <button class="btn" id="openClaude"><svg class="i"><use href="#i-ext"/></svg>Claude</button>
+              <button class="btn" id="openGpt"><svg class="i"><use href="#i-ext"/></svg>ChatGPT</button>
+              <button class="btn" id="pasteBtn"><svg class="i"><use href="#i-inbox"/></svg>Paste AI reply</button>
+              <button class="btn ink" id="tailorBtn"><svg class="i"><use href="#i-zap"/></svg>Auto-tailor with Gemini</button>
+            </div>
+          </div>
+        </details>
       </section>
     </div>
 
-    <!-- right: resume / changes / review -->
     <aside class="side">
       <section class="card" aria-label="Resume file">
         <div class="ch">
@@ -449,8 +504,9 @@ ul.list small{opacity:.8;font-size:11.5px;text-transform:uppercase;letter-spacin
             <button role="tab" id="tResume" aria-selected="true"><svg class="i"><use href="#i-file"/></svg>Resume</button>
             <button role="tab" id="tChanges" aria-selected="false"><svg class="i"><use href="#i-diff"/></svg>Changes</button>
             <button role="tab" id="tReview" aria-selected="false"><svg class="i"><use href="#i-shield"/></svg>Review <span class="cnt" id="reviewCnt" hidden></span></button>
+            <button role="tab" id="tLinks" aria-selected="false"><svg class="i"><use href="#i-link"/></svg>Links <span class="cnt" id="linksCnt" hidden></span></button>
           </div>
-          <span class="sp"></span><span class="badge" id="texBadge">Master</span>
+          <span class="sp"></span><span class="badge" id="texBadge">Original</span>
         </div>
         <div class="texbar">
           <label class="sr" for="texSelect">Resume file</label>
@@ -460,352 +516,310 @@ ul.list small{opacity:.8;font-size:11.5px;text-transform:uppercase;letter-spacin
           <button class="btn sm" id="pdfBtn"><svg class="i"><use href="#i-file"/></svg>PDF</button>
         </div>
         <div class="pane" id="paneResume"><pre class="tex" id="tex">Loading…</pre></div>
-        <div class="pane" id="paneChanges" hidden><div class="empty" id="diffEmpty">Pick a tailored resume to see exactly what changed from <b>main.tex</b>.</div><div class="diff" id="diff"></div></div>
+        <div class="pane" id="paneChanges" hidden><div class="empty" id="diffEmpty">Pick a tailored copy to see exactly what changed from your original.</div><div class="diff" id="diff"></div></div>
         <div class="pane" id="paneReview" hidden>
-          <div class="empty" id="reviewEmpty">After tailoring, this checks that every skill, project and number from <b>main.tex</b> is still there, and lists anything new.</div>
+          <div class="empty" id="reviewEmpty">For a tailored copy, this checks that every skill, project and number from your original is still there, and lists anything new.</div>
           <div class="review" id="review" hidden>
-            <div class="sect"><h3>Facts kept from main.tex</h3>
+            <div class="sect"><h3>Facts kept from your original</h3>
               <div class="meter"><span class="big" id="keptPct">–</span><div class="trk"><div class="fl" id="keptBar"></div></div></div>
-              <p class="help" style="margin:0" id="keptText"></p>
-            </div>
+              <p class="help" style="margin:0" id="keptText"></p></div>
             <div class="sect" id="missSect"><h3 style="color:var(--bad)">Removed. These are yours and should be back</h3><ul class="list bad" id="missList"></ul>
               <div class="row"><button class="btn sun sm" id="restoreBtn"><svg class="i"><use href="#i-undo"/></svg>Restore with Gemini</button></div></div>
-            <div class="sect" id="addSect"><h3 style="color:var(--warn)">New. Not in main.tex, confirm they're true</h3><ul class="list warn" id="addList"></ul>
-              <p class="help" style="margin:0">Keep only what you can explain in an interview. Edit the .tex to remove the rest.</p></div>
+            <div class="sect" id="addSect"><h3 style="color:var(--warn)">New. Not in your original, confirm they're true</h3><ul class="list warn" id="addList"></ul></div>
             <div class="sect" id="notesSect"><h3>AI notes &amp; real gaps</h3><div class="notes" id="notes"></div></div>
           </div>
         </div>
+        <div class="pane" id="paneLinks" hidden><div class="empty" id="linksEmpty">Press <b>Check links</b> to test every link in this resume.</div><div class="lklist" id="lklist"></div></div>
         <p class="help" style="margin:0">PDF: <b>Copy</b> → <b>Overleaf</b> → New project → Blank → paste over everything → Recompile → Download.</p>
       </section>
     </aside>
   </div>
 </main>
 
-<!-- modals -->
-<div class="scrim" id="settingsModal" hidden role="dialog" aria-modal="true" aria-labelledby="sTitle">
-  <div class="modal">
-    <h3 id="sTitle">Settings</h3>
-    <p>A <b>Google Gemini</b> key powers job-link reading, the Gemini match score, and auto-tailor. Get a free key at <b>aistudio.google.com</b> → Get API key. The local score and copy-prompt flow work without it.</p>
-    <label class="f">Gemini API key<input id="keyInput" type="password" placeholder="Leave blank to keep the saved key" autocomplete="off"></label>
-    <p id="keyState" class="help"></p>
-    <label class="f">Gemini model<select id="modelSelect"></select></label>
-    <p class="help">If a model is busy, the app automatically tries the others. The key is stored only in resume_studio/config.json (gitignored).</p>
-    <div class="acts"><button class="btn" data-close>Cancel</button><button class="btn sun" id="saveKey">Save</button></div>
-  </div>
-</div>
-<div class="scrim" id="pasteModal" hidden role="dialog" aria-modal="true" aria-labelledby="pTitle">
-  <div class="modal">
-    <h3 id="pTitle">Paste the AI's reply</h3>
-    <p>Paste everything Claude or ChatGPT wrote. The app saves the resume to <b>resumes/</b>, re-scores it, and checks that nothing of yours was removed.</p>
-    <textarea id="replyInput" aria-label="AI reply" placeholder="Ctrl + V"></textarea>
-    <div class="acts"><button class="btn" data-close>Cancel</button><button class="btn sun" id="saveReply">Save &amp; check</button></div>
-  </div>
-</div>
-<div class="scrim" id="loadingModal" hidden role="dialog" aria-modal="true" aria-labelledby="lTitle">
-  <div class="modal loading">
-    <div class="inksun" aria-hidden="true"></div>
-    <h3 id="lTitle">Gemini is working…</h3>
-    <div class="stages" id="stages"><div id="sg1" class="on">Reading the job and your master resume</div><div id="sg2">Writing the tailored resume</div><div id="sg3">Checking every skill is kept</div></div>
-    <p class="help" id="lTime">0s</p>
-  </div>
-</div>
+<div class="scrim" id="settingsModal" hidden role="dialog" aria-modal="true" aria-labelledby="sTitle"><div class="modal">
+  <h3 id="sTitle">Settings</h3>
+  <p>A <b>Google Gemini</b> key powers AI suggestions, job-link reading, PDF reading/conversion and the Gemini score. Get one free at <b>aistudio.google.com</b>. The local score and offline suggestions work without it.</p>
+  <label class="f">Gemini API key<input id="keyInput" type="password" placeholder="Leave blank to keep the saved key" autocomplete="off"></label>
+  <p id="keyState" class="help"></p>
+  <label class="f">Gemini model<select id="modelSelect"></select></label>
+  <div class="acts"><button class="btn" data-close>Cancel</button><button class="btn sun" id="saveKey">Save</button></div>
+</div></div>
+<div class="scrim" id="pasteResModal" hidden role="dialog" aria-modal="true" aria-labelledby="prTitle"><div class="modal">
+  <h3 id="prTitle">Paste your resume</h3>
+  <p>LaTeX source (best) or plain text. It's saved in <b>uploads/</b> as a new original and never edited.</p>
+  <label class="f">Name<input id="pasteName" placeholder="e.g. my_resume"></label>
+  <textarea id="pasteResText" aria-label="Resume text" placeholder="\documentclass… or your resume's text"></textarea>
+  <div class="acts"><button class="btn" data-close>Cancel</button><button class="btn sun" id="savePasteRes">Use as original</button></div>
+</div></div>
+<div class="scrim" id="pasteModal" hidden role="dialog" aria-modal="true" aria-labelledby="pTitle"><div class="modal">
+  <h3 id="pTitle">Paste the AI's reply</h3>
+  <p>Paste everything Claude or ChatGPT wrote. It's saved to <b>resumes/</b>, re-scored, and checked against your original.</p>
+  <textarea id="replyInput" aria-label="AI reply" placeholder="Ctrl + V"></textarea>
+  <div class="acts"><button class="btn" data-close>Cancel</button><button class="btn sun" id="saveReply">Save &amp; check</button></div>
+</div></div>
+<div class="scrim" id="loadingModal" hidden role="dialog" aria-modal="true" aria-labelledby="lTitle"><div class="modal loading">
+  <div class="inksun" aria-hidden="true"></div><h3 id="lTitle">Working…</h3><p class="help" id="lText"></p><p class="help" id="lTime">0s</p>
+</div></div>
 <div class="toast glass" id="toast" role="status" hidden></div>
 <canvas id="confetti" aria-hidden="true"></canvas>
 
 <script>
-const $ = s => document.querySelector(s);
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const S = { mode:'link', hasKey:false, model:'', models:[], pdflatex:false, scan:null, before:null, view:'ai', file:'main.tex' };
-const CIRC = 276.5;
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const S={mode:'link',hasKey:false,model:'',models:[],pdflatex:false,master:'main.tex',file:null,scan:null,view:'ai',
+  sugs:[],undo:[],shown:{ai:null,local:null},texFile:'main.tex'};
+const CIRC=276.5;
 
-async function api(path, body){
-  const r = await fetch(path, body===undefined ? {} : {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  const d = await r.json().catch(()=>({error:'Bad response from the app'}));
-  if(!r.ok) throw Object.assign(new Error(d.error||'Request failed'),{code:d.error});
+async function api(path,body){
+  const r=await fetch(path,body===undefined?{}:{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const d=await r.json().catch(()=>({error:'Bad response from the app'}));
+  if(!r.ok) throw new Error(d.error||'Request failed'); return d;
+}
+function toast(m,err){const t=$('#toast');t.textContent=m;t.className='toast glass'+(err?' err':'');t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,err?6500:2800)}
+const show=id=>{$(id).hidden=false;const f=$(id).querySelector('input,textarea,button.sun');f&&setTimeout(()=>f.focus(),50)};
+function closeAll(){document.querySelectorAll('.scrim').forEach(s=>{if(s.id!=='loadingModal')s.hidden=true})}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeAll);
+document.querySelectorAll('.scrim').forEach(s=>s.addEventListener('click',e=>{if(e.target===s&&s.id!=='loadingModal')closeAll()}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAll()});
+document.addEventListener('pointermove',e=>{document.querySelectorAll('.glass').forEach(g=>{const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)+'px');g.style.setProperty('--my',(e.clientY-r.top)+'px')})},{passive:true});
+let loadT;function loading(on,title,text){if(on){$('#lTitle').textContent=title;$('#lText').textContent=text||'';const t0=Date.now();clearInterval(loadT);loadT=setInterval(()=>$('#lTime').textContent=Math.round((Date.now()-t0)/1000)+'s',1000);$('#lTime').textContent='0s';$('#loadingModal').hidden=false}else{clearInterval(loadT);$('#loadingModal').hidden=true}}
+
+function setStep(n){[1,2,3,4].forEach(i=>{const s=$('#st'+i);s.classList.toggle('on',i===n);s.classList.toggle('done',i<n);
+  const c=$('#c'+i);c.classList.toggle('now',i===n);c.classList.toggle('done',i<n);c.classList.toggle('locked',i>n)})}
+const words=()=>{const v=$('#jd').value.trim();return v?v.split(/\s+/).length:0};
+const updCount=()=>$('#count').textContent='· '+words()+' words';
+$('#jd').addEventListener('input',()=>{updCount();if(S.scan)return;setStep(words()>=15?3:2)});
+const payload=(x={})=>({jd:$('#jd').value,company:$('#company').value,role:$('#role').value,master:S.master,...x});
+function needJD(){if(words()<15){toast(S.mode==='link'?'Read a job link first, or switch to Paste text':'Paste the job description first',true);return false}return true}
+
+/* ---------- 1 original resume ---------- */
+async function refresh(selMaster,selFile){
+  const d=await api('/api/init');
+  $('#masterSel').replaceChildren(...d.masters.map(f=>{const o=document.createElement('option');o.value=f;o.textContent=f==='main.tex'?'main.tex (your master)':f;return o}));
+  if(selMaster) S.master=selMaster; if(!d.masters.includes(S.master)) S.master=d.masters[0]||'main.tex';
+  $('#masterSel').value=S.master;
+  const files=[S.master,...d.resumes];
+  $('#texSelect').replaceChildren(...files.map(f=>{const o=document.createElement('option');o.value=f;o.textContent=f===S.master?f+' · original (never edited)':f;return o}));
+  $('#texSelect').value=selFile||S.texFile||S.master; if(!files.includes($('#texSelect').value)) $('#texSelect').value=S.master;
   return d;
 }
-function toast(msg, err){
-  const t=$('#toast'); t.textContent=msg; t.className='toast glass'+(err?' err':''); t.hidden=false;
-  clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true, err?6000:2800);
+$('#masterSel').onchange=async()=>{S.master=$('#masterSel').value;S.file=null;S.undo=[];resetSugs();await refresh();await selectFile(S.master);
+  $('#masterNote').hidden=true;toast('Original set to '+S.master);if(S.scan&&words()>=15)$('#scanBtn').click()};
+$('#uploadBtn').onclick=()=>$('#fileIn').click();
+$('#fileIn').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  if(f.size>5*1024*1024) return toast('That file is larger than 5 MB.',true);
+  const b64=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result.split(',')[1]);fr.readAsDataURL(f)});
+  await addOriginal({name:f.name,data:b64}, /\.tex$/i.test(f.name)?'':'Reading and converting your resume (keeping every fact)…')};
+$('#pasteResBtn').onclick=()=>{$('#pasteResText').value='';show('#pasteResModal')};
+$('#savePasteRes').onclick=async()=>{const t=$('#pasteResText').value.trim();if(t.length<200)return toast('Paste your full resume.',true);closeAll();
+  const n=($('#pasteName').value.trim()||'pasted')+(t.includes('\\documentclass')?'.tex':'.txt');
+  await addOriginal({name:n,text:t}, t.includes('\\documentclass')?'':'Converting your resume to LaTeX (keeping every fact)…')};
+async function addOriginal(body,slowMsg){
+  if(slowMsg) loading(true,'Adding your resume',slowMsg);
+  try{const r=await api('/api/upload_resume',body);S.file=null;S.undo=[];resetSugs();await refresh(r.master);await selectFile(r.master);
+    const n=$('#masterNote');n.hidden=false;n.classList.toggle('warn',!!r.converted);n.querySelector('span').textContent=r.note;
+    toast('Original set to '+r.master);if(S.scan&&words()>=15)$('#scanBtn').click()}
+  catch(e){toast(e.message,true)} loading(false);
 }
-const show = id => { $(id).hidden=false; const f=$(id).querySelector('input,textarea,button.sun'); f&&setTimeout(()=>f.focus(),50) };
-function closeAll(){ document.querySelectorAll('.scrim').forEach(s=>{ if(s.id!=='loadingModal') s.hidden=true }) }
-document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeAll);
-document.querySelectorAll('.scrim').forEach(s=>s.addEventListener('click',e=>{ if(e.target===s && s.id!=='loadingModal') closeAll() }));
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeAll() });
-
-/* liquid highlight follows the pointer on glass */
-document.addEventListener('pointermove', e=>{
-  document.querySelectorAll('.glass').forEach(g=>{ const r=g.getBoundingClientRect();
-    g.style.setProperty('--mx',(e.clientX-r.left)+'px'); g.style.setProperty('--my',(e.clientY-r.top)+'px') });
-},{passive:true});
-
-/* ---------- steps ---------- */
-function setStep(n){
-  [1,2,3,4].forEach(i=>{ const s=$('#st'+i); s.classList.toggle('on',i===n); s.classList.toggle('done',i<n) });
-  [1,2,3].forEach(i=>{ const c=$('#c'+i); c.classList.toggle('now',i===Math.min(n,3)&&n<4); c.classList.toggle('done',i<n); c.classList.toggle('locked',i>n) });
+$('#linksBtn').onclick=()=>checkLinks($('#texSelect').value);
+async function checkLinks(file){
+  tab('links');$('#linksEmpty').hidden=false;$('#linksEmpty').textContent='Checking links…';$('#lklist').replaceChildren();
+  try{const {links}=await api('/api/links',payload({file}));
+    $('#linksEmpty').hidden=!!links.length;$('#linksEmpty').textContent='No links found in this resume. Recruiters like seeing GitHub links for projects.';
+    const col={ok:'var(--good)',redirect:'var(--warn)',unverified:'var(--faint)',broken:'var(--bad)'};
+    const lab={ok:'Works',redirect:'Redirects',unverified:"Can't verify",broken:'Broken'};
+    $('#lklist').innerHTML=links.map(l=>`<div class="lk"><span class="dot" style="background:${col[l.status]}"></span><div style="flex:1;min-width:0">
+      <b style="color:${col[l.status]}">${lab[l.status]}${l.code?` · ${l.code}`:''}</b> ${l.label?`<span class="help">· ${esc(l.label)}</span>`:''}
+      <div><a href="${esc(l.url)}" target="_blank" rel="noreferrer">${esc(l.url)}</a></div><small>${esc(l.note)}</small></div></div>`).join('');
+    const bad=links.filter(l=>l.status==='broken'||l.status==='redirect').length;const c=$('#linksCnt');c.hidden=false;c.textContent=bad||'✓';c.classList.toggle('ok',!bad);
+    if(!links.some(l=>/github\.com\/[^/]+\/[^/]+/.test(l.url))) $('#lklist').insertAdjacentHTML('beforeend','<div class="source warn"><svg class="i"><use href="#i-alert"/></svg><span>No project repository links found. Adding a GitHub link to each project helps recruiters verify your work.</span></div>');
+  }catch(e){$('#linksEmpty').textContent=e.message}
 }
 
-/* ---------- job input ---------- */
-const words = () => { const v=$('#jd').value.trim(); return v ? v.split(/\s+/).length : 0 };
-const updCount = () => $('#count').textContent = '· '+words()+' words';
-$('#jd').addEventListener('input', updCount);
-function setMode(m){
-  S.mode=m; $('#modeLink').setAttribute('aria-pressed',m==='link'); $('#modePaste').setAttribute('aria-pressed',m==='paste');
-  $('#linkMode').hidden = m!=='link';
-  if(m==='paste'){ $('#jdBox').open=true; $('#jd').focus() } else $('#url').focus();
-}
-$('#modeLink').onclick=()=>setMode('link'); $('#modePaste').onclick=()=>setMode('paste');
-$('#url').addEventListener('keydown',e=>{ if(e.key==='Enter') $('#fetchBtn').click() });
-$('#fetchBtn').onclick = async ()=>{
-  const url=$('#url').value.trim();
-  if(!/^https?:\/\//.test(url)) return toast('Paste the full job link (starts with https://)', true);
-  const b=$('#fetchBtn'); b.disabled=true; b.lastChild.textContent='Reading…';
-  $('#source').hidden=true; $('#scanbox').classList.add('scanning'); $('#jdBox').open=true;
-  try{
-    const j = await api('/api/fetch_job',{url});
-    $('#company').value=j.company||''; $('#role').value=j.title||'';
-    $('#jd').value=j.description||''; updCount();
-    $('#sourceText').textContent = j.source + (j.location?` · ${j.location}`:'') + (j.note?` · ${j.note}`:'');
-    $('#source').classList.toggle('warn',!!j.note); $('#source').hidden=false;
-    $('#scanbox').classList.remove('scanning');
-    toast('Job loaded. Checking your score…');
-    $('#scanBtn').click();
-  }catch(e){ $('#scanbox').classList.remove('scanning'); toast(e.message,true); if(/Paste text/.test(e.message)) setMode('paste') }
-  b.disabled=false; b.lastChild.textContent='Read job';
-};
-$('#clearBtn').onclick=()=>{ ['#url','#company','#role','#jd'].forEach(s=>$(s).value=''); updCount(); $('#source').hidden=true; setMode(S.mode) };
-const payload = () => ({ jd:$('#jd').value, company:$('#company').value, role:$('#role').value, resume:'main.tex' });
-function needJD(){ if(words()<15){ toast(S.mode==='link'?'Read a job link first, or switch to Paste text':'Paste the job description first',true); return false } return true }
+/* ---------- 2 job ---------- */
+function setMode(m){S.mode=m;$('#modeLink').setAttribute('aria-pressed',m==='link');$('#modePaste').setAttribute('aria-pressed',m==='paste');$('#linkMode').hidden=m!=='link';if(m==='paste'){$('#jdBox').open=true;$('#jd').focus()}else $('#url').focus()}
+$('#modeLink').onclick=()=>setMode('link');$('#modePaste').onclick=()=>setMode('paste');
+$('#url').addEventListener('keydown',e=>{if(e.key==='Enter')$('#fetchBtn').click()});
+$('#fetchBtn').onclick=async()=>{const url=$('#url').value.trim();if(!/^https?:\/\//.test(url))return toast('Paste the full job link (starts with https://)',true);
+  const b=$('#fetchBtn');b.disabled=true;b.lastChild.textContent='Reading…';$('#source').hidden=true;$('#scanbox').classList.add('scanning');$('#jdBox').open=true;
+  try{const j=await api('/api/fetch_job',{url});$('#company').value=j.company||'';$('#role').value=j.title||'';$('#jd').value=j.description||'';updCount();
+    $('#sourceText').textContent=j.source+(j.location?` · ${j.location}`:'')+(j.note?` · ${j.note}`:'');$('#source').classList.toggle('warn',!!j.note);$('#source').hidden=false;
+    $('#scanbox').classList.remove('scanning');S.file=null;S.undo=[];resetSugs();toast('Job loaded. Checking your score…');$('#scanBtn').click()}
+  catch(e){$('#scanbox').classList.remove('scanning');toast(e.message,true);if(/paste/i.test(e.message))setMode('paste')}
+  b.disabled=false;b.lastChild.textContent='Read job'};
+$('#clearBtn').onclick=()=>{['#url','#company','#role','#jd'].forEach(s=>$(s).value='');updCount();$('#source').hidden=true;setMode(S.mode)};
 
-/* ---------- scoring ---------- */
-const tone = p => p>=80?'var(--good)':p>=60?'var(--warn)':'var(--bad)';
-const verdict = p => p>=85?'Strong':p>=70?'Good':p>=50?'Partial':'Weak';
-function gauge(el, r, before){
-  const arc=el.querySelector('.arc'), num=el.querySelector('.num b'), v=el.querySelector('.verdict'), d=el.querySelector('.delta');
+/* ---------- 3 score (animates from the previous value) ---------- */
+const tone=p=>p>=80?'var(--good)':p>=60?'var(--warn)':'var(--bad)';
+const verdict=p=>p>=85?'Strong':p>=70?'Good':p>=50?'Partial':'Weak';
+function gauge(el,which,r,before){
+  const arc=el.querySelector('.arc'),num=el.querySelector('.num b'),v=el.querySelector('.verdict'),d=el.querySelector('.delta');
   el.classList.remove('spin');
-  if(!r){ num.textContent='–'; arc.style.strokeDashoffset=CIRC; v.textContent=S.hasKey?'Unavailable':'Add key in Settings'; v.style.cssText='color:var(--muted);background:var(--field)'; d.hidden=true; return }
-  arc.style.stroke=tone(r.score);
-  arc.style.strokeDashoffset=CIRC; setTimeout(()=>arc.style.strokeDashoffset=CIRC-CIRC*r.score/100, 40);
-  const t0=performance.now(); clearInterval(el._t);
-  el._t=setInterval(()=>{ const k=Math.max(0,Math.min(1,(performance.now()-t0)/1100)), e=1-Math.pow(1-k,3);
-    num.textContent=Math.round(r.score*e)+'%'; if(k>=1) clearInterval(el._t) }, 16);
-  setTimeout(()=>{ clearInterval(el._t); num.textContent=r.score+'%' }, 1300);
-  v.textContent=verdict(r.score)+' match'; v.style.cssText=`color:${tone(r.score)};background:color-mix(in srgb,${tone(r.score)} 13%,transparent)`;
-  if(before!=null){ const x=r.score-before; d.hidden=false; d.textContent=`${before}% → ${r.score}% (${x>=0?'+':''}${x})`; d.style.color=x>=0?'var(--good)':'var(--bad)' } else d.hidden=true;
+  if(!r){num.textContent='–';arc.style.strokeDashoffset=CIRC;v.textContent=S.hasKey?'Unavailable':'Add key in Settings';v.style.cssText='color:var(--muted);background:var(--field)';d.hidden=true;S.shown[which]=null;return}
+  const from=S.shown[which]??0, to=r.score; S.shown[which]=to;
+  arc.style.stroke=tone(to); setTimeout(()=>arc.style.strokeDashoffset=CIRC-CIRC*to/100,40);
+  const t0=performance.now();clearInterval(el._t);
+  el._t=setInterval(()=>{const k=Math.max(0,Math.min(1,(performance.now()-t0)/1000)),e=1-Math.pow(1-k,3);num.textContent=Math.round(from+(to-from)*e)+'%';if(k>=1)clearInterval(el._t)},16);
+  setTimeout(()=>{clearInterval(el._t);num.textContent=to+'%'},1200);
+  if(from && to!==from){el.querySelectorAll('.pts').forEach(p=>p.remove());const p=document.createElement('span');p.className='pts';p.textContent=(to>from?'+':'')+(to-from);
+    if(to<from)p.style.color='var(--bad)';el.append(p);el.classList.remove('bump');void el.offsetWidth;el.classList.add('bump');setTimeout(()=>p.remove(),1700)}
+  v.textContent=verdict(to)+' match';v.style.cssText=`color:${tone(to)};background:color-mix(in srgb,${tone(to)} 13%,transparent)`;
+  if(before!=null){const x=to-before;d.hidden=false;d.textContent=`${before}% → ${to}% (${x>=0?'+':''}${x})`;d.style.color=x>=0?'var(--good)':'var(--bad)'}else d.hidden=true;
 }
-function renderScan(scan, before){
-  S.scan=scan; S.before=before||null;
-  $('#scoreWait').hidden=true; $('#scoreView').hidden=false;
-  gauge($('#gAi'), scan.ai, before?before.ai:null); gauge($('#gLocal'), scan.local, before?before.local:null);
-  if(!scan.ai && S.view==='ai') S.view='local';
-  if(scan.ai_error) toast('Gemini score unavailable: '+scan.ai_error.slice(0,140), true);
-  const b=$('#scoredFile'); b.hidden=false; b.textContent='Scored: '+scan.resume;
-  renderView();
-  if(before && (scan.ai||scan.local).score > ((before.ai ?? before.local) || 0)) setTimeout(confetti,900);
+function renderScan(scan,before){
+  S.scan=scan;$('#scoreWait').hidden=true;$('#scoreView').hidden=false;
+  gauge($('#gAi'),'ai',scan.ai,before?before.ai:null);gauge($('#gLocal'),'local',scan.local,before?before.local:null);
+  if(!scan.ai&&S.view==='ai')S.view='local';
+  if(scan.ai_error) toast('Gemini score unavailable: '+scan.ai_error.slice(0,140),true);
+  const b=$('#scoredFile');b.hidden=false;b.textContent='Scored: '+scan.resume;renderView();
 }
 function renderView(){
-  const r = S.view==='ai' ? S.scan.ai : S.scan.local;
-  $('#gAi').setAttribute('aria-pressed', S.view==='ai'); $('#gLocal').setAttribute('aria-pressed', S.view==='local');
-  $('#viewName').textContent = S.view==='ai' ? 'Gemini view' : 'Local view';
-  if(!r) return;
-  // bars
-  const bars=$('#bars'); bars.replaceChildren();
-  r.parts.forEach((p,i)=>{
-    const row=document.createElement('div'); row.className='bar';
+  const r=S.view==='ai'?S.scan.ai:S.scan.local;
+  $('#gAi').setAttribute('aria-pressed',S.view==='ai');$('#gLocal').setAttribute('aria-pressed',S.view==='local');$('#viewName').textContent=S.view==='ai'?'Gemini view':'Local view';
+  if(!r)return;
+  const bars=$('#bars');bars.replaceChildren();
+  r.parts.forEach((p,i)=>{const row=document.createElement('div');row.className='bar';
     row.innerHTML=`<div class="lb"><b>${esc(p.name)}${p.weight?` · ${p.weight}%`:''}</b><small title="${esc(p.detail)}">${esc(p.detail)}</small></div><div class="tr"><div class="fl"></div></div><div class="v"></div>`;
-    const fl=row.querySelector('.fl'), v=row.querySelector('.v');
-    fl.style.background = p.pct==null?'var(--faint)':tone(p.pct);
-    v.textContent = p.pct==null?'n/a':p.pct+'%'; v.style.color = p.pct==null?'var(--faint)':tone(p.pct);
-    bars.append(row); setTimeout(()=>fl.style.transform=`scaleX(${(p.pct??0)/100})`, 120+i*120);
-  });
-  // how we matched
-  const tb=$('#howBody'); tb.replaceChildren();
-  $('#howCount').textContent = `${r.matched.length} found`;
-  if(!r.matched.length){ tb.innerHTML='<tr><td colspan="2" class="help">No job keywords found yet.</td></tr>' }
-  r.matched.forEach(m=>{
-    const tr=document.createElement('tr');
-    let snip=esc(m.snip||'');
-    const word=(m.via && !/words|spread/.test(m.via)) ? m.via : m.k;
-    try{ snip=snip.replace(new RegExp('('+word.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','i'),'<mark>$1</mark>') }catch(e){}
-    tr.innerHTML=`<td class="k">${esc(m.k)}<br><span class="tagp">${m.p==='required'?'must-have':m.p==='preferred'?'nice-to-have':'general'}</span></td>
-      <td>${m.section?`<b>${esc(m.section)}</b> · `:''}${snip||'<span class="help">—</span>'}${m.via?`<div class="via">matched via “${esc(m.via)}”</div>`:''}</td>`;
-    tb.append(tr);
-  });
-  // missing
-  const mc=$('#missChips'); mc.replaceChildren(); $('#missCount').textContent=`${r.missing.length}`;
-  if(!r.missing.length) mc.innerHTML='<span class="help">Nothing missing 🎉</span>';
-  r.missing.forEach((m,i)=>{ const c=document.createElement('span'); c.className='chip '+(m.p==='required'?'req':m.p==='preferred'?'pref':'');
-    c.style.animationDelay=(Math.min(i,30)*30)+'ms'; c.textContent=m.k;
-    if(m.p!=='general'){ const t=document.createElement('span'); t.className='t'; t.textContent=m.p==='required'?'must':'nice'; c.append(t) }
-    mc.append(c) });
+    const fl=row.querySelector('.fl'),v=row.querySelector('.v');fl.style.background=p.pct==null?'var(--faint)':tone(p.pct);v.textContent=p.pct==null?'n/a':p.pct+'%';v.style.color=p.pct==null?'var(--faint)':tone(p.pct);
+    bars.append(row);setTimeout(()=>fl.style.transform=`scaleX(${(p.pct??0)/100})`,80+i*100)});
+  const tb=$('#howBody');tb.replaceChildren();$('#howCount').textContent=`${r.matched.length} found`;
+  if(!r.matched.length)tb.innerHTML='<tr><td colspan="2" class="help">No job keywords found yet.</td></tr>';
+  r.matched.forEach(m=>{const tr=document.createElement('tr');let snip=esc(m.snip||'');const w=(m.via&&!/words|spread/.test(m.via))?m.via:m.k;
+    try{snip=snip.replace(new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','i'),'<mark>$1</mark>')}catch(e){}
+    tr.innerHTML=`<td class="k">${esc(m.k)}<br><span class="tagp">${m.p==='required'?'must-have':m.p==='preferred'?'nice-to-have':'general'}</span></td><td>${m.section?`<b>${esc(m.section)}</b> · `:''}${snip||'<span class="help">—</span>'}${m.via?`<div class="via">matched via “${esc(m.via)}”</div>`:''}</td>`;tb.append(tr)});
+  const mc=$('#missChips');mc.replaceChildren();$('#missCount').textContent=r.missing.length;
+  if(!r.missing.length)mc.innerHTML='<span class="help">Nothing missing</span>';
+  r.missing.forEach((m,i)=>{const c=document.createElement('span');c.className='chip '+(m.p==='required'?'req':m.p==='preferred'?'pref':'');c.style.animationDelay=(Math.min(i,30)*30)+'ms';c.textContent=m.k;
+    if(m.p!=='general'){const t=document.createElement('span');t.className='t';t.textContent=m.p==='required'?'must':'nice';c.append(t)}mc.append(c)});
 }
-$('#gAi').onclick=()=>{ if(S.scan?.ai){ S.view='ai'; renderView() } else if(!S.hasKey) openSettings() };
-$('#gLocal').onclick=()=>{ if(S.scan){ S.view='local'; renderView() } };
+$('#gAi').onclick=()=>{if(S.scan?.ai){S.view='ai';renderView()}else if(!S.hasKey)openSettings()};
+$('#gLocal').onclick=()=>{if(S.scan){S.view='local';renderView()}};
+$('#scanBtn').onclick=async()=>{if(!needJD())return;const b=$('#scanBtn');b.disabled=true;b.lastChild.textContent='Scanning…';$('#scanbox').classList.add('scanning');
+  if(!$('#scoreView').hidden){$('#gAi').classList.add('spin');$('#gLocal').classList.add('spin')}else $('#scoreWait').textContent=S.hasKey?'Gemini is reading the job and finding its must-have keywords…':'Scanning your resume…';
+  setStep(3);const minWait=new Promise(r=>setTimeout(r,900));
+  try{const scan=await api('/api/scan',payload({resume:S.file||S.master}));await minWait;S.shown={ai:null,local:null};renderScan(scan);
+    api('/api/prompt',payload()).then(p=>$('#prompt').value=p.prompt).catch(()=>{});
+    setStep(4);$('#sugWait').innerHTML='Press <b>Get suggestions</b> to see edits that raise this score.';
+    $('#c3').scrollIntoView({behavior:'smooth',block:'start'})}
+  catch(e){toast(e.message,true);$('#gAi').classList.remove('spin');$('#gLocal').classList.remove('spin')}
+  $('#scanbox').classList.remove('scanning');b.disabled=false;b.lastChild.textContent='Check ATS score'};
 
-$('#scanBtn').onclick = async ()=>{
-  if(!needJD()) return;
-  const b=$('#scanBtn'); b.disabled=true; b.lastChild.textContent='Scanning…';
-  $('#scanbox').classList.add('scanning');
-  if(!$('#scoreView').hidden){ $('#gAi').classList.add('spin'); $('#gLocal').classList.add('spin') }
-  else $('#scoreWait').textContent = S.hasKey ? 'Gemini is reading the job and finding its must-have keywords…' : 'Scanning your resume…';
-  setStep(2);
-  const minWait=new Promise(r=>setTimeout(r,1000));
-  try{
-    const scan=await api('/api/scan',payload()); await minWait;
-    renderScan(scan);
-    const {prompt}=await api('/api/prompt',payload()); $('#prompt').value=prompt;
-    setStep(3); await selectFile('main.tex');
-    $('#c2').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(e){ toast(e.message,true); $('#gAi').classList.remove('spin'); $('#gLocal').classList.remove('spin') }
-  $('#scanbox').classList.remove('scanning'); b.disabled=false; b.lastChild.textContent='Check ATS score';
-};
-
-/* ---------- enhance ---------- */
-$('#copyPrompt').onclick=async ()=>{ if(!$('#prompt').value) return toast('Check your ATS score first',true);
-  await navigator.clipboard.writeText($('#prompt').value); toast('Prompt copied. Paste it into Claude or ChatGPT') };
-$('#openClaude').onclick=()=>window.open('https://claude.ai/new','_blank');
-$('#openGpt').onclick=()=>window.open('https://chatgpt.com/','_blank');
-$('#pasteBtn').onclick=()=>{ $('#replyInput').value=''; show('#pasteModal') };
-$('#saveReply').onclick=async ()=>{
-  const reply=$('#replyInput').value;
-  if(!reply.includes('\\documentclass')) return toast("That doesn't contain a LaTeX resume. Copy the AI's whole reply.",true);
-  try{ closeAll(); tailored(await api('/api/save_result',{...payload(),reply})) }catch(e){ toast(e.message,true) }
-};
-$('#tailorBtn').onclick=async ()=>{
-  if(!needJD()) return;
-  if(!S.hasKey){ toast('Add a Gemini key in Settings, or use Copy prompt'); return openSettings() }
-  let job; try{ job=(await api('/api/tailor',payload())).job }catch(e){ return toast(e.message,true) }
-  show('#loadingModal'); $('#tailorBtn').disabled=true;
-  const t0=Date.now(), stage=n=>[1,2,3].forEach(i=>{ $('#sg'+i).className = i<n?'ok':i===n?'on':'' });
-  const poll=setInterval(async ()=>{
-    $('#lTime').textContent=Math.round((Date.now()-t0)/1000)+'s';
-    try{
-      const j=await api('/api/job/'+job);
-      stage(j.state==='writing'?2:j.state==='checking'?3:1);
-      if(j.state==='done'||j.state==='error'){
-        clearInterval(poll); $('#loadingModal').hidden=true; $('#tailorBtn').disabled=false;
-        j.state==='done' ? tailored(j.result) : toast(j.error,true);
-      }
-    }catch(e){ clearInterval(poll); $('#loadingModal').hidden=true; $('#tailorBtn').disabled=false; toast(e.message,true) }
-  },1000);
-};
-function tailored(res){
-  renderScan(res.scan, res.before);
-  setStep(4);
-  refreshList(res.file).then(()=>selectFile(res.file, res.check, res.notes));
-  tab('review');
-  toast(res.repaired ? 'Saved. Gemini had dropped some of your facts; they were restored automatically' : 'Saved to '+res.file);
+/* ---------- 4 suggestions ---------- */
+function resetSugs(){S.sugs=[];$('#sugs').replaceChildren();$('#working').hidden=true;$('#sugWait').hidden=false}
+const TYPE={reword:'Uses job wording',surface:'Surfaces a skill you show',reorder:'Reorders',new_skill:'New skill',exact:'Exact ATS phrase'};
+function renderSugs(){
+  const box=$('#sugs');box.replaceChildren();
+  const safe=S.sugs.filter(s=>!s.needs_consent),ask=S.sugs.filter(s=>s.needs_consent);
+  $('#sugWait').hidden=!!S.sugs.length;
+  if(!S.sugs.length){$('#sugWait').hidden=false;$('#sugWait').innerHTML='No more suggestions for this job. Press <b>Get suggestions</b> to look again.'}
+  const card=s=>{const el=document.createElement('div');el.className='sug'+(s.needs_consent?' consent':'');el.dataset.id=s.id;
+    el.innerHTML=`<div class="top"><b>${esc(s.title)}</b><span class="gain${s.gain>0?'':' zero'}">${s.gain>0?'+'+s.gain+' pts':'+0 here'}</span></div>
+      <div class="row" style="gap:6px"><span class="tagt${s.needs_consent?' warn':''}">${esc(TYPE[s.type]||s.type)}</span>${(s.keywords||[]).map(k=>`<span class="tagt">${esc(k)}</span>`).join('')}<span class="tagt">${s.source==='local'?'offline':'Gemini'}</span></div>
+      <p>${esc(s.why)}</p>${s.evidence?`<div class="ev">Proof in your resume: ${esc(s.evidence)}</div>`:''}
+      <div class="mini"><div class="del">${esc(s.find)}</div><div class="add">${esc(s.replace)}</div></div>
+      ${s.needs_consent?`<label class="consentbox"><input type="checkbox"> <span>This adds <b>${esc((s.adds||[]).join(', ')||'a new skill')}</b>, which isn't in your original. Tick only if it's true for you.</span></label>`:''}
+      <div class="row"><button class="btn sun sm acc"${s.needs_consent?' disabled':''}><svg class="i"><use href="#i-check"/></svg>Accept${s.gain>0?` · score → ${s.after}%`:''}</button><button class="btn quiet sm skip"><svg class="i"><use href="#i-x"/></svg>Skip</button></div>`;
+    const cb=el.querySelector('input[type=checkbox]');if(cb)cb.onchange=()=>el.querySelector('.acc').disabled=!cb.checked;
+    el.querySelector('.acc').onclick=()=>accept(s,el);el.querySelector('.skip').onclick=()=>{el.classList.add('leaving');setTimeout(()=>{S.sugs=S.sugs.filter(x=>x.id!==s.id);renderSugs()},250)};
+    return el};
+  if(safe.length){box.insertAdjacentHTML('beforeend','<div class="grp">Uses what you already have</div>');safe.forEach(s=>box.append(card(s)))}
+  if(ask.length){box.insertAdjacentHTML('beforeend','<div class="grp" style="color:var(--warn)">Needs your OK: adds something not in your original</div>');ask.forEach(s=>box.append(card(s)))}
 }
+$('#sugBtn').onclick=async()=>{if(!needJD())return;if(!S.scan)return toast('Check your ATS score first',true);
+  loading(true,'Finding score-raising edits',S.hasKey?'Gemini proposes edits; each one is then re-scored and checked against your original.':'Offline suggestions…');
+  try{const r=await api('/api/suggest',payload({file:S.file}));S.sugs=r.suggestions;renderSugs();if(r.ai_error)toast(r.ai_error,true);
+    if(!r.suggestions.length)toast('No score-raising edits found that keep your resume truthful.',false)}
+  catch(e){toast(e.message,true)} loading(false)};
+async function accept(s,el){
+  el.querySelectorAll('button').forEach(b=>b.disabled=true);
+  try{const pending=S.sugs.filter(x=>x.id!==s.id);
+    const r=await api('/api/apply',payload({file:S.file,find:s.find,replace:s.replace,pending}));
+    S.undo.push({file:r.file,text:r.previous,sugs:S.sugs});S.file=r.file;
+    el.classList.add('leaving');setTimeout(()=>{S.sugs=r.pending;renderSugs()},250);
+    renderScan(r.scan);updWorking();await refresh(null,r.file);await selectFile(r.file,r.check);
+    const p=(r.scan.ai||r.scan.local).score;if(p>=85&&p-s.gain<85)setTimeout(confetti,500);
+    toast(s.gain>0?`Accepted · +${s.gain} points`:'Accepted')}
+  catch(e){toast(e.message,true);el.querySelectorAll('button').forEach(b=>b.disabled=false)}
+}
+function updWorking(){$('#working').hidden=!S.file;if(!S.file)return;$('#workFile').textContent=S.file;$('#workScore').textContent=((S.scan.ai||S.scan.local).score)+'%';$('#undoBtn').disabled=!S.undo.length}
+$('#undoBtn').onclick=async()=>{const u=S.undo.pop();if(!u)return;
+  try{const r=await api('/api/write',payload({file:u.file,text:u.text}));S.sugs=u.sugs;renderSugs();renderScan(r.scan);updWorking();await selectFile(u.file,r.check);toast('Undone')}
+  catch(e){toast(e.message,true)}};
+$('#newCopyBtn').onclick=()=>{S.file=null;S.undo=[];resetSugs();toast('Next accepted suggestion starts a fresh copy of your original')};
+
+/* other ways */
+$('#copyPrompt').onclick=async()=>{if(!$('#prompt').value)return toast('Check your ATS score first',true);await navigator.clipboard.writeText($('#prompt').value);toast('Prompt copied. Paste it into Claude or ChatGPT')};
+$('#openClaude').onclick=()=>window.open('https://claude.ai/new','_blank');$('#openGpt').onclick=()=>window.open('https://chatgpt.com/','_blank');
+$('#pasteBtn').onclick=()=>{$('#replyInput').value='';show('#pasteModal')};
+$('#saveReply').onclick=async()=>{const reply=$('#replyInput').value;if(reply.trim().length<200)return toast("Paste the AI's whole reply.",true);
+  try{closeAll();tailored(await api('/api/save_result',payload({reply})))}catch(e){toast(e.message,true)}};
+$('#tailorBtn').onclick=async()=>{if(!needJD())return;if(!S.hasKey){toast('Add a Gemini key in Settings first');return openSettings()}
+  let job;try{job=(await api('/api/tailor',payload())).job}catch(e){return toast(e.message,true)}
+  loading(true,'Gemini is tailoring your resume','Writing the full version, then checking every skill is kept.');
+  const poll=setInterval(async()=>{try{const j=await api('/api/job/'+job);if(j.state==='done'||j.state==='error'){clearInterval(poll);loading(false);j.state==='done'?tailored(j.result):toast(j.error,true)}}
+    catch(e){clearInterval(poll);loading(false);toast(e.message,true)}},1200)};
+function tailored(res){renderScan(res.scan,res.before);refresh(null,res.file).then(()=>selectFile(res.file,res.check,res.notes));tab('review');
+  toast(res.repaired?'Saved. Dropped facts were restored automatically':'Saved to '+res.file)}
 
 /* ---------- right panel ---------- */
-function tab(t){
-  [['resume','#tResume','#paneResume'],['changes','#tChanges','#paneChanges'],['review','#tReview','#paneReview']].forEach(([n,b,p])=>{
-    $(b).setAttribute('aria-selected',n===t); $(p).hidden=n!==t });
+function tab(t){[['resume','#tResume','#paneResume'],['changes','#tChanges','#paneChanges'],['review','#tReview','#paneReview'],['links','#tLinks','#paneLinks']].forEach(([n,b,p])=>{$(b).setAttribute('aria-selected',n===t);$(p).hidden=n!==t})}
+$('#tResume').onclick=()=>tab('resume');$('#tChanges').onclick=()=>tab('changes');$('#tReview').onclick=()=>tab('review');$('#tLinks').onclick=()=>tab('links');
+function highlight(src){return src.split('\n').map(line=>{const m=line.match(/(^|[^\\])%/);let code=line,com='';if(m){const i=m.index+m[1].length;code=line.slice(0,i);com=line.slice(i)}
+  return esc(code).replace(/(\\[a-zA-Z]+\*?)/g,'<span class="k">$1</span>')+(com?'<span class="c">'+esc(com)+'</span>':'')}).join('\n')}
+async function selectFile(file,check,notes){
+  S.texFile=file;$('#texSelect').value=file;const orig=file===S.master;
+  const b=$('#texBadge');b.textContent=orig?'Original':'Tailored copy';b.classList.toggle('new',!orig);
+  $('#pdfBtn').disabled=!S.pdflatex||!file.endsWith('.tex');$('#pdfBtn').title=S.pdflatex?'':'Install MiKTeX to enable. Use Overleaf for now.';
+  try{const d=await api('/api/tex?file='+encodeURIComponent(file));$('#tex').innerHTML=highlight(d.tex);$('#tex').dataset.raw=d.tex}catch(e){$('#tex').textContent='Could not load '+file}
+  $('#diff').replaceChildren();$('#diffEmpty').hidden=!orig;
+  if(!orig){try{const d=await api(`/api/diff?master=${encodeURIComponent(S.master)}&file=${encodeURIComponent(file)}`);
+    const sum=document.createElement('div');sum.className='diffsum';sum.style.cssText='padding:12px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--code)';
+    sum.innerHTML=`<b>vs your original</b><span class="a">+${d.added} added</span><span class="r">−${d.removed} removed</span><span class="help">lines</span>`;$('#diff').append(sum);
+    d.rows.forEach(r=>{const el=document.createElement('div');el.className=r.t==='+'?'add':r.t==='-'?'del':r.t==='…'?'gap':'';el.textContent=r.t==='…'?`⋯ ${r.l}`:r.l;$('#diff').append(el)})}catch(e){}}
+  if(orig){$('#review').hidden=true;$('#reviewEmpty').hidden=false;$('#reviewCnt').hidden=true;return}
+  if(!check&&words()>=15){try{check=(await api('/api/review',payload({file}))).check}catch(e){}}
+  renderReview(check,notes);
 }
-$('#tResume').onclick=()=>tab('resume'); $('#tChanges').onclick=()=>tab('changes'); $('#tReview').onclick=()=>tab('review');
-function highlight(src){
-  return src.split('\n').map(line=>{
-    const m=line.match(/(^|[^\\])%/); let code=line, com='';
-    if(m){ const i=m.index+m[1].length; code=line.slice(0,i); com=line.slice(i) }
-    return esc(code).replace(/(\\[a-zA-Z]+\*?)/g,'<span class="k">$1</span>') + (com?'<span class="c">'+esc(com)+'</span>':'');
-  }).join('\n');
+function renderReview(c,notes){
+  if(!c){$('#review').hidden=true;$('#reviewEmpty').hidden=false;return}
+  $('#review').hidden=false;$('#reviewEmpty').hidden=true;
+  $('#keptPct').textContent=c.preserved_pct+'%';$('#keptPct').style.color=c.missing.length?'var(--bad)':'var(--good)';
+  $('#keptBar').style.background=c.missing.length?'var(--bad)':'var(--good)';$('#keptBar').style.width=c.preserved_pct+'%';
+  $('#keptText').textContent=`${c.kept} of ${c.total} skills, projects, roles and numbers from your original are in this copy.`;
+  $('#missSect').hidden=!c.missing.length;$('#missList').innerHTML=c.missing.map(m=>`<li><svg class="i"><use href="#i-alert"/></svg>${esc(m.item)}<small>${esc(m.kind)}</small></li>`).join('');
+  const added=[...c.added_skills.map(s=>({s,k:'skill'})),...c.added_keywords.filter(k=>!c.added_skills.some(s=>s.toLowerCase().includes(k))).map(s=>({s,k:'keyword'}))];
+  $('#addSect').hidden=!added.length;$('#addList').innerHTML=added.map(a=>`<li><svg class="i"><use href="#i-alert"/></svg>${esc(a.s)}<small>${a.k}</small></li>`).join('');
+  $('#notesSect').hidden=!notes;$('#notes').textContent=notes||'';
+  const n=c.missing.length+added.length,cnt=$('#reviewCnt');cnt.hidden=false;cnt.textContent=n||'✓';cnt.classList.toggle('ok',!n);
 }
-async function refreshList(sel){
-  const d=await api('/api/init');
-  $('#texSelect').replaceChildren(...d.resumes.map(f=>{ const o=document.createElement('option'); o.value=f; o.textContent=f==='main.tex'?'main.tex · master (never changed)':f; return o }));
-  $('#texSelect').value=sel||S.file; return d;
-}
-async function selectFile(file, check, notes){
-  S.file=file; $('#texSelect').value=file;
-  const master=file==='main.tex';
-  const b=$('#texBadge'); b.textContent=master?'Master':'Tailored'; b.classList.toggle('new',!master);
-  $('#pdfBtn').disabled=!S.pdflatex||master; $('#pdfBtn').title=S.pdflatex?'':'Install MiKTeX to enable. Use Overleaf for now.';
-  try{ const d=await api('/api/tex?file='+encodeURIComponent(file)); $('#tex').innerHTML=highlight(d.tex); $('#tex').dataset.raw=d.tex }
-  catch(e){ $('#tex').textContent='Could not load '+file }
-  // changes
-  $('#diff').replaceChildren(); $('#diffEmpty').hidden=!master;
-  if(!master){
-    try{ const d=await api('/api/diff?file='+encodeURIComponent(file));
-      const sum=document.createElement('div'); sum.className='diffsum'; sum.style.cssText='padding:12px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--code)';
-      sum.innerHTML=`<b>vs main.tex</b><span class="a">+${d.added} added</span><span class="r">−${d.removed} removed</span><span class="help">lines</span>`;
-      $('#diff').append(sum);
-      d.rows.forEach(r=>{ const el=document.createElement('div'); el.className=r.t==='+'?'add':r.t==='-'?'del':r.t==='…'?'gap':''; el.textContent=r.t==='…'?`⋯ ${r.l}`:r.l; $('#diff').append(el) });
-    }catch(e){}
-  }
-  // review
-  if(master){ $('#review').hidden=true; $('#reviewEmpty').hidden=false; $('#reviewCnt').hidden=true; return }
-  if(!check && words()>=15){ try{ const r=await api('/api/review',{...payload(),file}); check=r.check }catch(e){} }
-  renderReview(check, notes);
-}
-function renderReview(c, notes){
-  if(!c){ $('#review').hidden=true; $('#reviewEmpty').hidden=false; return }
-  $('#review').hidden=false; $('#reviewEmpty').hidden=true;
-  $('#keptPct').textContent=c.preserved_pct+'%'; $('#keptPct').style.color=c.missing.length?'var(--bad)':'var(--good)';
-  $('#keptBar').style.background=c.missing.length?'var(--bad)':'var(--good)'; $('#keptBar').style.width=c.preserved_pct+'%';
-  $('#keptText').textContent=`${c.kept} of ${c.total} skills, projects, roles and numbers from main.tex are in this resume.`;
-  $('#missSect').hidden=!c.missing.length;
-  $('#missList').innerHTML=c.missing.map(m=>`<li><svg class="i"><use href="#i-alert"/></svg>${esc(m.item)}<small>${esc(m.kind)}</small></li>`).join('');
-  const added=[...c.added_skills.map(s=>({s,k:'skill'})), ...c.added_keywords.filter(k=>!c.added_skills.some(s=>s.toLowerCase().includes(k))).map(s=>({s,k:'keyword'}))];
-  $('#addSect').hidden=!added.length;
-  $('#addList').innerHTML=added.map(a=>`<li><svg class="i"><use href="#i-alert"/></svg>${esc(a.s)}<small>${a.k}</small></li>`).join('');
-  $('#notesSect').hidden=!notes; $('#notes').textContent=notes||'';
-  const n=c.missing.length+added.length, cnt=$('#reviewCnt'); cnt.hidden=false; cnt.textContent=n||'✓'; cnt.classList.toggle('ok',!n);
-}
-$('#restoreBtn').onclick=async ()=>{
-  const b=$('#restoreBtn'); b.disabled=true; b.lastChild.textContent='Restoring…';
-  try{ const r=await api('/api/review',{...payload(),file:S.file,repair:true}); renderScan(r.scan, S.before); await selectFile(S.file, r.check, $('#notes').textContent); tab('review');
-    toast(r.check.missing.length?'Some items still missing. Check the list':'All your facts are back ✓', !!r.check.missing.length) }
-  catch(e){ toast(e.message,true) }
-  b.disabled=false; b.lastChild.textContent='Restore with Gemini';
-};
-$('#texSelect').onchange=()=>selectFile($('#texSelect').value);
-$('#copyTex').onclick=async ()=>{ await navigator.clipboard.writeText($('#tex').dataset.raw||''); toast('LaTeX copied. Paste it into Overleaf') };
+$('#restoreBtn').onclick=async()=>{const b=$('#restoreBtn');b.disabled=true;
+  try{const r=await api('/api/review',payload({file:S.texFile,repair:true}));renderScan(r.scan);await selectFile(S.texFile,r.check,$('#notes').textContent);tab('review');toast(r.check.missing.length?'Some items still missing':'All your facts are back',!!r.check.missing.length)}
+  catch(e){toast(e.message,true)} b.disabled=false};
+$('#texSelect').onchange=()=>{const f=$('#texSelect').value;selectFile(f);if(f!==S.master&&f.startsWith('resumes/')){S.file=f;S.undo=[];updWorking()}};
+$('#copyTex').onclick=async()=>{await navigator.clipboard.writeText($('#tex').dataset.raw||'');toast('Copied. Paste it into Overleaf')};
 $('#overleaf').onclick=()=>window.open('https://www.overleaf.com/project','_blank');
-$('#pdfBtn').onclick=async ()=>{ try{ const r=await api('/api/compile',{file:S.file}); toast('PDF opened: '+r.pdf) }catch(e){ toast(e.message,true) } };
+$('#pdfBtn').onclick=async()=>{try{const r=await api('/api/compile',{file:S.texFile});toast('PDF opened: '+r.pdf)}catch(e){toast(e.message,true)}};
 $('#folderBtn').onclick=()=>api('/api/open_folder',{}).catch(e=>toast(e.message,true));
 
 /* ---------- settings ---------- */
-function keyNote(){ $('#keyNote').textContent = S.hasKey ? `Gemini ready · ${S.model}` : 'Needs a Gemini key (Settings)' }
-function openSettings(){
-  $('#keyInput').value='';
-  $('#keyState').textContent = S.hasKey ? '✓ A Gemini key is saved. Paste a new one to replace it.' : 'No key saved yet.';
-  $('#modelSelect').replaceChildren(...S.models.map((m,i)=>{ const o=document.createElement('option'); o.value=m; o.textContent=m+(i===0?' (recommended)':''); return o }));
-  $('#modelSelect').value=S.model; show('#settingsModal');
-}
+function openSettings(){$('#keyInput').value='';$('#keyState').textContent=S.hasKey?'✓ A Gemini key is saved. Paste a new one to replace it.':'No key saved yet.';
+  $('#modelSelect').replaceChildren(...S.models.map((m,i)=>{const o=document.createElement('option');o.value=m;o.textContent=m+(i===0?' (recommended)':'');return o}));$('#modelSelect').value=S.model;show('#settingsModal')}
 $('#settingsBtn').onclick=openSettings;
-$('#saveKey').onclick=async ()=>{
-  const body={gemini_model:$('#modelSelect').value}; if($('#keyInput').value.trim()) body.gemini_key=$('#keyInput').value.trim();
-  try{ const r=await api('/api/settings',body); S.hasKey=r.has_key; S.model=r.model; keyNote(); closeAll(); toast('Settings saved') }catch(e){ toast(e.message,true) }
-};
+$('#saveKey').onclick=async()=>{const body={gemini_model:$('#modelSelect').value};if($('#keyInput').value.trim())body.gemini_key=$('#keyInput').value.trim();
+  try{const r=await api('/api/settings',body);S.hasKey=r.has_key;S.model=r.model;closeAll();toast('Settings saved')}catch(e){toast(e.message,true)}};
 
-/* ---------- confetti (vermilion petals) ---------- */
-function confetti(){
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const cv=$('#confetti'), x=cv.getContext('2d'); cv.width=innerWidth; cv.height=innerHeight;
-  const cols=['#C8361F','#E8573E','#1C1915','#D9A441','#F4EFE6'];
-  const ps=Array.from({length:120},()=>({x:innerWidth*(.25+Math.random()*.5),y:innerHeight*.3,vx:(Math.random()-.5)*12,vy:-Math.random()*11-3,r:Math.random()*7+4,c:cols[Math.random()*5|0],a:Math.random()*6,s:(Math.random()-.5)*.25}));
-  let t=0; (function f(){ x.clearRect(0,0,cv.width,cv.height);
-    ps.forEach(p=>{ p.vy+=.3; p.x+=p.vx; p.y+=p.vy; p.vx*=.99; p.a+=p.s; x.save(); x.translate(p.x,p.y); x.rotate(p.a); x.globalAlpha=Math.max(0,1-t/120); x.fillStyle=p.c;
-      x.beginPath(); x.ellipse(0,0,p.r,p.r*.45,0,0,Math.PI*2); x.fill(); x.restore() });
-    if(++t<130) requestAnimationFrame(f); else x.clearRect(0,0,cv.width,cv.height) })();
-}
+function confetti(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;const cv=$('#confetti'),x=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const cols=['#C8361F','#E8573E','#1C1915','#D9A441','#F4EFE6'];const ps=Array.from({length:120},()=>({x:innerWidth*(.25+Math.random()*.5),y:innerHeight*.3,vx:(Math.random()-.5)*12,vy:-Math.random()*11-3,r:Math.random()*7+4,c:cols[Math.random()*5|0],a:Math.random()*6,s:(Math.random()-.5)*.25}));
+  let t=0;(function f(){x.clearRect(0,0,cv.width,cv.height);ps.forEach(p=>{p.vy+=.3;p.x+=p.vx;p.y+=p.vy;p.vx*=.99;p.a+=p.s;x.save();x.translate(p.x,p.y);x.rotate(p.a);x.globalAlpha=Math.max(0,1-t/120);x.fillStyle=p.c;x.beginPath();x.ellipse(0,0,p.r,p.r*.45,0,0,Math.PI*2);x.fill();x.restore()});if(++t<130)requestAnimationFrame(f);else x.clearRect(0,0,cv.width,cv.height)})()}
 
 /* ---------- boot ---------- */
-(async ()=>{
-  try{
-    const d=await refreshList('main.tex');
-    Object.assign(S,{hasKey:d.has_key,model:d.model,models:d.models,pdflatex:d.pdflatex}); keyNote();
-    const jd=d.jd||''; const c=jd.match(/^Company:\s*(.+)$/im), t=jd.match(/^Job Title:\s*(.+)$/im);
-    if(c) $('#company').value=c[1].trim(); if(t) $('#role').value=t[1].trim();
-    $('#jd').value=jd.replace(/^(Company|Job Title):.*\n/gim,''); updCount();
-    if(words()>=15) $('#jdBox').open=true;
-    await selectFile('main.tex');
-  }catch(e){ toast('Could not reach the app. Restart Resume Studios',true) }
+(async()=>{
+  try{const d=await refresh();Object.assign(S,{hasKey:d.has_key,model:d.model,models:d.models,pdflatex:d.pdflatex});
+    const jd=d.jd||'';const c=jd.match(/^Company:\s*(.+)$/im),t=jd.match(/^Job Title:\s*(.+)$/im);
+    if(c)$('#company').value=c[1].trim();if(t)$('#role').value=t[1].trim();$('#jd').value=jd.replace(/^(Company|Job Title):.*\n/gim,'');updCount();
+    if(words()>=15)$('#jdBox').open=true;setStep(words()>=15?3:2);await selectFile(S.master)}
+  catch(e){toast('Could not reach the app. Restart Resume Studios',true)}
   setInterval(()=>fetch('/api/ping').catch(()=>{}),10000);
-  if(location.hash==='#scan') $('#scanBtn').click();
-  const fm=location.hash.match(/^#file=(.+)$/);
-  if(fm){ const f=decodeURIComponent(fm[1]); await selectFile(f); tab('review') }
 })();
 </script>
 </body>

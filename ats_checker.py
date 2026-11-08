@@ -232,6 +232,17 @@ def scan(resume_path, jd_raw, ai_keywords=None):
     if not os.path.isabs(resume_path):
         resume_path = os.path.join(SCRIPT_DIR, resume_path)
     name, resume_plain = load_resume_text(resume_path)
+    r = scan_plain(resume_plain, jd_raw, ai_keywords)
+    r.update(name=name, resume_path=resume_path)
+    return r
+
+
+def scan_text(tex, jd_raw, ai_keywords=None):
+    """Score resume SOURCE TEXT (LaTeX or plain text) without a file."""
+    return scan_plain(latex_to_text(tex), jd_raw, ai_keywords)
+
+
+def scan_plain(resume_plain, jd_raw, ai_keywords=None):
     text = resume_plain.lower()
     jd_text = jd_raw.lower()
     company, role = parse_jd_header(jd_raw)
@@ -296,7 +307,7 @@ def scan(resume_path, jd_raw, ai_keywords=None):
         del p["score"]
 
     return {
-        "name": name, "resume_path": resume_path, "company": company, "role": role,
+        "company": company, "role": role,
         "score": round(overall * 100), "parts": parts,
         "matched": matched, "missing": missing,
         "ai_keywords": bool(ai_keywords),

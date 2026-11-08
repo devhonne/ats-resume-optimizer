@@ -163,3 +163,81 @@ def extract_job(key, url, page_text=None, model=None):
     if not m:
         raise GeminiError("Gemini couldn't read that page. Paste the job text instead.")
     return json.loads(m.group(0))
+
+
+def read_pdf(key, data, model=None):
+    """PDF bytes -> plain text, for scanned/odd PDFs that local parsing can't read."""
+    import base64
+    body = {"contents": [{"role": "user", "parts": [
+        {"inline_data": {"mime_type": "application/pdf", "data": base64.b64encode(data).decode()}},
+        {"text": "Transcribe this resume to plain text. Keep every word, link, date and number. "
+                 "Keep section headings on their own lines and bullets as '- '. No commentary."}]}],
+        "generationConfig": {"maxOutputTokens": 16384}}
+    last = None
+    for m in ([model] if model else []) + MODELS:
+        try:
+            d = _call(key, m, body, 120)
+            c = (d.get("candidates") or [{}])[0]
+            text = "".join(p.get("text", "") for p in c.get("content", {}).get("parts", []) if not p.get("thought"))
+            if text.strip():
+                return text
+        except Exception as e:
+            last = e
+    raise GeminiError(f"Gemini couldn't read that PDF ({last or 'empty reply'}).")
+
+
+SUGGEST_SCHEMA = {
+    "type": "OBJECT",
+    "properties": {"suggestions": {"type": "ARRAY", "items": {
+        "type": "OBJECT",
+        "properties": {
+            "title": {"type": "STRING"},
+            "why": {"type": "STRING"},
+            "type": {"type": "STRING", "enum": ["reword", "surface", "reorder", "new_skill"]},
+            "keywords": {"type": "ARRAY", "items": {"type": "STRING"}},
+            "evidence": {"type": "STRING"},
+            "find": {"type": "STRING"},
+            "replace": {"type": "STRING"},
+        },
+        "required": ["title", "why", "type", "keywords", "find", "replace"]}}},
+    "required": ["suggestions"],
+}
+
+SUGGEST_PROMPT = """You are an ATS resume coach. Propose small, surgical edits to the candidate's resume source
+that raise its match with the job description below. The candidate decides on each edit one by one.
+
+Rules for every suggestion:
+- It edits ONE contiguous piece of the resume source. "find" must be copied character-for-character
+  from the source (a phrase, a bullet, or one skills line; max ~300 characters). "replace" is that
+  same piece rewritten.
+- Never delete facts: keep every skill, tool, project, number and link that is already in the piece.
+- Prefer, in this order:
+  "reword"  - use the job's exact wording for something the candidate already has;
+  "surface" - make explicit a skill clearly shown by existing content; put the proof in "evidence";
+  "reorder" - move the most job-relevant items first within one line or bullet.
+- If the job needs a skill the resume does not show at all, you MAY suggest adding it, but then
+  "type" must be "new_skill" and "why" must say to accept only if it is true.
+- Keep the source valid (LaTeX: escape & % # _ ; plain text stays plain).
+- 4 to 10 suggestions, highest score impact first, aimed at the missing must-have keywords.
+- "keywords": the job keywords each edit adds. "title": a short imperative, e.g. "Use 'RESTful APIs' in Skills".
+
+Job keywords NOT visible in the resume yet:
+- Must-have: {must}
+- Nice-to-have: {nice}
+- Other: {other}
+
+<job_description>
+{jd}
+</job_description>
+
+<resume_source>
+{resume}
+</resume_source>"""
+
+
+def suggest(key, resume, jd, missing, model=None):
+    grp = lambda p: ", ".join(m["k"] for m in missing if m["p"] == p) or "(none)"
+    text = generate(key, None, SUGGEST_PROMPT.format(must=grp("required"), nice=grp("preferred"), other=grp("general"),
+                                                     jd=jd[:30000], resume=resume),
+                    schema=SUGGEST_SCHEMA, model=model, timeout=150, max_tokens=16384)
+    return json.loads(text).get("suggestions", [])

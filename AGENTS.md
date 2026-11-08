@@ -76,7 +76,13 @@ analysis) is required. `compare_resumes()` reports facts dropped from / added to
   `cache.json` (AI keywords per JD).
 
 ## GUI
-`python resume_studio/app.py` (or double-click `resume_studio/Resume Studio.bat`) runs the pipeline
-in a local web app: paste a job link → Gemini reads it → local + Gemini scores with "how we matched"
-evidence → copy-prompt for Claude/ChatGPT or auto-tailor with Gemini → Changes (diff vs main.tex)
-and Review (facts kept / new claims, one-click restore).
+`python resume_studio/app.py` (or double-click `resume_studio/Resume Studio.bat`) runs a local web app:
+1. Original resume: `main.tex` by default, or upload/paste a .tex/.pdf/.docx/.txt (saved in `uploads/`,
+   never edited; PDFs are read locally or by Gemini, and converted to LaTeX with every fact kept).
+2. Job: paste a link (Gemini opens it if the page can't be downloaded) or the text.
+3. Score: local (offline) + Gemini, with "how we matched" evidence.
+4. Raise score: suggestions are exact edits (`suggest.py`), each re-scored locally for its point gain.
+   Edits that remove an original fact are discarded; edits that add a skill not in the original are
+   flagged and need the user's explicit OK. Accept/Undo work on a copy in `resumes/`.
+Right panel: Resume / Changes (diff vs original) / Review (facts kept, new claims, restore) / Links
+(`links.py`: works, redirects, broken, can't verify).

@@ -1,13 +1,17 @@
-"""Resume Studio — local web app for Honne's ATS scanner + AI tailoring.
+"""Resume Studios (desktop) — local web app: ATS score, score-raising suggestions, tailoring, link checks.
 
 Run:  python resume_studio/app.py      (or double-click "resume_studio/Resume Studio.bat")
 Only listens on 127.0.0.1 and shuts down ~30 s after the window closes.
 
 Folder layout
-  resume_studio/   this app: app.py, gemini.py, job_fetch.py, index.html, assets/, config.json*, cache.json*
-  ../              offline files: main.tex (master resume), ats_checker.py (local scoring),
-                   job_description.txt, resumes/ (tailored outputs)            * = gitignored
+  resume_studio/   this app (app.py, gemini.py, job_fetch.py, suggest.py, links.py, resume_parse.py,
+                   index.html, assets/, config.json*, cache.json*)                * = gitignored
+  ../              offline files: main.tex (default original resume), uploads/ (other originals you
+                   upload), ats_checker.py (local scoring), job_description.txt, resumes/ (tailored)
+
+The ORIGINAL resume (main.tex or an upload) is never edited. Tailored copies go to resumes/.
 """
+import base64
 import difflib
 import hashlib
 import json
@@ -31,14 +35,19 @@ sys.path.insert(0, ROOT)
 import ats_checker   # noqa: E402  (offline scorer lives outside the studio folder)
 import gemini        # noqa: E402
 import job_fetch     # noqa: E402
+import links         # noqa: E402
+import resume_parse  # noqa: E402
+import suggest       # noqa: E402
 
 UI_FILE = os.path.join(APP_DIR, "index.html")
 ASSETS = os.path.join(APP_DIR, "assets")
 CONFIG = os.path.join(APP_DIR, "config.json")
 CACHE = os.path.join(APP_DIR, "cache.json")
+TEMPLATE = os.path.join(APP_DIR, "template.tex")
 RESUMES_DIR = os.path.join(ROOT, "resumes")
-MASTER = os.path.join(ROOT, "main.tex")
+UPLOADS_DIR = os.path.join(ROOT, "uploads")
 JD_FILE = os.path.join(ROOT, "job_description.txt")
+SOURCE_EXT = (".tex", ".txt")
 
 JOBS = {}
 LAST_PING = [time.time()]
@@ -50,6 +59,12 @@ MIME = {".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png", ".svg"
 def read(path):
     with open(path, encoding="utf-8") as f:
         return f.read()
+
+
+def write(path, text):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(text)
 
 
 def load_json(path):
@@ -81,19 +96,38 @@ def slug(text):
 
 
 def header_jd(jd, company, role):
-    extra = (f"Company: {company}\n" if company else "") + (f"Job Title: {role}\n" if role else "")
-    return extra + jd
+    return (f"Company: {company}\n" if company else "") + (f"Job Title: {role}\n" if role else "") + jd
 
 
 def rel(path):
     return os.path.relpath(path, ROOT).replace("\\", "/")
 
 
-def safe_tex(relpath):
-    full = os.path.realpath(os.path.join(ROOT, relpath))
-    if not full.startswith(os.path.realpath(ROOT)) or not full.endswith(".tex") or not os.path.exists(full):
-        raise FileNotFoundError("file not found")
+def safe(relpath, dirs=("", "uploads", "resumes")):
+    """Resolve a resume path inside ROOT (main.tex, uploads/, resumes/), .tex or .txt only."""
+    full = os.path.realpath(os.path.join(ROOT, relpath or "main.tex"))
+    parent = os.path.relpath(os.path.dirname(full), os.path.realpath(ROOT)).replace("\\", "/")
+    if parent == ".":
+        parent = ""
+    if parent not in dirs or not full.endswith(SOURCE_EXT) or not os.path.exists(full):
+        raise FileNotFoundError(f"resume not found: {relpath}")
     return full
+
+
+def unique(path):
+    base, ext = os.path.splitext(path)
+    n = 2
+    while os.path.exists(path):
+        path = f"{base}_{n}{ext}"
+        n += 1
+    return path
+
+
+def list_sources(folder):
+    d = os.path.join(ROOT, folder)
+    if not os.path.isdir(d):
+        return []
+    return [f"{folder}/{f}" for f in sorted(os.listdir(d)) if f.endswith(SOURCE_EXT)]
 
 
 def ai_keywords(jd):
@@ -117,48 +151,45 @@ def ai_keywords(jd):
     return kw, None
 
 
-# ---------------------------------------------------------------- prompts
+# ---------------------------------------------------------------- prompts (full rewrite flow)
 PRESERVE_RULES = """NON-NEGOTIABLE: this is the candidate's real resume. Do not change who they are.
 1. KEEP EVERYTHING. Every skill in the skills section, every project, internship, education entry,
-   certification, the patent, every link, and every number/metric must still be in your output.
+   certification, award, every link, and every number/metric must still be in your output.
    You may reorder, regroup and reword them; you may not delete any.
 2. ADD NOTHING NEW. No new skills, tools, courses/coursework, dates, availability, locations,
-   responsibilities or metrics that are not already in the master resume.
+   responsibilities or metrics that are not already in the original resume.
 3. Matching the job means: put the most relevant existing items first, and where the candidate
-   already has a skill, use the job description's exact wording for it (e.g. "REST APIs" ->
-   "RESTful services" if the JD says that). A JD keyword the candidate does not have is a GAP:
-   leave it out of the resume and list it in <notes>.
-4. Same LaTeX template and packages, one page, compiles as-is."""
+   already has a skill, use the job description's exact wording for it. A JD keyword the candidate
+   does not have is a GAP: leave it out of the resume and list it in <notes>.
+4. Same format (LaTeX template and packages, or plain text), one page."""
 
 
-def build_prompts(resume_tex, jd, company, role, missing):
-    agents = os.path.join(ROOT, "AGENTS.md")
-    rules = read(agents) if os.path.exists(agents) else ""
+def build_prompts(resume_src, jd, company, role, missing):
     must = [m["k"] for m in missing if m["p"] == "required"]
     other = [m["k"] for m in missing if m["p"] != "required"]
-    system = ("You tailor Devi Sree Honne's LaTeX resume to one job description so it passes ATS keyword "
-              "screening and reads well to a recruiter.\n\n" + PRESERVE_RULES + "\n\nProject rules:\n" + rules)
+    system = ("You tailor a candidate's resume to one job description so it passes ATS keyword screening "
+              "and reads well to a recruiter.\n\n" + PRESERVE_RULES)
     user = f"""Company: {company or "(see JD)"}
 Role: {role or "(see JD)"}
 
 {PRESERVE_RULES}
 
-<master_resume>
-{resume_tex}
-</master_resume>
+<original_resume>
+{resume_src}
+</original_resume>
 
 <job_description>
 {jd}
 </job_description>
 
-The ATS scanner reports these JD keywords as not visible in the master resume:
+The ATS scanner reports these JD keywords as not visible in the resume:
 - Must-have: {", ".join(must) if must else "(none)"}
 - Other: {", ".join(other) if other else "(none)"}
-Use one only if the master resume already proves it (then use the JD's exact wording). Otherwise it is a gap.
+Use one only if the resume already proves it (then use the JD's exact wording). Otherwise it is a gap.
 
 Return exactly two parts:
 <resume>
-...the complete tailored LaTeX document, from \\documentclass to \\end{{document}}...
+...the complete tailored resume in the same format (for LaTeX: \\documentclass to \\end{{document}})...
 </resume>
 <notes>
 - What you reordered or reworded, and which JD keywords that surfaced
@@ -167,50 +198,66 @@ Return exactly two parts:
     return system, user
 
 
-REPAIR_PROMPT = """The tailored resume below dropped facts from the candidate's master resume.
+REPAIR_PROMPT = """The tailored resume below dropped facts from the candidate's original resume.
 Put back every item listed under <missing> in the right section, without removing or rewording
-anything else, and without adding anything new. Return only the complete LaTeX document.
+anything else, and without adding anything new. Return only the complete resume.
 
 <missing>
 {missing}
 </missing>
 
-<master_resume>
+<original_resume>
 {master}
-</master_resume>
+</original_resume>
 
 <tailored_resume>
 {tailored}
 </tailored_resume>"""
 
+CONVERT_PROMPT = """Convert this resume into the LaTeX template below.
+- Use EVERY fact: name, contact details, links, every skill, job, internship, project, education
+  entry, grade, certification, award and number. Do not drop anything. Do not invent anything.
+- Group skills as "\\textbf{{Category:}} a, b, c". Drop template sections with no content.
+- Escape LaTeX special characters (\\& \\% \\# \\_ \\$). Return only the LaTeX document.
+
+<template>
+{template}
+</template>
+
+<resume_text>
+{text}
+</resume_text>"""
+
 
 def extract_parts(text):
     m = re.search(r"<resume>\s*(.*?)\s*</resume>", text, re.S)
-    tex = m.group(1) if m else text
-    tex = re.sub(r"^```(?:latex|tex)?\s*|\s*```$", "", tex.strip())
-    if "\\documentclass" in tex:
-        tex = tex[tex.index("\\documentclass"):]
-    if "\\end{document}" in tex:
-        tex = tex[:tex.index("\\end{document}") + len("\\end{document}")] + "\n"
+    src = m.group(1) if m else text
+    src = re.sub(r"^```(?:latex|tex|text)?\s*|\s*```$", "", src.strip())
+    if "\\documentclass" in src:
+        src = src[src.index("\\documentclass"):]
+        if "\\end{document}" in src:
+            src = src[:src.index("\\end{document}") + len("\\end{document}")]
     n = re.search(r"<notes>\s*(.*?)\s*</notes>", text, re.S)
-    return tex, (n.group(1).strip() if n else "")
+    return src.strip() + "\n", (n.group(1).strip() if n else "")
 
 
-# ---------------------------------------------------------------- actions
-def do_scan(resume, jd, company, role, save_jd=True):
-    """Both scores: local (offline keyword list) and Gemini (AI must-have keywords)."""
+def valid_output(src, master_path):
+    if master_path.endswith(".tex"):
+        return "\\documentclass" in src and "\\end{document}" in src
+    return len(src.strip()) > 200
+
+
+# ---------------------------------------------------------------- core actions
+def do_scan(resume, jd, company, role, save_jd=True, text=None):
+    """Both scores for a resume file (or for `text`): local (offline) and Gemini (AI keywords)."""
     jd_full = header_jd(jd, company, role)
     if save_jd:
-        with open(JD_FILE, "w", encoding="utf-8") as f:
-            f.write(jd_full)
-    path = os.path.join(ROOT, resume or "main.tex")
-    local = ats_checker.scan(path, jd_full, None)
+        write(JD_FILE, jd_full)
+    src = text if text is not None else read(safe(resume))
+    local = ats_checker.scan_text(src, jd_full, None)
     kw, err = ai_keywords(jd)
-    ai = ats_checker.scan(path, jd_full, kw) if kw else None
-    for r in (local, ai):
-        if r:
-            r["resume"] = rel(r.pop("resume_path"))
-    return {"local": local, "ai": ai, "ai_error": err, "resume": rel(path),
+    ai = ats_checker.scan_text(src, jd_full, kw) if kw else None
+    return {"local": local, "ai": ai, "ai_error": err, "resume": resume,
             "company": local["company"], "role": local["role"]}
 
 
@@ -218,78 +265,115 @@ def primary(scan):
     return scan["ai"] or scan["local"]
 
 
-def make_prompt(jd, company, role):
-    base = do_scan("main.tex", jd, company, role)
-    p = primary(base)
-    system, user = build_prompts(read(MASTER), jd, company or p["company"], role or p["role"], p["missing"])
-    return base, system, user
-
-
 def all_keywords(scan):
     p = primary(scan)
     return [m["k"] for m in p["matched"] + p["missing"]]
 
 
-def review(tailored_path, scan):
-    return ats_checker.compare_resumes(read(MASTER), read(tailored_path), all_keywords(scan))
+def check(master_path, src, scan):
+    return ats_checker.compare_resumes(read(master_path), src, all_keywords(scan))
 
 
-def repair(tailored_path, check):
-    """Ask Gemini to restore dropped facts. Returns the new check."""
-    missing = "\n".join(f"- {m['kind']}: {m['item']}" for m in check["missing"])
+def tailored_path(master_path, company, role):
+    ext = os.path.splitext(master_path)[1]
+    return unique(os.path.join(RESUMES_DIR, f"{slug(company or 'company')}_{slug(role or 'role')}{ext}"))
+
+
+def repair(master_path, tailored_file, chk):
+    missing = "\n".join(f"- {m['kind']}: {m['item']}" for m in chk["missing"])
     reply = gemini.generate(gemini_key(), None, REPAIR_PROMPT.format(
-        missing=missing, master=read(MASTER), tailored=read(tailored_path)), model=gemini_model(), timeout=180)
-    tex, _ = extract_parts(reply)
-    if "\\documentclass" in tex and "\\end{document}" in tex:
-        with open(tailored_path, "w", encoding="utf-8") as f:
-            f.write(tex)
+        missing=missing, master=read(master_path), tailored=read(tailored_file)), model=gemini_model(), timeout=180)
+    src, _ = extract_parts(reply)
+    if valid_output(src, master_path):
+        write(tailored_file, src)
 
 
-def save_tailored(reply, jd, company, role, base, auto_repair=False):
-    tex, notes = extract_parts(reply)
-    if "\\documentclass" not in tex or "\\end{document}" not in tex:
-        raise ValueError("That reply doesn't contain a complete LaTeX resume (\\documentclass … \\end{document}).")
-    os.makedirs(RESUMES_DIR, exist_ok=True)
-    path = os.path.join(RESUMES_DIR, f"{slug(company or 'company')}_{slug(role or 'role')}.tex")
-    with open(path, "w", encoding="utf-8") as f:
-        f.write(tex)
-    check = review(path, base)
-    repaired = False
-    if auto_repair and check["missing"] and gemini_key():
+def save_tailored(reply, b, base, auto_repair=False):
+    mpath = safe(b["master"])
+    src, notes = extract_parts(reply)
+    if not valid_output(src, mpath):
+        raise ValueError("That reply doesn't contain a complete resume"
+                         + (" (\\documentclass … \\end{document})." if mpath.endswith(".tex") else "."))
+    path = tailored_path(mpath, b["company"] or base["company"], b["role"] or base["role"])
+    write(path, src)
+    chk, repaired = check(mpath, src, base), False
+    if auto_repair and chk["missing"] and gemini_key():
         try:
-            repair(path, check)
-            check, repaired = review(path, base), True
+            repair(mpath, path, chk)
+            chk, repaired = check(mpath, read(path), base), True
         except Exception:
             pass
-    after = do_scan(rel(path), jd, company, role)
-    return {"scan": after, "before": {"local": base["local"]["score"],
-                                      "ai": base["ai"]["score"] if base["ai"] else None},
-            "notes": notes, "file": rel(path), "check": check, "repaired": repaired}
+    after = do_scan(rel(path), b["jd"], b["company"], b["role"])
+    return {"scan": after, "before": {"local": base["local"]["score"], "ai": base["ai"]["score"] if base["ai"] else None},
+            "notes": notes, "file": rel(path), "check": chk, "repaired": repaired}
 
 
-def tailor_job(job_id, jd, company, role):
+def tailor_job(job_id, b):
     job = JOBS[job_id]
     try:
-        base, system, user = make_prompt(jd, company, role)
-        company, role = company or base["company"], role or base["role"]
+        base = do_scan(b["master"], b["jd"], b["company"], b["role"])
+        p = primary(base)
+        system, user = build_prompts(read(safe(b["master"])), b["jd"], b["company"] or p["company"], b["role"] or p["role"], p["missing"])
         job["state"] = "writing"
         reply = gemini.generate(gemini_key(), system, user, model=gemini_model(), timeout=240)
         job["state"] = "checking"
-        job.update(state="done", result=save_tailored(reply, jd, company, role, base, auto_repair=True))
+        job.update(state="done", result=save_tailored(reply, b, base, auto_repair=True))
     except Exception as e:
         job.update(state="error", error=str(e))
 
 
-def diff(file):
-    a = read(MASTER).splitlines()
-    b = read(safe_tex(file)).splitlines()
+def make_suggestions(b):
+    """Validated, scored suggestions for the working copy (or the original if none yet)."""
+    mpath = safe(b["master"])
+    working = read(safe(b["file"])) if b.get("file") else read(mpath)
+    scan = do_scan(b.get("file") or b["master"], b["jd"], b["company"], b["role"], save_jd=False, text=working)
+    jd_full = header_jd(b["jd"], b["company"], b["role"])
+    kw, _ = ai_keywords(b["jd"])
+    items = suggest.local_suggestions(working, b["jd"], scan)
+    ai_error = None
+    if gemini_key():
+        try:
+            for s in gemini.suggest(gemini_key(), working, b["jd"], primary(scan)["missing"], model=gemini_model()):
+                s["source"] = "ai"
+                items.append(s)
+        except Exception as e:
+            ai_error = str(e)
+    else:
+        ai_error = "Add a Gemini key in Settings for AI suggestions. Showing offline suggestions only."
+    out = suggest.evaluate(items, read(mpath), working, jd_full, kw, all_keywords(scan))
+    return {"suggestions": out, "scan": scan, "ai_error": ai_error}
+
+
+def apply_suggestion(b):
+    """Apply one edit to the working copy (creating it from the original on first accept)."""
+    mpath = safe(b["master"])
+    if b.get("file"):
+        path = safe(b["file"], dirs=("resumes",))
+    else:
+        path = tailored_path(mpath, b["company"], b["role"])
+        write(path, read(mpath))
+    prev = read(path)
+    span = suggest.locate(prev, b["find"])
+    if not span:
+        raise ValueError("That text changed since the suggestion was made. Refresh the suggestions.")
+    new = prev[:span[0]] + b["replace"] + prev[span[1]:]
+    write(path, new)
+    scan = do_scan(rel(path), b["jd"], b["company"], b["role"], save_jd=False, text=new)
+    kw, _ = ai_keywords(b["jd"])
+    pending = suggest.evaluate([dict(s, keep_zero=s.get("type") == "exact") for s in b.get("pending", [])],
+                               read(mpath), new, header_jd(b["jd"], b["company"], b["role"]), kw, all_keywords(scan))
+    return {"file": rel(path), "previous": prev, "scan": scan, "check": check(mpath, new, scan), "pending": pending}
+
+
+def diff(master, file):
+    a = read(safe(master)).splitlines()
+    b = read(safe(file)).splitlines()
     rows, added, removed = [], 0, 0
     for op, i1, i2, j1, j2 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
         if op == "equal":
             n = i2 - i1
             if n > 6:
-                rows += [{"t": " ", "l": a[i1]}, {"t": " ", "l": a[i1 + 1]},
-                         {"t": "…", "l": f"{n - 4} unchanged lines"},
+                rows += [{"t": " ", "l": a[i1]}, {"t": " ", "l": a[i1 + 1]}, {"t": "…", "l": f"{n - 4} unchanged lines"},
                          {"t": " ", "l": a[i2 - 2]}, {"t": " ", "l": a[i2 - 1]}]
             else:
                 rows += [{"t": " ", "l": x} for x in a[i1:i2]]
@@ -299,6 +383,48 @@ def diff(file):
         removed += i2 - i1
         added += j2 - j1
     return {"rows": rows, "added": added, "removed": removed}
+
+
+def upload_resume(b):
+    """Save an uploaded/pasted ORIGINAL resume into uploads/. PDFs/DOCX are read locally, or by Gemini
+    if local reading fails; with a Gemini key they're converted to LaTeX (every fact kept)."""
+    name = os.path.basename(b.get("name") or "pasted.txt")
+    if b.get("text"):
+        data = b["text"].encode("utf-8")
+        name = name if name.endswith((".tex", ".txt")) else ("pasted.tex" if "\\documentclass" in b["text"] else "pasted.txt")
+    else:
+        data = base64.b64decode(b.get("data", ""))
+    stem = slug(os.path.splitext(name)[0])
+    kind, text, note = None, None, ""
+    try:
+        kind, text = resume_parse.read_upload(name, data)
+    except ValueError as e:
+        if name.lower().endswith(".pdf") and gemini_key():
+            kind, text = "pdf", gemini.read_pdf(gemini_key(), data, model=gemini_model())
+            note = "Local PDF reading failed, so Gemini read it. "
+        else:
+            raise e
+    if kind == "latex":
+        if "\\documentclass" not in text or "\\end{document}" not in text:
+            raise ValueError("That .tex file isn't a complete document (needs \\documentclass … \\end{document}).")
+        path = unique(os.path.join(UPLOADS_DIR, stem + ".tex"))
+        write(path, text)
+        return {"master": rel(path), "converted": False, "note": note + "Saved as your original. It will never be edited."}
+    if gemini_key():
+        reply = gemini.generate(gemini_key(), None, CONVERT_PROMPT.format(template=read(TEMPLATE), text=text),
+                                model=gemini_model(), timeout=180)
+        src, _ = extract_parts(reply)
+        if "\\documentclass" in src and "\\end{document}" in src:
+            path = unique(os.path.join(UPLOADS_DIR, stem + ".tex"))
+            write(path, src)
+            write(unique(os.path.join(UPLOADS_DIR, stem + "_original_text.txt")), text)
+            return {"master": rel(path), "converted": True,
+                    "note": note + f"Converted from {kind.upper()} to LaTeX with Gemini. Check it on the right; "
+                                   "the extracted text is saved next to it."}
+    path = unique(os.path.join(UPLOADS_DIR, stem + ".txt"))
+    write(path, text)
+    return {"master": rel(path), "converted": False,
+            "note": note + "Saved as plain text (add a Gemini key to convert it to LaTeX). Scoring and suggestions work on it."}
 
 
 # ---------------------------------------------------------------- http
@@ -317,7 +443,11 @@ class Handler(BaseHTTPRequestHandler):
 
     def _body(self):
         n = int(self.headers.get("Content-Length") or 0)
-        return json.loads(self.rfile.read(n) or b"{}")
+        b = json.loads(self.rfile.read(n) or b"{}")
+        for k in ("jd", "company", "role"):
+            b[k] = (b.get(k) or "").strip() if k != "jd" else (b.get(k) or "")
+        b["master"] = b.get("master") or "main.tex"
+        return b
 
     def do_GET(self):
         LAST_PING[0] = time.time()
@@ -328,24 +458,25 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, read(UI_FILE).encode(), "text/html; charset=utf-8")
             if u.path.startswith("/assets/"):
                 name = os.path.basename(u.path)
-                full = os.path.join(ASSETS, name)
-                ext = os.path.splitext(name)[1].lower()
+                full, ext = os.path.join(ASSETS, name), os.path.splitext(name)[1].lower()
                 if ext in MIME and os.path.exists(full):
                     with open(full, "rb") as f:
                         return self._send(200, f.read(), MIME[ext])
                 return self._send(404, {"error": "not found"})
             if u.path == "/api/init":
+                masters = (["main.tex"] if os.path.exists(os.path.join(ROOT, "main.tex")) else []) + \
+                          [f for f in list_sources("uploads") if not f.endswith("_original_text.txt")]
                 return self._send(200, {
-                    "resumes": [f for f in ats_checker.get_resume_files() if f.endswith(".tex")],
+                    "masters": masters, "resumes": list_sources("resumes"),
                     "jd": read(JD_FILE) if os.path.exists(JD_FILE) else "",
                     "has_key": bool(gemini_key()), "model": gemini_model(), "models": gemini.MODELS,
                     "pdflatex": bool(shutil.which("pdflatex")),
                 })
             if u.path == "/api/tex":
                 f = q.get("file", ["main.tex"])[0]
-                return self._send(200, {"file": f, "tex": read(safe_tex(f))})
+                return self._send(200, {"file": f, "tex": read(safe(f))})
             if u.path == "/api/diff":
-                return self._send(200, diff(q.get("file", [""])[0]))
+                return self._send(200, diff(q.get("master", ["main.tex"])[0], q.get("file", [""])[0]))
             if u.path == "/api/ping":
                 return self._send(200, {"ok": True})
             if u.path.startswith("/api/job/"):
@@ -361,35 +492,49 @@ class Handler(BaseHTTPRequestHandler):
         LAST_PING[0] = time.time()
         try:
             b = self._body()
-            jd, company, role = b.get("jd", ""), b.get("company", "").strip(), b.get("role", "").strip()
             if self.path == "/api/fetch_job":
                 return self._send(200, job_fetch.fetch_job(b.get("url", "").strip(), gemini_key(), gemini_model()))
+            if self.path == "/api/upload_resume":
+                return self._send(200, upload_resume(b))
             if self.path == "/api/scan":
-                return self._send(200, do_scan(b.get("resume"), jd, company, role))
+                return self._send(200, do_scan(b.get("resume") or b["master"], b["jd"], b["company"], b["role"]))
             if self.path == "/api/prompt":
-                _, system, user = make_prompt(jd, company, role)
+                base = do_scan(b["master"], b["jd"], b["company"], b["role"])
+                p = primary(base)
+                system, user = build_prompts(read(safe(b["master"])), b["jd"], b["company"] or p["company"],
+                                             b["role"] or p["role"], p["missing"])
                 return self._send(200, {"prompt": system + "\n\n---\n\n" + user})
+            if self.path == "/api/suggest":
+                return self._send(200, make_suggestions(b))
+            if self.path == "/api/apply":
+                return self._send(200, apply_suggestion(b))
+            if self.path == "/api/write":          # undo: restore a previous working-copy text
+                path = safe(b.get("file", ""), dirs=("resumes",))
+                write(path, b.get("text", ""))
+                scan = do_scan(rel(path), b["jd"], b["company"], b["role"], save_jd=False)
+                return self._send(200, {"scan": scan, "check": check(safe(b["master"]), read(path), scan)})
+            if self.path == "/api/links":
+                return self._send(200, {"links": links.check_all(read(safe(b.get("file") or b["master"])))})
             if self.path == "/api/tailor":
                 if not gemini_key():
-                    return self._send(400, {"error": "no_key"})
+                    return self._send(400, {"error": "Add a Gemini key in Settings first."})
                 job_id = uuid.uuid4().hex[:10]
                 JOBS[job_id] = {"state": "thinking", "result": None, "error": None}
-                threading.Thread(target=tailor_job, args=(job_id, jd, company, role), daemon=True).start()
+                threading.Thread(target=tailor_job, args=(job_id, b), daemon=True).start()
                 return self._send(200, {"job": job_id})
             if self.path == "/api/save_result":
-                base = do_scan("main.tex", jd, company, role)
-                company, role = company or base["company"], role or base["role"]
-                return self._send(200, save_tailored(b.get("reply", ""), jd, company, role, base))
+                base = do_scan(b["master"], b["jd"], b["company"], b["role"])
+                return self._send(200, save_tailored(b.get("reply", ""), b, base))
             if self.path == "/api/review":
-                base = do_scan("main.tex", jd, company, role, save_jd=False)
-                path = safe_tex(b.get("file", ""))
-                check = review(path, base)
-                if b.get("repair") and check["missing"]:
+                base = do_scan(b["master"], b["jd"], b["company"], b["role"], save_jd=False)
+                mpath, path = safe(b["master"]), safe(b.get("file", ""), dirs=("resumes",))
+                chk = check(mpath, read(path), base)
+                if b.get("repair") and chk["missing"]:
                     if not gemini_key():
                         return self._send(400, {"error": "Add a Gemini key in Settings to auto-restore."})
-                    repair(path, check)
-                    check = review(path, base)
-                return self._send(200, {"check": check, "scan": do_scan(rel(path), jd, company, role, save_jd=False)})
+                    repair(mpath, path, chk)
+                    chk = check(mpath, read(path), base)
+                return self._send(200, {"check": chk, "scan": do_scan(rel(path), b["jd"], b["company"], b["role"], save_jd=False)})
             if self.path == "/api/settings":
                 c = cfg()
                 if b.get("gemini_key"):
@@ -403,8 +548,8 @@ class Handler(BaseHTTPRequestHandler):
                 os.startfile(RESUMES_DIR)
                 return self._send(200, {"ok": True})
             if self.path == "/api/compile":
-                full = safe_tex(b.get("file", ""))
-                subprocess.run(["pdflatex", "-interaction=nonstopmode", "-output-directory", RESUMES_DIR, full],
+                full = safe(b.get("file", ""))
+                subprocess.run(["pdflatex", "-interaction=nonstopmode", "-output-directory", os.path.dirname(full), full],
                                capture_output=True, text=True)
                 pdf = full[:-4] + ".pdf"
                 if not os.path.exists(pdf):
@@ -412,6 +557,8 @@ class Handler(BaseHTTPRequestHandler):
                 os.startfile(pdf)
                 return self._send(200, {"pdf": rel(pdf)})
             self._send(404, {"error": "not found"})
+        except FileNotFoundError as e:
+            self._send(404, {"error": str(e)})
         except Exception as e:
             self._send(500, {"error": str(e)})
 
@@ -441,10 +588,10 @@ def watchdog(server):
 
 
 if __name__ == "__main__":
-    port = free_port()
+    port = int(os.environ.get("RS_PORT") or 0) or free_port()
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
     url = f"http://127.0.0.1:{port}/"
-    print(f"Resume Studio running at {url}  (close the window to quit)")
+    print(f"Resume Studios running at {url}  (close the window to quit)")
     if "--no-open" not in sys.argv:
         open_window(url)
         threading.Thread(target=watchdog, args=(server,), daemon=True).start()
