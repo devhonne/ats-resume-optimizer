@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Resume Studio</title>
+<title>Resume Studios</title>
+<link rel="icon" type="image/png" href="/assets/favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500;600;700&display=swap" rel="stylesheet">
@@ -85,7 +86,7 @@ svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .nav{position:sticky;top:calc(12px + env(safe-area-inset-top,0px));z-index:30;margin:12px auto 0;max-width:1480px;width:calc(100% - 32px);
   display:flex;align-items:center;gap:16px;padding:10px 12px 10px 16px;border-radius:20px}
 .brand{display:flex;align-items:center;gap:10px;min-width:0}
-.sunmark{width:30px;height:30px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 35%,#E8573E,var(--sun) 60%,#9E2814);box-shadow:0 0 0 3px rgba(200,54,31,.15)}
+.logo{width:38px;height:38px;border-radius:11px;flex:none;object-fit:cover;box-shadow:0 1px 3px rgba(28,25,21,.18),inset 0 0 0 1px rgba(28,25,21,.08)}
 .brand b{font-family:var(--serif);font-size:18px;font-weight:700;white-space:nowrap}
 .steps{display:flex;align-items:center;gap:4px;margin:0 auto;padding:4px;border-radius:999px}
 .step{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-size:13px;color:var(--muted);font-weight:500;white-space:nowrap;transition:background .25s,color .25s}
@@ -324,8 +325,8 @@ ul.list small{opacity:.8;font-size:11.5px;text-transform:uppercase;letter-spacin
 
 <div class="scene" aria-hidden="true"></div><div class="veil" aria-hidden="true"></div><div class="mist" aria-hidden="true"></div>
 
-<nav class="nav glass" aria-label="Resume Studio">
-  <div class="brand"><div class="sunmark" aria-hidden="true"></div><b>Resume Studio</b></div>
+<nav class="nav glass" aria-label="Resume Studios">
+  <div class="brand"><img class="logo" src="/assets/favicon.png" alt=""><b>Resume Studios</b></div>
   <div class="steps glass" role="list" aria-label="Progress">
     <div class="step on" id="st1" role="listitem"><i>1</i><span>Job</span></div>
     <div class="step" id="st2" role="listitem"><i>2</i><span>ATS score</span></div>
@@ -800,7 +801,7 @@ function confetti(){
     $('#jd').value=jd.replace(/^(Company|Job Title):.*\n/gim,''); updCount();
     if(words()>=15) $('#jdBox').open=true;
     await selectFile('main.tex');
-  }catch(e){ toast('Could not reach the app. Restart Resume Studio',true) }
+  }catch(e){ toast('Could not reach the app. Restart Resume Studios',true) }
   setInterval(()=>fetch('/api/ping').catch(()=>{}),10000);
   if(location.hash==='#scan') $('#scanBtn').click();
   const fm=location.hash.match(/^#file=(.+)$/);
